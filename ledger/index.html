@@ -39,6 +39,7 @@
   td.title a:hover { text-decoration: underline; }
   .tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 12px; background: #ecf5ff; color: var(--primary); }
   .tag.s { background: #fef0f0; color: #f56c6c; }
+  .tag.g { background: #f0f9eb; color: #67c23a; }
   .num { text-align: right; color: var(--muted); }
   .pager { display: flex; justify-content: center; gap: 8px; margin-top: 14px; align-items: center; }
   .pager button { padding: 6px 14px; border: 1px solid var(--border); border-radius: 6px; background: #fff; cursor: pointer; font-size: 13px; }
@@ -85,7 +86,7 @@
     <div style="max-height:520px;overflow:auto">
       <table>
         <thead><tr>
-          <th>标题</th><th>分类</th><th>发布时间</th><th>状态</th>
+          <th>标题</th><th>分类</th><th>发布时间</th><th>状态</th><th>评价</th>
           <th class="num">浏览</th><th class="num">评论</th><th class="num">点赞</th><th class="num">收藏</th>
         </tr></thead>
         <tbody id="tbody"></tbody>
@@ -103,6 +104,7 @@
 <script>
 const PAGE_SIZE = 20;
 let ARTICLES = [];
+let REVIEWS = {};
 let filtered = [];
 let page = 1;
 let charts = {};
@@ -314,11 +316,18 @@ function renderTable() {
     const status = a.status === 1 ? '已发布' : '其他';
     const tr = document.createElement('tr');
     const link = a.id ? `https://openlab.cosmoplat.com/article-detils?id=${a.id}&articleType=0` : '#';
+    let evalCell = '<td><span class="tag">—</span></td>';
+    const rv = REVIEWS[a.id];
+    if (rv) {
+      const cls = rv.grade === '优秀' ? 'tag g' : 'tag';
+      evalCell = `<td><span class="${cls}" title="${escapeHtml(rv.comment)}">${rv.grade} ${rv.score}分</span></td>`;
+    }
     tr.innerHTML = `
       <td class="title"><a href="${link}" target="_blank">${escapeHtml(a.title || '')}</a></td>
       <td><span class="tag">${escapeHtml(a.cateName || '未分类')}</span></td>
       <td>${escapeHtml(a.createTime || '')}</td>
       <td><span class="tag">${status}</span></td>
+      ${evalCell}
       <td class="num">${fmtNum(a.viewCount)}</td>
       <td class="num">${fmtNum(a.commentCount)}</td>
       <td class="num">${fmtNum(a.favor)}</td>
@@ -348,16 +357,18 @@ function renderAll() {
   document.getElementById('sub').textContent = `账号 ${ARTICLES.length} 篇 · 数据更新 ${document.getElementById('updatedAt') || ''}`;
 }
 
-fetch('data/articles.json')
-  .then(r => r.json())
-  .then(json => {
-    document.getElementById('updatedAt') && null;
+Promise.all([
+  fetch('data/articles.json').then(r => r.json()),
+  fetch('data/reviews.json').then(r => r.json()).catch(() => ({}))
+])
+  .then(([json, reviews]) => {
+    REVIEWS = reviews || {};
     parseData(json);
     document.getElementById('sub').textContent = `账号 ${json.memberId} · 共 ${json.total} 篇文章 · 数据更新 ${json.updatedAt}`;
   })
   .catch(e => {
     document.getElementById('sub').textContent = '数据加载失败: ' + e.message;
-    document.getElementById('tbody').innerHTML = `<tr><td colspan="8">数据加载失败</td></tr>`;
+    document.getElementById('tbody').innerHTML = `<tr><td colspan="9">数据加载失败</td></tr>`;
   });
 </script>
 </body>
