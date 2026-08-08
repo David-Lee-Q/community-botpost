@@ -34,6 +34,10 @@
   .dim-bar .val { width: 40px; text-align: right; color: var(--muted); font-variant-numeric: tabular-nums; }
   .modal .weak { color: #f56c6c; }
   .sugg { margin: 10px 0; padding: 10px 12px; border-left: 3px solid #f59e0b; background: #fff7e6; border-radius: 4px; font-size: 13px; line-height: 1.6; }
+  .seg { display: inline-flex; gap: 2px; vertical-align: 3px; margin-left: 8px; }
+  .seg button { padding: 3px 12px; font-size: 12px; border: 1px solid var(--border); background: #fff; color: var(--muted); cursor: pointer; border-radius: 4px; }
+  .seg button.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+  .panel h2 { display: flex; align-items: center; flex-wrap: wrap; }
   .wrap { max-width: 1200px; margin: 0 auto; padding: 20px 16px 60px; }
   .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; margin-bottom: 20px; }
   .card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 18px; }
@@ -98,6 +102,16 @@
     <div class="panel"><h2>每月发布量（近12个月）</h2><div class="chart-box"><canvas id="chartMonthly"></canvas></div></div>
     <div class="panel"><h2>分类分布</h2><div class="chart-box"><canvas id="chartCate"></canvas></div></div>
     <div class="panel"><h2>分类发布趋势（近6个月）</h2><div class="chart-box"><canvas id="chartTrend"></canvas></div></div>
+    <div class="panel"><h2>文章评价分数趋势 <span class="seg">
+      <button data-kind="score" data-p="day" class="active">按日</button>
+      <button data-kind="score" data-p="week">按周</button>
+      <button data-kind="score" data-p="month">按月</button></span></h2>
+      <div class="chart-box"><canvas id="chartScore"></canvas></div></div>
+    <div class="panel"><h2>浏览次数趋势 <span class="seg">
+      <button data-kind="views" data-p="day" class="active">按日</button>
+      <button data-kind="views" data-p="week">按周</button>
+      <button data-kind="views" data-p="month">按月</button></span></h2>
+      <div class="chart-box"><canvas id="chartViews"></canvas></div></div>
   </div>
 
   <div class="panel">
@@ -208,62 +222,84 @@ function makeChart(id, cfg) {
   charts[id] = new Chart(document.getElementById(id), cfg);
 }
 
+function fmtLocal(d) {
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${y}-${m}-${day}`;
+}
+function addDays(d, n) { const r = new Date(d); r.setDate(r.getDate() + n); return r; }
+function addWeeks(d, n) { const r = new Date(d); r.setDate(r.getDate() + n * 7); return r; }
+function addMonths(d, n) { const r = new Date(d.getFullYear(), d.getMonth() + n, 1); return r; }
+function mondayOf(d) {
+  const r = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+  r.setDate(r.getDate() - ((r.getDay() + 6) % 7));
+  return r;
+}
+function monthKey(d) { return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`; }
+
 function renderCharts() {
   const now = new Date();
-  const daily = new Map();
-  const weekly = new Map();
-  const monthly = new Map();
   const cateCount = new Map();
-  const trend = new Map();
+  const catTrend = new Map();
+  const byDay = new Map();
+  const byWeek = new Map();
+  const byMonth = new Map();
 
   ARTICLES.forEach(a => {
     const iso = a.createTime;
     if (!iso) return;
     const d = dateStr(iso);
-    daily.set(d, (daily.get(d) || 0) + 1);
-    const wk = weekOf(iso);
-    weekly.set(wk.toISOString().slice(0, 10), (weekly.get(wk.toISOString().slice(0, 10)) || 0) + 1);
+    if (!d) return;
+    const dt = new Date(d + 'T00:00:00');
+    byDay.set(d, (byDay.get(d) || 0) + 1);
+    const mk = fmtLocal(mondayOf(dt));
+    byWeek.set(mk, (byWeek.get(mk) || 0) + 1);
     const ym = d.slice(0, 7);
-    monthly.set(ym, (monthly.get(ym) || 0) + 1);
+    byMonth.set(ym, (byMonth.get(ym) || 0) + 1);
     const cn = a.cateName || '未分类';
     cateCount.set(cn, (cateCount.get(cn) || 0) + 1);
-    if (ym >= sixMonthsAgo(now)) {
-      const key = cn;
-      if (!trend.has(key)) trend.set(key, {});
-      const tm = trend.get(key);
-      tm[ym] = (tm[ym] || 0) + 1;
-    }
+    if (!catTrend.has(cn)) catTrend.set(cn, {});
+    catTrend.get(cn)[ym] = (catTrend.get(cn)[ym] || 0) + 1;
   });
 
-  function sixMonthsAgo(n) {
-    const d = new Date(n); d.setMonth(d.getMonth() - 5);
-    return d.toISOString().slice(0, 7);
+  // 近30天（自然日）
+  const dayBuckets = [];
+  for (let i = 29; i >= 0; i--) {
+    const dt = addDays(now, -i);
+    const key = fmtLocal(dt);
+    dayBuckets.push({ key, label: key.slice(5), v: byDay.get(key) || 0 });
   }
-
-  // 近30天
-  const dFrom = new Date(now); dFrom.setDate(dFrom.getDate() - 29);
-  const dailyData = fillBuckets(daily, dFrom, now, function dayFn(c) { return c.toISOString().slice(0, 10); });
   makeChart('chartDaily', {
     type: 'bar',
-    data: { labels: dailyData.map(d => d.key.slice(5)), datasets: [{ label: '发布量', data: dailyData.map(d => d.count), backgroundColor: '#2f6fed', borderRadius: 3 }] },
+    data: { labels: dayBuckets.map(b => b.label), datasets: [{ label: '发布量', data: dayBuckets.map(b => b.v), backgroundColor: '#2f6fed', borderRadius: 3 }] },
     options: chartOpts('文章数')
   });
 
-  // 近12周
-  const wFrom = new Date(now); wFrom.setDate(now.getDate() - (now.getDay() + 6) % 7 - 77);
-  const weeklyData = fillBuckets(weekly, wFrom, now, function weekFn(c) { const m = weekOf(c.toISOString()); return m.toISOString().slice(0, 10); });
+  // 近12周（自然周：周一~周日，横坐标标记自然周最后一天=周日）
+  const thisMonday = mondayOf(now);
+  const weekBuckets = [];
+  for (let i = 11; i >= 0; i--) {
+    const m = addWeeks(thisMonday, -i);
+    const sunday = addDays(m, 6);
+    weekBuckets.push({ key: fmtLocal(m), label: fmtLocal(sunday).slice(5), v: byWeek.get(fmtLocal(m)) || 0 });
+  }
   makeChart('chartWeekly', {
     type: 'bar',
-    data: { labels: weeklyData.map(d => d.key.slice(5)), datasets: [{ label: '发布量', data: weeklyData.map(d => d.count), backgroundColor: '#19be6b', borderRadius: 3 }] },
+    data: { labels: weekBuckets.map(b => b.label), datasets: [{ label: '发布量', data: weekBuckets.map(b => b.v), backgroundColor: '#19be6b', borderRadius: 3 }] },
     options: chartOpts('文章数')
   });
 
-  // 近12个月
-  const mFrom = new Date(now.getFullYear(), now.getMonth() - 11, 1);
-  const monthlyData = fillBuckets(monthly, mFrom, now, function monthFn(c) { return c.toISOString().slice(0, 7); });
+  // 近12个月（自然月）
+  const monthBuckets = [];
+  for (let i = 11; i >= 0; i--) {
+    const m = addMonths(now, -i);
+    const key = monthKey(m);
+    monthBuckets.push({ key, label: key, v: byMonth.get(key) || 0 });
+  }
   makeChart('chartMonthly', {
     type: 'line',
-    data: { labels: monthlyData.map(d => d.key), datasets: [{ label: '发布量', data: monthlyData.map(d => d.count), borderColor: '#f59e0b', backgroundColor: 'rgba(245,158,11,.15)', fill: true, tension: .35 }] },
+    data: { labels: monthBuckets.map(b => b.label), datasets: [{ label: '发布量', data: monthBuckets.map(b => b.v), borderColor: '#f59e0b', backgroundColor: 'rgba(245,158,11,.15)', fill: true, tension: .35 }] },
     options: chartOpts('文章数')
   });
 
@@ -280,23 +316,122 @@ function renderCharts() {
   });
 
   // 分类趋势（近6个月，top8）
-  const monthsOrder = [];
-  for (let i = 5; i >= 0; i--) { const d = new Date(now.getFullYear(), now.getMonth() - i, 1); monthsOrder.push(d.toISOString().slice(0, 7)); }
-  const trendSorted = Object.entries(trend).sort((a, b) => {
-    const sa = Object.values(a[1]).reduce((s, x) => s + x, 0);
-    const sb = Object.values(b[1]).reduce((s, x) => s + x, 0);
-    return sb - sa;
-  }).slice(0, 8);
+  const mOrder6 = [];
+  for (let i = 5; i >= 0; i--) mOrder6.push(monthKey(addMonths(now, -i)));
+  const sumArr = obj => Object.values(obj).reduce((s, x) => s + x, 0);
+  const trendSorted = [...catTrend.entries()].sort((a, b) => sumArr(b[1]) - sumArr(a[1])).slice(0, 8);
   makeChart('chartTrend', {
     type: 'line',
     data: {
-      labels: monthsOrder,
+      labels: mOrder6,
       datasets: trendSorted.map((c, i) => ({
-        label: c[0], data: monthsOrder.map(m => c[1][m] || 0),
+        label: c[0], data: mOrder6.map(m => c[1][m] || 0),
         borderColor: palette[i % palette.length], tension: .35, pointRadius: 2,
       }))
     },
     options: chartOpts('文章数')
+  });
+
+  renderTrendChart('score');
+  renderTrendChart('views');
+}
+
+const PERIOD_COUNT = { day: 30, week: 12, month: 12 };
+const PERIOD_OFFSET = { day: 365, week: 52, month: 12 };
+const currentPeriod = { score: 'day', views: 'day' };
+
+function buildPeriodBuckets(period) {
+  const n = PERIOD_COUNT[period];
+  const off = PERIOD_OFFSET[period];
+  const now = new Date();
+  let anchor;
+  if (period === 'month') anchor = new Date(now.getFullYear(), now.getMonth(), 1);
+  else if (period === 'week') anchor = mondayOf(now);
+  else anchor = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const total = n + off;
+  const keys = [], labels = [], bIdx = {};
+  for (let i = total - 1; i >= 0; i--) {
+    let d = period === 'day' ? addDays(anchor, -i)
+          : period === 'week' ? addWeeks(anchor, -i)
+          : addMonths(anchor, -i);
+    const wk = period === 'week' ? mondayOf(d) : d;
+    const key = period === 'month' ? monthKey(d) : fmtLocal(wk);
+    const pos = keys.length;
+    keys.push(key);
+    labels.push(period === 'week' ? fmtLocal(addDays(wk, 6)).slice(5)
+              : period === 'month' ? key : key.slice(5));
+    bIdx[key] = pos;
+  }
+  return { n, off, keys, labels, bIdx };
+}
+
+function buildRates(vals, off) {
+  const yoy = vals.map((v, i) => {
+    if (v == null || i - off < 0) return null;
+    const p = vals[i - off];
+    if (p == null || p === 0) return null;
+    return +((v - p) / p * 100).toFixed(1);
+  });
+  const mom = vals.map((v, i) => {
+    if (v == null || i < 1) return null;
+    const p = vals[i - 1];
+    if (p == null || p === 0) return null;
+    return +((v - p) / p * 100).toFixed(1);
+  });
+  return { yoy, mom };
+}
+
+function renderTrendChart(kind) {
+  const period = currentPeriod[kind];
+  const { n, off, labels, bIdx } = buildPeriodBuckets(period);
+  const total = n + off;
+  const scoreSum = new Array(total).fill(0);
+  const scoreCnt = new Array(total).fill(0);
+  const viewSum = new Array(total).fill(0);
+  ARTICLES.forEach(a => {
+    const iso = a.createTime;
+    if (!iso) return;
+    const d = dateStr(iso);
+    if (!d) return;
+    const dt = new Date(d + 'T00:00:00');
+    const key = period === 'month' ? d.slice(0, 7)
+              : period === 'week' ? fmtLocal(mondayOf(dt)) : d;
+    const i = bIdx[key];
+    if (i == null) return;
+    viewSum[i] += (a.viewCount || 0);
+    const rv = REVIEWS[a.id];
+    if (rv && typeof rv.score === 'number') { scoreSum[i] += rv.score; scoreCnt[i]++; }
+  });
+  const scoreVals = scoreSum.map((s, i) => scoreCnt[i] ? +(s / scoreCnt[i]).toFixed(1) : null);
+  const base = kind === 'score' ? scoreVals : viewSum;
+  const { yoy, mom } = buildRates(base, off);
+  const show = base.slice(off);
+  const showYoy = yoy.slice(off);
+  const showMom = mom.slice(off);
+
+  const datasets = [{
+    label: kind === 'score' ? '平均评价分' : '浏览次数',
+    data: show, borderColor: '#2f6fed', backgroundColor: 'rgba(47,111,237,.12)',
+    fill: true, tension: .35, pointRadius: 2, yAxisID: 'y'
+  }];
+  if (showYoy.some(v => v != null)) {
+    datasets.push({ label: '同比', data: showYoy, borderColor: '#e84393', tension: .3, pointRadius: 0, borderDash: [5, 3], yAxisID: 'y2' });
+  }
+  if (showMom.some(v => v != null)) {
+    datasets.push({ label: '环比', data: showMom, borderColor: '#00b5ad', tension: .3, pointRadius: 0, borderDash: [2, 2], yAxisID: 'y2' });
+  }
+  makeChart(kind === 'score' ? 'chartScore' : 'chartViews', {
+    type: 'line',
+    data: { labels: labels.slice(off), datasets },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { labels: { font: { size: 11 } } } },
+      scales: {
+        y: { beginAtZero: false, title: { display: true, text: kind === 'score' ? '评价分' : '浏览数' } },
+        y2: { position: 'right', title: { display: true, text: '同比/环比 %' }, grid: { drawOnChartArea: false } },
+        x: { ticks: { maxTicksLimit: 15, font: { size: 10 } } }
+      }
+    }
   });
 }
 
@@ -417,6 +552,17 @@ document.getElementById('cateFilter').addEventListener('change', applyFilters);
 document.getElementById('periodFilter').addEventListener('change', applyFilters);
 document.getElementById('prevBtn').addEventListener('click', () => { page--; renderTable(); });
 document.getElementById('nextBtn').addEventListener('click', () => { page++; renderTable(); });
+
+document.querySelectorAll('.seg button').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const kind = btn.dataset.kind;
+    const p = btn.dataset.p;
+    currentPeriod[kind] = p;
+    document.querySelectorAll(`.seg button[data-kind="${kind}"]`).forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    renderTrendChart(kind);
+  });
+});
 
 function renderAll() {
   calcStats();
