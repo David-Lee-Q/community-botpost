@@ -11,6 +11,9 @@ ROOT = os.path.dirname(LEDGER)
 STATUS_FILE = os.path.join(LEDGER, "data", "oneshot_status.json")
 ONE_SHOT = os.path.join(ROOT, "bot", "one_shot.py")
 
+sys.path.insert(0, os.path.join(ROOT, "bot"))
+import sensitive  # noqa: E402
+
 _lock = threading.Lock()
 
 
@@ -27,6 +30,17 @@ class Handler(http.server.SimpleHTTPRequestHandler):
         self.wfile.write(body)
 
     def do_POST(self):
+        if self.path == "/api/check":
+            try:
+                length = int(self.headers.get("Content-Length") or 0)
+                data = json.loads(self.rfile.read(length) or b"{}")
+            except ValueError:
+                self._json(400, {"error": "请求体非法"})
+                return
+            text = (data.get("text") or "").strip()
+            hits = sensitive.check(text) if text else []
+            self._json(200, {"hit": bool(hits), "words": hits})
+            return
         if self.path != "/api/publish":
             self._json(404, {"error": "not found"})
             return
@@ -42,6 +56,14 @@ class Handler(http.server.SimpleHTTPRequestHandler):
             return
         if len(prompt) > 60:
             self._json(400, {"error": "标题或关键词过长（≤60字）"})
+            return
+        hits = sensitive.check(prompt)
+        if hits:
+            sensitive.log_record({
+                "source": "发一篇输入", "article_title": prompt,
+                "hits": hits, "action": "拒绝（输入含敏感词）",
+            })
+            self._json(400, {"error": "输入内容包含敏感词：" + "、".join(hits)})
             return
         if _lock.locked():
             self._json(429, {"error": "已有文章正在生成，请稍候"})

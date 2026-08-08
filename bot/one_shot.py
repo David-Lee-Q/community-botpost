@@ -15,6 +15,7 @@ COVERS_DIR = os.path.join(BOT_DIR, "covers")
 
 sys.path.insert(0, BOT_DIR)
 from publish import CATEGORY_IDS, get_token, publish_one  # noqa: E402
+import sensitive  # noqa: E402
 
 IMG_BASE = "https://images.unsplash.com/{}?w=800&q=80"
 COVER_BASE = "https://images.unsplash.com/{}?w=800&h=400&fit=crop&q=80"
@@ -146,6 +147,20 @@ def run(prompt):
         "title": gen["title"], "category": gen["category"],
         "file": article_file, "summary": gen["summary"], "cover": cover_path,
     }
+
+    hits = sensitive.check(gen["title"]) + sensitive.check(gen["summary"]) + sensitive.check(gen["body"])
+    if hits:
+        hits = sorted(set(hits))
+        sensitive.log_record({
+            "source": "发一篇", "article_title": gen["title"], "hits": hits,
+            "action": "LLM内容优化",
+        })
+        item["title"] = sensitive.optimize_text(gen["title"], sensitive.check(gen["title"]), "标题") or gen["title"]
+        item["summary"] = sensitive.optimize_text(gen["summary"], sensitive.check(gen["summary"]), "摘要") or gen["summary"]
+        with open(article_file, "w", encoding="utf-8") as f:
+            f.write("# " + item["title"] + "\n\n" + sensitive.optimize_text(gen["body"], hits, "正文"))
+        gen["title"] = item["title"]
+
     result = publish_one(token, item)
     return gen, result, cover_path
 
@@ -162,6 +177,14 @@ def main():
     prompt = sys.argv[1] if len(sys.argv) > 1 else ""
     if not prompt:
         print("用法: one_shot.py <标题或关键词>")
+        return 1
+    hits = sensitive.check(prompt)
+    if hits:
+        sensitive.log_record({
+            "source": "发一篇输入", "article_title": prompt, "hits": hits,
+            "action": "拒绝（输入含敏感词）",
+        })
+        print(json.dumps({"state": "failed", "error": "输入内容包含敏感词：" + "、".join(hits)}, ensure_ascii=False))
         return 1
     _write_status("processing", {"prompt": prompt})
     try:

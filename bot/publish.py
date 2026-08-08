@@ -4,6 +4,9 @@ import sys
 import subprocess
 import requests
 
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import sensitive  # noqa: E402
+
 BASE = "https://openlab.cosmoplat.com/api"
 BOT_DIR = os.path.dirname(os.path.abspath(__file__))
 TOKEN_FILE = os.path.join(BOT_DIR, "token.txt")
@@ -139,12 +142,29 @@ def publish_one(token, item):
     while lines and lines[0].startswith("#"):
         lines.pop(0)
     body = "\n".join(lines).strip()
+    summary = item["summary"]
+
+    hits_title = sensitive.check(title)
+    hits_sum = sensitive.check(summary)
+    hits_body = sensitive.check(body)
+    if hits_title or hits_sum or hits_body:
+        hits = sorted(set(hits_title + hits_sum + hits_body))
+        sensitive.log_record({
+            "source": "定时发文", "article_title": title,
+            "hits": hits, "action": "LLM内容优化",
+        })
+        if hits_title:
+            title = sensitive.optimize_text(title, hits_title, "标题")
+        if hits_sum:
+            summary = sensitive.optimize_text(summary, hits_sum, "摘要")
+        if hits_body:
+            body = sensitive.optimize_text(body, hits_body, "正文")
 
     payload = {
         "canReply": 0, "source": 1, "cateId": CATEGORY_IDS[item["category"]],
         "activityTopic": None, "activityType": None, "contentType": "markdown",
         "sourceLink": "", "thumbnail": cover_url, "title": title,
-        "description": item["summary"], "content": body,
+        "description": summary, "content": body,
         "draftId": "", "articleId": None, "id": None,
         "viewRank": 0, "sectionId": None,
     }
