@@ -59,7 +59,7 @@
   .tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 12px; background: #ecf5ff; color: var(--primary); }
   .tag.s { background: #fef0f0; color: #f56c6c; }
   .tag.g { background: #f0f9eb; color: #67c23a; }
-  .tag.a { background: #f9f0ff; color: #8b5cf6; }
+  .tag.o { background: #fdf6ec; color: #e6a23c; }
   .num { text-align: right; color: var(--muted); }
   .pager { display: flex; justify-content: center; gap: 8px; margin-top: 14px; align-items: center; }
   .pager button { padding: 6px 14px; border: 1px solid var(--border); border-radius: 6px; background: #fff; cursor: pointer; font-size: 13px; }
@@ -350,10 +350,8 @@ function renderTable() {
     let evalCell = '<td><span class="tag">—</span></td>';
     const rv = REVIEWS[a.id];
     if (rv) {
-      const isAuto = rv.auto;
-      const cls = rv.grade === '优秀' ? 'tag g' : (isAuto ? 'tag a' : 'tag');
-      const label = isAuto ? `自动·${rv.grade} ${rv.score}分` : `${rv.grade} ${rv.score}分`;
-      evalCell = `<td><span class="${cls}" title="${escapeHtml(rv.comment)}">${label}</span></td>`;
+      const cls = rv.grade === '优秀' ? 'tag g' : rv.grade === '不合格' ? 'tag s' : rv.grade === '合格' ? 'tag o' : 'tag';
+      evalCell = `<td><span class="${cls}" title="${escapeHtml(rv.comment)}">${rv.grade} ${rv.score}分</span></td>`;
     }
     tr.innerHTML = `
       <td class="title"><a href="${link}" target="_blank">${escapeHtml(a.title || '')}</a></td>
