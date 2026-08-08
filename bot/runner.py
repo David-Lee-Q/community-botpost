@@ -42,6 +42,7 @@ def gen_heartbeat():
 def main():
     log("bot runner started")
     last_plan_day = None
+    last_score_week = None
     while True:
         now = datetime.datetime.now()
         with open(PLAN_FILE, encoding="utf-8") as f:
@@ -51,6 +52,20 @@ def main():
             last_plan_day = now.date().isoformat()
             log("6点已到，生成新一批计划")
             # 扩展点：调用 gen_plan 生成新计划并补充文章
+            # 每周一 6 点更新综合评分（评分周期为上一完整周）
+            if now.weekday() == 0:
+                score_week = now.date().isoformat()
+                if last_score_week != score_week:
+                    last_score_week = score_week
+                    review_engine = os.path.join(os.path.dirname(BOT_DIR), "ledger", "review_engine.py")
+                    if os.path.exists(review_engine):
+                        log("每周一更新综合评分")
+                        r4 = subprocess.run([sys.executable, review_engine],
+                                            capture_output=True, text=True, timeout=120)
+                        if r4.returncode != 0:
+                            log("review_engine.py 失败: " + r4.stderr[-500:])
+                        else:
+                            log(r4.stdout.strip())
 
         due = [it for it in plan["schedule"] if it.get("status") == "pending"
                and it.get("time") and it["time"] <= now.strftime("%Y-%m-%d %H:%M")]

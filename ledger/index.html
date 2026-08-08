@@ -13,8 +13,27 @@
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body { font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif; background: var(--bg); color: var(--text); }
   header { background: linear-gradient(135deg, #1f3b8f, #2f6fed); color: #fff; padding: 20px 28px; }
-  header h1 { font-size: 22px; font-weight: 600; }
+  header h1 { font-size: 22px; font-weight: 600; display: inline-block; margin-right: 14px; }
   header .sub { font-size: 13px; opacity: .85; margin-top: 6px; }
+  .score-tag {
+    display: inline-block; vertical-align: 2px; padding: 5px 16px; border-radius: 20px;
+    font-size: 15px; font-weight: 700; color: #1f3b8f; background: linear-gradient(135deg, #ffe066, #ffc53d);
+    box-shadow: 0 2px 10px rgba(0,0,0,.25); cursor: pointer; user-select: none; transition: transform .15s;
+  }
+  .score-tag:hover { transform: scale(1.06); }
+  .modal-mask { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.45); z-index: 100; align-items: center; justify-content: center; }
+  .modal-mask.show { display: flex; }
+  .modal { background: #fff; border-radius: 12px; width: min(560px, 92vw); max-height: 84vh; overflow: auto; padding: 22px 26px; box-shadow: 0 10px 40px rgba(0,0,0,.3); }
+  .modal h3 { font-size: 18px; margin-bottom: 4px; }
+  .modal .meta { font-size: 12px; color: var(--muted); margin-bottom: 14px; }
+  .modal .close { float: right; cursor: pointer; font-size: 22px; line-height: 1; color: var(--muted); }
+  .dim-bar { display: flex; align-items: center; gap: 10px; margin: 8px 0; font-size: 13px; }
+  .dim-bar .name { width: 84px; flex-shrink: 0; color: var(--text); }
+  .dim-bar .track { flex: 1; height: 10px; background: #eee; border-radius: 5px; overflow: hidden; }
+  .dim-bar .fill { height: 100%; border-radius: 5px; background: linear-gradient(90deg, #2f6fed, #19be6b); }
+  .dim-bar .val { width: 40px; text-align: right; color: var(--muted); font-variant-numeric: tabular-nums; }
+  .modal .weak { color: #f56c6c; }
+  .sugg { margin: 10px 0; padding: 10px 12px; border-left: 3px solid #f59e0b; background: #fff7e6; border-radius: 4px; font-size: 13px; line-height: 1.6; }
   .wrap { max-width: 1200px; margin: 0 auto; padding: 20px 16px 60px; }
   .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; margin-bottom: 20px; }
   .card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 18px; }
@@ -51,8 +70,18 @@
 <body>
 <header>
   <h1>社区发文台账</h1>
+  <span class="score-tag" id="scoreTag" title="点击查看下周优化建议">综合评分 —</span>
   <div class="sub" id="sub">加载中...</div>
 </header>
+
+<div class="modal-mask" id="modalMask">
+  <div class="modal">
+    <span class="close" id="modalClose">&times;</span>
+    <h3 id="modalTitle">下周优化建议</h3>
+    <div class="meta" id="modalMeta"></div>
+    <div id="modalBody"></div>
+  </div>
+</div>
 
 <div class="wrap">
   <div class="cards">
@@ -105,6 +134,7 @@
 const PAGE_SIZE = 20;
 let ARTICLES = [];
 let REVIEWS = {};
+let SCORE = null;
 let filtered = [];
 let page = 1;
 let charts = {};
@@ -344,6 +374,43 @@ function escapeHtml(s) {
   return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 }
 
+function renderScore() {
+  const tag = document.getElementById('scoreTag');
+  if (!SCORE || SCORE.score == null) {
+    tag.textContent = '综合评分 —';
+    return;
+  }
+  tag.textContent = `综合评分 ${SCORE.score}分`;
+}
+
+function openModal() {
+  if (!SCORE || SCORE.score == null) return;
+  document.getElementById('modalTitle').textContent = '下周优化建议';
+  document.getElementById('modalMeta').textContent =
+    `评分周期 ${SCORE.week} · 覆盖 ${SCORE.articleCount} 篇 bot 文章 · 更新于 ${SCORE.updatedAt}`;
+  let html = `<div style="font-size:34px;font-weight:800;color:#f59e0b;margin:6px 0 14px">${SCORE.score}<span style="font-size:15px;color:var(--muted)"> / 100 分</span></div>`;
+  if (SCORE.avgDimensions) {
+    Object.entries(SCORE.avgDimensions).forEach(([name, val]) => {
+      const isWeak = (SCORE.weakest || []).includes(name);
+      const pct = Math.min(100, val / 20 * 100);
+      html += `<div class="dim-bar">
+        <span class="name ${isWeak ? 'weak' : ''}">${escapeHtml(name)}${isWeak ? ' ⚠' : ''}</span>
+        <div class="track"><div class="fill" style="width:${pct}%"></div></div>
+        <span class="val">${val}</span>
+      </div>`;
+    });
+  }
+  (SCORE.suggestions || []).forEach(s => { html += `<div class="sugg">${escapeHtml(s)}</div>`; });
+  document.getElementById('modalBody').innerHTML = html;
+  document.getElementById('modalMask').classList.add('show');
+}
+
+document.getElementById('scoreTag').addEventListener('click', openModal);
+document.getElementById('modalClose').addEventListener('click', () => document.getElementById('modalMask').classList.remove('show'));
+document.getElementById('modalMask').addEventListener('click', e => {
+  if (e.target === e.currentTarget) document.getElementById('modalMask').classList.remove('show');
+});
+
 document.getElementById('searchInput').addEventListener('input', applyFilters);
 document.getElementById('cateFilter').addEventListener('change', applyFilters);
 document.getElementById('periodFilter').addEventListener('change', applyFilters);
@@ -359,11 +426,14 @@ function renderAll() {
 
 Promise.all([
   fetch('data/articles.json').then(r => r.json()),
-  fetch('data/reviews.json').then(r => r.json()).catch(() => ({}))
+  fetch('data/reviews.json').then(r => r.json()).catch(() => ({})),
+  fetch('data/bot_score.json').then(r => r.json()).catch(() => null)
 ])
-  .then(([json, reviews]) => {
+  .then(([json, reviews, score]) => {
     REVIEWS = reviews || {};
+    SCORE = score || null;
     parseData(json);
+    renderScore();
     document.getElementById('sub').textContent = `账号 ${json.memberId} · 共 ${json.total} 篇文章 · 数据更新 ${json.updatedAt}`;
   })
   .catch(e => {
