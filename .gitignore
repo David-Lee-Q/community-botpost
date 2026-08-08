@@ -42,7 +42,7 @@ __pycache__/
 credentials.json
 bot/token.txt
 bot/login_state.json
-ledger/data/
+ledger/data/articles.json
 
 # Logs
 *.log
