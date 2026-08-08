@@ -83,6 +83,12 @@
   .pager span { font-size: 13px; color: var(--muted); }
   .empty { text-align: center; color: var(--muted); padding: 40px 0; }
   footer.watermark { text-align: center; font-size: 13px; letter-spacing: 1px; color: #c0c4cc; opacity: .75; padding: 18px 16px 28px; user-select: none; }
+  .version-link { display: inline-block; margin-top: 8px; font-size: 12px; color: #b0b4bd; cursor: pointer; user-select: none; }
+  .version-link:hover { color: var(--primary); text-decoration: underline; }
+  .commit-item { display: flex; gap: 10px; padding: 9px 4px; border-bottom: 1px dashed var(--border); font-size: 13px; align-items: baseline; }
+  .commit-item .ch { color: var(--primary); font-family: monospace; flex-shrink: 0; }
+  .commit-item .cd { color: var(--muted); font-size: 12px; flex-shrink: 0; }
+  .commit-item .cm { color: var(--text); word-break: break-all; }
   .fab { position: fixed; right: 28px; bottom: 28px; z-index: 90; padding: 12px 22px; border: none; border-radius: 30px; font-size: 15px; font-weight: 700; color: #fff; cursor: pointer; background: linear-gradient(135deg, #2f6fed, #1f3b8f); box-shadow: 0 6px 18px rgba(47,111,237,.45); transition: transform .2s, box-shadow .2s; }
   .fab:hover { transform: translateY(-3px); box-shadow: 0 10px 24px rgba(47,111,237,.55); }
   #oneshotMask textarea { width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: 8px; font-size: 14px; font-family: inherit; resize: vertical; margin: 8px 0; }
@@ -174,7 +180,16 @@
   </div>
 </div>
 
-<footer class="watermark">社区内容自运营智能体开发与运营@卡奥斯产品研发中心-李灯辉19029667</footer>
+<footer class="watermark">社区内容自运营智能体开发与运营@卡奥斯产品研发中心-李灯辉19029667<br><span class="version-link" id="versionLink">版本记录</span></footer>
+
+<div class="modal-mask" id="commitMask">
+  <div class="modal">
+    <span class="close" id="commitClose">&times;</span>
+    <h3>版本记录</h3>
+    <div class="meta">按时间倒序，最近 60 条提交</div>
+    <div id="commitList" style="max-height: 52vh; overflow: auto;"></div>
+  </div>
+</div>
 
 <button class="fab" id="fabBtn" title="发一篇">发一篇</button>
 
@@ -719,6 +734,27 @@ Promise.all([
   document.getElementById('oneshotGo').addEventListener('click', submit);
   input.addEventListener('keydown', e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); submit(); } });
   mask.addEventListener('click', e => { if (e.target === mask) close(); });
+})();
+
+(function () {
+  const mask = document.getElementById('commitMask');
+  const list = document.getElementById('commitList');
+  document.getElementById('versionLink').addEventListener('click', async () => {
+    mask.classList.add('show');
+    list.innerHTML = '<div class="empty" style="padding:20px 0">加载中...</div>';
+    try {
+      const r = await fetch('/api/commits');
+      const d = await r.json();
+      const items = (d.commits || []).map(c =>
+        `<div class="commit-item"><span class="ch">${c.hash}</span><span class="cd">${c.date}</span><span class="cm">${escapeHtml(c.message)}</span></div>`
+      ).join('');
+      list.innerHTML = items || '<div class="empty">暂无记录</div>';
+    } catch (e) {
+      list.innerHTML = '<div class="empty">加载失败</div>';
+    }
+  });
+  document.getElementById('commitClose').addEventListener('click', () => mask.classList.remove('show'));
+  mask.addEventListener('click', e => { if (e.target === mask) mask.classList.remove('show'); });
 })();
 </script>
 </body>
