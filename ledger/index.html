@@ -16,11 +16,13 @@
   header h1 { font-size: 22px; font-weight: 600; }
   header .sub { font-size: 13px; opacity: .85; margin-top: 6px; flex-basis: 100%; }
   .score-tag {
-    display: inline-block; margin-left: auto; padding: 6px 18px; border-radius: 20px;
-    font-size: 15px; font-weight: 700; color: #1f3b8f; background: linear-gradient(135deg, #ffe066, #ffc53d);
+    display: inline-block; margin-left: auto; padding: 6px 18px; border-radius: 14px;
+    text-align: center; line-height: 1.2; color: #1f3b8f; background: linear-gradient(135deg, #ffe066, #ffc53d);
     box-shadow: 0 2px 10px rgba(0,0,0,.25); cursor: pointer; user-select: none;
     animation: breathe 2.2s ease-in-out infinite;
   }
+  .score-tag .st-label { display: block; font-size: 12px; font-weight: 600; opacity: .85; }
+  .score-tag .st-num { display: block; font-size: 24px; font-weight: 800; letter-spacing: 1px; }
   .score-tag:hover { animation-play-state: paused; transform: scale(1.06); }
   @keyframes breathe {
     0%, 100% { box-shadow: 0 0 0 0 rgba(255, 214, 64, .55), 0 2px 10px rgba(0,0,0,.25); }
@@ -85,7 +87,7 @@
 <body>
 <header>
   <h1>社区内容自运营智能体</h1>
-  <span class="score-tag" id="scoreTag" title="点击查看下周优化建议">综合评分 —</span>
+  <span class="score-tag" id="scoreTag" title="点击查看下周优化建议"><span class="st-label">综合评分</span><span class="st-num">—</span></span>
   <div class="sub" id="sub">加载中...</div>
 </header>
 
@@ -533,10 +535,10 @@ function escapeHtml(s) {
 function renderScore() {
   const tag = document.getElementById('scoreTag');
   if (!SCORE || SCORE.score == null) {
-    tag.textContent = '综合评分 —';
+    tag.innerHTML = '<span class="st-label">综合评分</span><span class="st-num">—</span>';
     return;
   }
-  tag.textContent = `综合评分 ${SCORE.score}分`;
+  tag.innerHTML = `<span class="st-label">综合评分</span><span class="st-num">${SCORE.score}分</span>`;
 }
 
 function openModal() {
