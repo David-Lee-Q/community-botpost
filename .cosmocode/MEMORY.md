@@ -61,3 +61,14 @@ Agent 在任务执行过程中发现的条目应遵循以下格式：
   - 分类名映射从 GET /api/cate/list 获取 id→name
   - 静态服务器：/workspace/ledger 下 `python3 -m http.server 8090 --bind 0.0.0.0`，根路径即首页 index.html
   - 发布完成后 runner.py 会自动调用 fetch_articles.py 刷新台账数据，无需手动拉取
+
+[发文质量持续改进]
+- Date: 2026-08-08
+- Context: review_engine.py 每周一基于综合评分自动沉淀优化建议
+- Instructions:
+  - 每周一更新综合评分后，自动同步优化建议到 .cosmocode/docs/质量改进记录.md 与 .cosmocode/quality_tasks.md
+  - 最新周期 2026-08-03~2026-08-08 综合分 88，当前短板维度：传播表现、可读表达
+  - 改进要点：打磨标题信息量与钩子，摘要直击痛点，首段前三句抓住读者
+  - 改进要点：每段聚焦单一论点并控制段落长度，增强小标题引导与图文呼应
+  - 创作新文章前，先核对 quality_tasks.md 的未完成改进项并主动应用
+  - 周综合评分低于 85 时，下批文章发布前必须优先落实对应改进要点

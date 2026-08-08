@@ -160,7 +160,23 @@ def publish_one(token, item):
     return {"status": "published", "article_id": d["data"]["id"], "title": title}
 
 
+def show_improvements():
+    import re
+    tasks = os.path.join(os.path.dirname(BOT_DIR), ".cosmocode", "quality_tasks.md")
+    if not os.path.exists(tasks):
+        return
+    text = open(tasks, encoding="utf-8").read()
+    pending = re.findall(r"- \[ \] (.+?)（建议日期：", text)
+    if not pending:
+        return
+    print("=== 本周质量改进待办 ===")
+    for t in pending:
+        print("  [ ] " + t)
+    print("=========================")
+
+
 def main():
+    show_improvements()
     token = get_token()
     with open(os.path.join(BOT_DIR, "plan.json"), encoding="utf-8") as f:
         plan = json.load(f)
