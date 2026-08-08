@@ -125,6 +125,20 @@ def _note(text):
     return {"tag": "note", "elements": [{"tag": "plain_text", "content": text}]}
 
 
+def _row(widths, cells, header=False):
+    cols = []
+    for w, c in zip(widths, cells):
+        md = c if header else c
+        content = "**" + md + "**" if header else md
+        cols.append({
+            "tag": "column", "width": "weighted",
+            "weight": w,
+            "vertical_align": "center",
+            "elements": [{"tag": "div", "text": {"tag": "lark_md", "content": content}}],
+        })
+    return {"tag": "column_set", "horizontal_spacing": "default", "columns": cols, "background_style": "grey" if header else "default"}
+
+
 def daily_card(day=None):
     day = day or datetime.date.today()
     arts = _articles()
@@ -148,12 +162,16 @@ def daily_card(day=None):
     ))
     if published:
         elements.append({"tag": "hr"})
-        lines = ["**今日文章表现**"]
+        elements.append(_div("**今日文章表现**"))
+        col_widths = [1, 3, 1]
+        headers = ["#", "标题", "浏览/互动"]
+        elements.append(_row(col_widths, headers, header=True))
         for i, a in enumerate(sorted(published, key=lambda x: -_view_engage(x)[0])[:5], 1):
             v, e = _view_engage(a)
             cate = CATE_MAP.get(a.get("cateId"), "")
-            lines.append(str(i) + ". " + str(a.get("title", ""))[:26] + "（" + cate + "）　浏览 " + str(v) + " · 互动 " + str(e))
-        elements.append(_div("\n".join(lines)))
+            url = "https://openlab.cosmoplat.com/article-detils?id=" + str(a.get("id")) + "&articleType=0"
+            title = "[" + str(a.get("title", ""))[:20] + "](<" + url + ">)"
+            elements.append(_row(col_widths, [str(i), title, str(v) + "/" + str(e)], header=False))
     notes = []
     if last_score:
         notes.append("综合评分 " + str(last_score["score"]) + " 分（周期 " + last_score["week"] + "）")
