@@ -117,8 +117,102 @@ def weekly_text(week_end=None):
     return "\n".join(lines)
 
 
-def push(text):
-    r = requests.post(WEBHOOK, json={"msg_type": "text", "content": {"text": text}}, timeout=15)
+def _div(md):
+    return {"tag": "div", "text": {"tag": "lark_md", "content": md}}
+
+
+def _note(text):
+    return {"tag": "note", "elements": [{"tag": "plain_text", "content": text}]}
+
+
+def daily_card(day=None):
+    day = day or datetime.date.today()
+    arts = _articles()
+    today_arts = [a for a in arts if (a.get("createTime") or "").startswith(day.isoformat())]
+    published = [a for a in today_arts if a.get("status") == 1]
+    total_view = sum(a.get("viewCount", 0) for a in published)
+    total_engage = sum(
+        a.get("commentCount", 0) + a.get("favor", 0) + a.get("collect", 0) for a in published
+    )
+    sh = _load(SCORE_HISTORY).get("history") or []
+    last_score = sh[0] if sh else None
+    plan = _load(PLAN).get("schedule", [])
+    pending = [it for it in plan if it.get("status") == "pending"
+               and it.get("time") and it["time"].startswith(day.isoformat())]
+
+    elements = []
+    elements.append(_div(
+        "**今日发布：** " + str(len(published)) + " 篇　　　"
+        "**浏览量：** " + str(total_view) + "　　　"
+        "**互动：** " + str(total_engage)
+    ))
+    if published:
+        elements.append({"tag": "hr"})
+        lines = ["**今日文章表现**"]
+        for i, a in enumerate(sorted(published, key=lambda x: -_view_engage(x)[0])[:5], 1):
+            v, e = _view_engage(a)
+            cate = CATE_MAP.get(a.get("cateId"), "")
+            lines.append(str(i) + ". " + str(a.get("title", ""))[:26] + "（" + cate + "）　浏览 " + str(v) + " · 互动 " + str(e))
+        elements.append(_div("\n".join(lines)))
+    notes = []
+    if last_score:
+        notes.append("综合评分 " + str(last_score["score"]) + " 分（周期 " + last_score["week"] + "）")
+    if pending:
+        notes.append("今日待发 " + str(len(pending)) + " 篇")
+    elements.append({"tag": "hr"})
+    elements.append(_note("　".join(notes) if notes else "今日无发布"))
+    return {
+        "msg_type": "interactive",
+        "card": {
+            "header": {"title": {"tag": "plain_text", "content": "每日总结 · " + day.strftime("%Y-%m-%d")}, "template": "blue"},
+            "elements": elements,
+        },
+    }
+
+
+def weekly_card(week_end=None):
+    week_end = week_end or datetime.date.today()
+    mon = _monday(week_end)
+    arts = _articles()
+    week_arts = [a for a in arts if mon.isoformat() <= (a.get("createTime") or "")[:10] <= week_end.isoformat()]
+    published = [a for a in week_arts if a.get("status") == 1]
+    total_view = sum(a.get("viewCount", 0) for a in published)
+    total_engage = sum(
+        a.get("commentCount", 0) + a.get("favor", 0) + a.get("collect", 0) for a in published
+    )
+    sh = _load(SCORE_HISTORY).get("history") or []
+    last_score = sh[0] if sh else None
+    plan = _load(PLAN).get("schedule", [])
+    pending = [it for it in plan if it.get("status") == "pending"]
+
+    elements = []
+    elements.append(_div(
+        "**本周发布：** " + str(len(published)) + " 篇　　　"
+        "**浏览量：** " + str(total_view) + "　　　"
+        "**互动：** " + str(total_engage)
+    ))
+    if last_score:
+        elements.append({"tag": "hr"})
+        score_color = "green" if last_score["score"] >= 85 else ("orange" if last_score["score"] >= 70 else "red")
+        score_md = '**综合评分：** <font color="' + score_color + '">' + str(last_score["score"]) + " 分</font>（覆盖 " + str(last_score["articleCount"]) + " 篇 bot 文章）"
+        elements.append(_div(score_md))
+        if last_score.get("weakest"):
+            elements.append(_div("**短板维度：** " + "、".join(last_score["weakest"])))
+        for s in (last_score.get("suggestions") or [])[:3]:
+            elements.append(_div("· " + s))
+    elements.append({"tag": "hr"})
+    elements.append(_note("下周待发布 " + str(len(pending)) + " 篇"))
+    return {
+        "msg_type": "interactive",
+        "card": {
+            "header": {"title": {"tag": "plain_text", "content": "每周总结 · " + mon.strftime("%Y-%m-%d") + " ~ " + week_end.strftime("%Y-%m-%d")}, "template": "green"},
+            "elements": elements,
+        },
+    }
+
+
+def push(payload):
+    r = requests.post(WEBHOOK, json=payload, timeout=15)
     data = r.json()
     if data.get("code") != 0:
         raise RuntimeError("飞书推送失败: " + json.dumps(data, ensure_ascii=False))
@@ -129,15 +223,15 @@ def main():
     kind = sys.argv[1] if len(sys.argv) > 1 else "daily"
     preview = "--preview" in sys.argv
     if kind == "daily":
-        text = daily_text()
+        payload = daily_card()
     elif kind == "weekly":
-        text = weekly_text()
+        payload = weekly_card()
     else:
         print("用法: report.py daily|weekly [--preview]")
         return 1
-    print(text)
+    print(json.dumps(payload, ensure_ascii=False, indent=2))
     if not preview:
-        push(text)
+        push(payload)
         print("已推送飞书")
     return 0
 
