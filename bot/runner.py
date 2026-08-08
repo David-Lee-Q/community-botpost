@@ -43,10 +43,24 @@ def main():
     log("bot runner started")
     last_plan_day = None
     last_score_week = None
+    last_fetch_hour = None
     while True:
         now = datetime.datetime.now()
         with open(PLAN_FILE, encoding="utf-8") as f:
             plan = json.load(f)
+
+        # 每 6 小时定时刷新台账数据（浏览/互动实时增长，保证趋势图数据最新）
+        if now.hour % 6 == 0 and last_fetch_hour != now.date().isoformat() + str(now.hour):
+            last_fetch_hour = now.date().isoformat() + str(now.hour)
+            ledger = os.path.join(os.path.dirname(BOT_DIR), "ledger", "fetch_articles.py")
+            if os.path.exists(ledger):
+                log("定时刷新台账数据")
+                rf = subprocess.run([sys.executable, ledger],
+                                    capture_output=True, text=True, timeout=300)
+                if rf.returncode != 0:
+                    log("fetch_articles.py 失败: " + rf.stderr[-500:])
+                else:
+                    log(rf.stdout.strip())
 
         if now.hour == 6 and last_plan_day != now.date().isoformat():
             last_plan_day = now.date().isoformat()
