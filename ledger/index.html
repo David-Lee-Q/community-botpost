@@ -112,6 +112,11 @@
       <button data-kind="views" data-p="week">按周</button>
       <button data-kind="views" data-p="month">按月</button></span></h2>
       <div class="chart-box"><canvas id="chartViews"></canvas></div></div>
+    <div class="panel"><h2>互动次数趋势 <span class="seg">
+      <button data-kind="engage" data-p="day" class="active">按日</button>
+      <button data-kind="engage" data-p="week">按周</button>
+      <button data-kind="engage" data-p="month">按月</button></span></h2>
+      <div class="chart-box"><canvas id="chartEngage"></canvas></div></div>
   </div>
 
   <div class="panel">
@@ -334,11 +339,12 @@ function renderCharts() {
 
   renderTrendChart('score');
   renderTrendChart('views');
+  renderTrendChart('engage');
 }
 
 const PERIOD_COUNT = { day: 30, week: 12, month: 12 };
 const PERIOD_OFFSET = { day: 365, week: 52, month: 12 };
-const currentPeriod = { score: 'day', views: 'day' };
+const currentPeriod = { score: 'day', views: 'day', engage: 'day' };
 
 function buildPeriodBuckets(period) {
   const n = PERIOD_COUNT[period];
@@ -388,6 +394,7 @@ function renderTrendChart(kind) {
   const scoreSum = new Array(total).fill(0);
   const scoreCnt = new Array(total).fill(0);
   const viewSum = new Array(total).fill(0);
+  const engageSum = new Array(total).fill(0);
   ARTICLES.forEach(a => {
     const iso = a.createTime;
     if (!iso) return;
@@ -399,18 +406,20 @@ function renderTrendChart(kind) {
     const i = bIdx[key];
     if (i == null) return;
     viewSum[i] += (a.viewCount || 0);
+    engageSum[i] += (a.commentCount || 0) + (a.favor || 0) + (a.collect || 0);
     const rv = REVIEWS[a.id];
     if (rv && typeof rv.score === 'number') { scoreSum[i] += rv.score; scoreCnt[i]++; }
   });
   const scoreVals = scoreSum.map((s, i) => scoreCnt[i] ? +(s / scoreCnt[i]).toFixed(1) : null);
-  const base = kind === 'score' ? scoreVals : viewSum;
+  const base = kind === 'score' ? scoreVals : kind === 'views' ? viewSum : engageSum;
   const { yoy, mom } = buildRates(base, off);
   const show = base.slice(off);
   const showYoy = yoy.slice(off);
   const showMom = mom.slice(off);
 
+  const mainLabel = kind === 'score' ? '平均评价分' : kind === 'views' ? '浏览次数' : '互动次数';
   const datasets = [{
-    label: kind === 'score' ? '平均评价分' : '浏览次数',
+    label: mainLabel,
     data: show, borderColor: '#2f6fed', backgroundColor: 'rgba(47,111,237,.12)',
     fill: true, tension: .35, pointRadius: 2, yAxisID: 'y'
   }];
@@ -420,14 +429,15 @@ function renderTrendChart(kind) {
   if (showMom.some(v => v != null)) {
     datasets.push({ label: '环比', data: showMom, borderColor: '#00b5ad', tension: .3, pointRadius: 0, borderDash: [2, 2], yAxisID: 'y2' });
   }
-  makeChart(kind === 'score' ? 'chartScore' : 'chartViews', {
+  const canvasId = kind === 'score' ? 'chartScore' : kind === 'views' ? 'chartViews' : 'chartEngage';
+  makeChart(canvasId, {
     type: 'line',
     data: { labels: labels.slice(off), datasets },
     options: {
       responsive: true, maintainAspectRatio: false,
       plugins: { legend: { labels: { font: { size: 11 } } } },
       scales: {
-        y: { beginAtZero: false, title: { display: true, text: kind === 'score' ? '评价分' : '浏览数' } },
+        y: { beginAtZero: false, title: { display: true, text: mainLabel } },
         y2: { position: 'right', title: { display: true, text: '同比/环比 %' }, grid: { drawOnChartArea: false } },
         x: { ticks: { maxTicksLimit: 15, font: { size: 10 } } }
       }
