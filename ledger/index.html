@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>社区发文台账</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<style>
+  :root {
+    --bg: #f5f7fa; --card: #fff; --border: #e4e7ed; --text: #303133;
+    --muted: #909399; --primary: #2f6fed; --accent: #19be6b;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif; background: var(--bg); color: var(--text); }
+  header { background: linear-gradient(135deg, #1f3b8f, #2f6fed); color: #fff; padding: 20px 28px; }
+  header h1 { font-size: 22px; font-weight: 600; }
+  header .sub { font-size: 13px; opacity: .85; margin-top: 6px; }
+  .wrap { max-width: 1200px; margin: 0 auto; padding: 20px 16px 60px; }
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; margin-bottom: 20px; }
+  .card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 18px; }
+  .card .label { font-size: 13px; color: var(--muted); }
+  .card .value { font-size: 30px; font-weight: 700; margin-top: 6px; color: var(--primary); }
+  .card .extra { font-size: 12px; color: var(--muted); margin-top: 4px; }
+  .panel { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 18px; margin-bottom: 20px; }
+  .panel h2 { font-size: 16px; margin-bottom: 14px; font-weight: 600; }
+  .charts { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .charts .panel:nth-child(3n) { grid-column: 1 / -1; }
+  .chart-box { position: relative; height: 300px; }
+  @media (max-width: 800px) { .charts { grid-template-columns: 1fr; } .charts .panel:nth-child(3n) { grid-column: auto; } }
+  .filters { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-bottom: 12px; }
+  .filters select, .filters input { padding: 7px 10px; border: 1px solid var(--border); border-radius: 6px; font-size: 13px; background: #fff; }
+  .filters input { flex: 1; min-width: 200px; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th, td { padding: 10px 12px; text-align: left; border-bottom: 1px solid var(--border); white-space: nowrap; }
+  th { background: #fafafa; color: var(--muted); font-weight: 600; position: sticky; top: 0; }
+  tbody tr:hover { background: #f0f6ff; }
+  td.title { white-space: normal; min-width: 260px; max-width: 420px; }
+  td.title a { color: var(--primary); text-decoration: none; }
+  td.title a:hover { text-decoration: underline; }
+  .tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 12px; background: #ecf5ff; color: var(--primary); }
+  .tag.s { background: #fef0f0; color: #f56c6c; }
+  .num { text-align: right; color: var(--muted); }
+  .pager { display: flex; justify-content: center; gap: 8px; margin-top: 14px; align-items: center; }
+  .pager button { padding: 6px 14px; border: 1px solid var(--border); border-radius: 6px; background: #fff; cursor: pointer; font-size: 13px; }
+  .pager button:disabled { opacity: .4; cursor: not-allowed; }
+  .pager span { font-size: 13px; color: var(--muted); }
+  .empty { text-align: center; color: var(--muted); padding: 40px 0; }
+</style>
+</head>
+<body>
+<header>
+  <h1>社区发文台账</h1>
+  <div class="sub" id="sub">加载中...</div>
+</header>
+
+<div class="wrap">
+  <div class="cards">
+    <div class="card"><div class="label">历史累计</div><div class="value" id="statTotal">-</div><div class="extra">账号全部发文</div></div>
+    <div class="card"><div class="label">本月发布</div><div class="value" id="statMonth">-</div><div class="extra" id="statMonthExtra"></div></div>
+    <div class="card"><div class="label">本周发布</div><div class="value" id="statWeek">-</div><div class="extra" id="statWeekExtra"></div></div>
+    <div class="card"><div class="label">今日发布</div><div class="value" id="statToday">-</div><div class="extra" id="statTodayExtra"></div></div>
+  </div>
+
+  <div class="charts">
+    <div class="panel"><h2>每日发布量（近30天）</h2><div class="chart-box"><canvas id="chartDaily"></canvas></div></div>
+    <div class="panel"><h2>每周发布量（近12周）</h2><div class="chart-box"><canvas id="chartWeekly"></canvas></div></div>
+    <div class="panel"><h2>每月发布量（近12个月）</h2><div class="chart-box"><canvas id="chartMonthly"></canvas></div></div>
+    <div class="panel"><h2>分类分布</h2><div class="chart-box"><canvas id="chartCate"></canvas></div></div>
+    <div class="panel"><h2>分类发布趋势（近6个月）</h2><div class="chart-box"><canvas id="chartTrend"></canvas></div></div>
+  </div>
+
+  <div class="panel">
+    <h2>发布台账明细</h2>
+    <div class="filters">
+      <input id="searchInput" placeholder="搜索标题关键词...">
+      <select id="cateFilter"><option value="">全部分类</option></select>
+      <select id="periodFilter">
+        <option value="">全部时间</option>
+        <option value="today">今日</option>
+        <option value="week">本周</option>
+        <option value="month">本月</option>
+      </select>
+      <span style="font-size:13px;color:var(--muted)" id="countInfo"></span>
+    </div>
+    <div style="max-height:520px;overflow:auto">
+      <table>
+        <thead><tr>
+          <th>标题</th><th>分类</th><th>发布时间</th><th>状态</th>
+          <th class="num">浏览</th><th class="num">评论</th><th class="num">点赞</th><th class="num">收藏</th>
+        </tr></thead>
+        <tbody id="tbody"></tbody>
+      </table>
+      <div class="empty" id="empty" style="display:none">暂无文章</div>
+    </div>
+    <div class="pager">
+      <button id="prevBtn" disabled>上一页</button>
+      <span id="pageInfo"></span>
+      <button id="nextBtn">下一页</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const PAGE_SIZE = 20;
+let ARTICLES = [];
+let filtered = [];
+let page = 1;
+let charts = {};
+
+function fmtNum(n) { return n == null ? 0 : Number(n).toLocaleString(); }
+
+function dateStr(iso) {
+  return iso ? iso.slice(0, 10) : '';
+}
+function weekOf(iso) {
+  const d = new Date(iso.slice(0, 10) + 'T00:00:00');
+  const day = (d.getDay() + 6) % 7;
+  const monday = new Date(d); monday.setDate(d.getDate() - day);
+  return monday;
+}
+function fillBuckets(buckets, from, to, stepFn) {
+  const out = [];
+  for (let cur = new Date(from); cur <= to; ) {
+    const key = stepFn(cur);
+    out.push({ key, count: buckets.get(key) || 0 });
+    if (stepFn.name.includes('Week')) cur.setDate(cur.getDate() + 7);
+    else if (stepFn.name.includes('Month')) cur.setMonth(cur.getMonth() + 1);
+    else cur.setDate(cur.getDate() + 1);
+  }
+  return out;
+}
+
+function parseData(json) {
+  ARTICLES = json.articles || [];
+  const cats = json.categories || {};
+  // 分类下拉
+  const cateSel = document.getElementById('cateFilter');
+  const used = [...new Set(ARTICLES.map(a => a.cateName || '未分类'))].sort();
+  used.forEach(c => {
+    const opt = document.createElement('option');
+    opt.value = c; opt.textContent = c;
+    cateSel.appendChild(opt);
+  });
+  renderAll();
+}
+
+function calcStats() {
+  const now = new Date();
+  const today = now.toISOString().slice(0, 10);
+  const wd = (now.getDay() + 6) % 7;
+  const weekStart = new Date(now); weekStart.setDate(now.getDate() - wd);
+  const ws = weekStart.toISOString().slice(0, 10);
+  const ms = now.toISOString().slice(0, 7);
+
+  let m = 0, w = 0, t = 0;
+  ARTICLES.forEach(a => {
+    const d = dateStr(a.createTime);
+    if (!d) return;
+    if (d === today) t++;
+    if (d >= ws && d <= today) w++;
+    if (d.slice(0, 7) === ms) m++;
+  });
+  document.getElementById('statTotal').textContent = fmtNum(ARTICLES.length);
+  document.getElementById('statMonth').textContent = fmtNum(m);
+  document.getElementById('statWeek').textContent = fmtNum(w);
+  document.getElementById('statToday').textContent = fmtNum(t);
+  const months = [...new Set(ARTICLES.map(a => dateStr(a.createTime).slice(0, 7)).filter(Boolean))].sort();
+  const latest = months[months.length - 1] || '-';
+  document.getElementById('statMonthExtra').textContent = latest + ' 当月';
+  document.getElementById('statTodayExtra').textContent = today;
+}
+
+function makeChart(id, cfg) {
+  if (charts[id]) charts[id].destroy();
+  charts[id] = new Chart(document.getElementById(id), cfg);
+}
+
+function renderCharts() {
+  const now = new Date();
+  const daily = new Map();
+  const weekly = new Map();
+  const monthly = new Map();
+  const cateCount = new Map();
+  const trend = new Map();
+
+  ARTICLES.forEach(a => {
+    const iso = a.createTime;
+    if (!iso) return;
+    const d = dateStr(iso);
+    daily.set(d, (daily.get(d) || 0) + 1);
+    const wk = weekOf(iso);
+    weekly.set(wk.toISOString().slice(0, 10), (weekly.get(wk.toISOString().slice(0, 10)) || 0) + 1);
+    const ym = d.slice(0, 7);
+    monthly.set(ym, (monthly.get(ym) || 0) + 1);
+    const cn = a.cateName || '未分类';
+    cateCount.set(cn, (cateCount.get(cn) || 0) + 1);
+    if (ym >= sixMonthsAgo(now)) {
+      const key = cn;
+      if (!trend.has(key)) trend.set(key, {});
+      const tm = trend.get(key);
+      tm[ym] = (tm[ym] || 0) + 1;
+    }
+  });
+
+  function sixMonthsAgo(n) {
+    const d = new Date(n); d.setMonth(d.getMonth() - 5);
+    return d.toISOString().slice(0, 7);
+  }
+
+  // 近30天
+  const dFrom = new Date(now); dFrom.setDate(dFrom.getDate() - 29);
+  const dailyData = fillBuckets(daily, dFrom, now, function dayFn(c) { return c.toISOString().slice(0, 10); });
+  makeChart('chartDaily', {
+    type: 'bar',
+    data: { labels: dailyData.map(d => d.key.slice(5)), datasets: [{ label: '发布量', data: dailyData.map(d => d.count), backgroundColor: '#2f6fed', borderRadius: 3 }] },
+    options: chartOpts('文章数')
+  });
+
+  // 近12周
+  const wFrom = new Date(now); wFrom.setDate(now.getDate() - (now.getDay() + 6) % 7 - 77);
+  const weeklyData = fillBuckets(weekly, wFrom, now, function weekFn(c) { const m = weekOf(c.toISOString()); return m.toISOString().slice(0, 10); });
+  makeChart('chartWeekly', {
+    type: 'bar',
+    data: { labels: weeklyData.map(d => d.key.slice(5)), datasets: [{ label: '发布量', data: weeklyData.map(d => d.count), backgroundColor: '#19be6b', borderRadius: 3 }] },
+    options: chartOpts('文章数')
+  });
+
+  // 近12个月
+  const mFrom = new Date(now.getFullYear(), now.getMonth() - 11, 1);
+  const monthlyData = fillBuckets(monthly, mFrom, now, function monthFn(c) { return c.toISOString().slice(0, 7); });
+  makeChart('chartMonthly', {
+    type: 'line',
+    data: { labels: monthlyData.map(d => d.key), datasets: [{ label: '发布量', data: monthlyData.map(d => d.count), borderColor: '#f59e0b', backgroundColor: 'rgba(245,158,11,.15)', fill: true, tension: .35 }] },
+    options: chartOpts('文章数')
+  });
+
+  // 分类分布（取前12大 + 其他）
+  const sorted = [...cateCount.entries()].sort((a, b) => b[1] - a[1]);
+  const top = sorted.slice(0, 12);
+  const rest = sorted.slice(12).reduce((s, x) => s + x[1], 0);
+  if (rest > 0) top.push(['其他', rest]);
+  const palette = ['#2f6fed','#19be6b','#f59e0b','#f56c6c','#9b59b6','#00b5ad','#e67e22','#34495e','#1abc9c','#e84393','#16a085','#d35400','#7f8c8d'];
+  makeChart('chartCate', {
+    type: 'doughnut',
+    data: { labels: top.map(d => d[0]), datasets: [{ data: top.map(d => d[1]), backgroundColor: palette.slice(0, top.length) }] },
+    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right' } } }
+  });
+
+  // 分类趋势（近6个月，top8）
+  const monthsOrder = [];
+  for (let i = 5; i >= 0; i--) { const d = new Date(now.getFullYear(), now.getMonth() - i, 1); monthsOrder.push(d.toISOString().slice(0, 7)); }
+  const trendSorted = Object.entries(trend).sort((a, b) => {
+    const sa = Object.values(a[1]).reduce((s, x) => s + x, 0);
+    const sb = Object.values(b[1]).reduce((s, x) => s + x, 0);
+    return sb - sa;
+  }).slice(0, 8);
+  makeChart('chartTrend', {
+    type: 'line',
+    data: {
+      labels: monthsOrder,
+      datasets: trendSorted.map((c, i) => ({
+        label: c[0], data: monthsOrder.map(m => c[1][m] || 0),
+        borderColor: palette[i % palette.length], tension: .35, pointRadius: 2,
+      }))
+    },
+    options: chartOpts('文章数')
+  });
+}
+
+function chartOpts(yLabel) {
+  return {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: true, labels: { font: { size: 11 } } } },
+    scales: {
+      y: { beginAtZero: true, ticks: { precision: 0 }, title: { display: true, text: yLabel } },
+      x: { ticks: { maxTicksLimit: 15, font: { size: 10 } } }
+    }
+  };
+}
+
+function applyFilters() {
+  const kw = document.getElementById('searchInput').value.trim().toLowerCase();
+  const cate = document.getElementById('cateFilter').value;
+  const period = document.getElementById('periodFilter').value;
+  const now = new Date();
+  const today = now.toISOString().slice(0, 10);
+  const wd = (now.getDay() + 6) % 7;
+  const ws = new Date(now); ws.setDate(now.getDate() - wd);
+  const wstart = ws.toISOString().slice(0, 10);
+  const ms = now.toISOString().slice(0, 7);
+
+  filtered = ARTICLES.filter(a => {
+    if (kw && !(a.title || '').toLowerCase().includes(kw)) return false;
+    if (cate && a.cateName !== cate) return false;
+    const d = dateStr(a.createTime);
+    if (period === 'today' && d !== today) return false;
+    if (period === 'week' && !(d >= wstart && d <= today)) return false;
+    if (period === 'month' && d.slice(0, 7) !== ms) return false;
+    return true;
+  });
+  filtered.sort((a, b) => (b.createTime || '').localeCompare(a.createTime || ''));
+  document.getElementById('countInfo').textContent = `共 ${filtered.length} 篇`;
+  page = 1;
+  renderTable();
+}
+
+function renderTable() {
+  const tb = document.getElementById('tbody');
+  tb.innerHTML = '';
+  const start = (page - 1) * PAGE_SIZE;
+  const rows = filtered.slice(start, start + PAGE_SIZE);
+  document.getElementById('empty').style.display = rows.length ? 'none' : 'block';
+  rows.forEach(a => {
+    const status = a.status === 1 ? '已发布' : '其他';
+    const tr = document.createElement('tr');
+    const link = a.id ? `https://openlab.cosmoplat.com/article-detils?id=${a.id}&articleType=0` : '#';
+    tr.innerHTML = `
+      <td class="title"><a href="${link}" target="_blank">${escapeHtml(a.title || '')}</a></td>
+      <td><span class="tag">${escapeHtml(a.cateName || '未分类')}</span></td>
+      <td>${escapeHtml(a.createTime || '')}</td>
+      <td><span class="tag">${status}</span></td>
+      <td class="num">${fmtNum(a.viewCount)}</td>
+      <td class="num">${fmtNum(a.commentCount)}</td>
+      <td class="num">${fmtNum(a.favor)}</td>
+      <td class="num">${fmtNum(a.collect)}</td>`;
+    tb.appendChild(tr);
+  });
+  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+  document.getElementById('pageInfo').textContent = `${page} / ${totalPages}`;
+  document.getElementById('prevBtn').disabled = page <= 1;
+  document.getElementById('nextBtn').disabled = page >= totalPages;
+}
+
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+}
+
+document.getElementById('searchInput').addEventListener('input', applyFilters);
+document.getElementById('cateFilter').addEventListener('change', applyFilters);
+document.getElementById('periodFilter').addEventListener('change', applyFilters);
+document.getElementById('prevBtn').addEventListener('click', () => { page--; renderTable(); });
+document.getElementById('nextBtn').addEventListener('click', () => { page++; renderTable(); });
+
+function renderAll() {
+  calcStats();
+  renderCharts();
+  applyFilters();
+  document.getElementById('sub').textContent = `账号 ${ARTICLES.length} 篇 · 数据更新 ${document.getElementById('updatedAt') || ''}`;
+}
+
+fetch('data/articles.json')
+  .then(r => r.json())
+  .then(json => {
+    document.getElementById('updatedAt') && null;
+    parseData(json);
+    document.getElementById('sub').textContent = `账号 ${json.memberId} · 共 ${json.total} 篇文章 · 数据更新 ${json.updatedAt}`;
+  })
+  .catch(e => {
+    document.getElementById('sub').textContent = '数据加载失败: ' + e.message;
+    document.getElementById('tbody').innerHTML = `<tr><td colspan="8">数据加载失败</td></tr>`;
+  });
+</script>
+</body>
+</html>
