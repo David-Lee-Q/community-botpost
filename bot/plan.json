@@ -7,7 +7,7 @@
       "file": "/workspace/bot-articles/article-1.md",
       "summary": "大模型竞争重心已从参数规模转向落地成效，多模态、长上下文与推理能力持续跃迁，推理成本大幅下降。以智能体与知识工程为支撑，大模型加速渗透制造、医疗、教育等垂直场景，产业智能化进入价值兑现阶段。",
       "images": [],
-      "cover": "/workspace/bot/covers/cover1.jpg",
+      "cover": "/workspace/bot/covers/ai/cover1.jpg",
       "status": "published",
       "article_id": 35156,
       "detail_url": "https://openlab.cosmoplat.com/article-detils?id=35156&articleType=0"
@@ -19,7 +19,7 @@
       "file": "/workspace/bot-articles/article-2.md",
       "summary": "制造业正借助工业互联网与人工智能实现柔性转型，设备联网与数据治理让生产全程透明，机器视觉、数字孪生与预测性维护显著提升效率与可靠性，数据驱动与跨企业协同推动供应链弹性升级，智能制造进入规模化落地新阶段。",
       "images": [],
-      "cover": "/workspace/bot/covers/cover2.jpg",
+      "cover": "/workspace/bot/covers/smart-manufacturing/cover2.jpg",
       "status": "published",
       "article_id": 35170,
       "detail_url": "https://openlab.cosmoplat.com/article-detils?id=35170&articleType=0"
@@ -31,7 +31,7 @@
       "file": "/workspace/bot-articles/article-3.md",
       "summary": "容器与Kubernetes成为企业数字化标配，平台工程与自动化流水线重塑研发运维协作，可观测性体系保障分布式系统稳定，混合多云架构降低锁定风险，云原生正从工具链演进为组织级工程文化，驱动业务快速迭代。",
       "images": [],
-      "cover": "/workspace/bot/covers/cover3.jpg",
+      "cover": "/workspace/bot/covers/cloud-native/cover3.jpg",
       "status": "published",
       "article_id": 35174,
       "detail_url": "https://openlab.cosmoplat.com/article-detils?id=35174&articleType=0"
@@ -43,7 +43,7 @@
       "file": "/workspace/bot-articles/article-4.md",
       "summary": "工业互联网从设备上云走向场景化应用，平台组件化与低代码化降低中小企业门槛，标识解析贯通全链条数据，开源生态加速工业操作系统协同创新，工业操作系统正成为制造强国建设的新型基础设施。",
       "images": [],
-      "cover": "/workspace/bot/covers/cover4.jpg",
+      "cover": "/workspace/bot/covers/industrial-internet/cover4.jpg",
       "status": "published",
       "article_id": 35180,
       "detail_url": "https://openlab.cosmoplat.com/article-detils?id=35180&articleType=0"

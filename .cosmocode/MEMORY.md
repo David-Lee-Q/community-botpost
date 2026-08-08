@@ -49,7 +49,7 @@ Agent 在任务执行过程中发现的条目应遵循以下格式：
   - 发布直接调用 POST /api/article/save，认证用自定义 header `s-user-token`（JWT，有效期约7天），token 存于 /workspace/bot/token.txt，失效时 runner 通过 Playwright 重新登录获取
   - 文章封面上传：POST /api/file/uploadFileStream?type=1（multipart），返回 data.path 作为 thumbnail
   - 发布必填字段：cateId（分类ID，见 publish.py CATEGORY_IDS）、thumbnail、title、description（摘要）、content（markdown正文，不含首行#标题）、viewRank=0
-  - 封面要求 800×400、jpg/png、≤1MB；正文配图需至少2张，可用 Unsplash 直链
+  - 封面要求 800×400、jpg/png、≤1MB；正文配图需至少2张，免费可商用图源见「配图来源规范」条目
 
 [发布台账展示页]
 - Date: 2026-08-08
@@ -72,3 +72,11 @@ Agent 在任务执行过程中发现的条目应遵循以下格式：
   - 改进要点：每段聚焦单一论点并控制段落长度，增强小标题引导与图文呼应
   - 创作新文章前，先核对 quality_tasks.md 的未完成改进项并主动应用
   - 周综合评分低于 85 时，下批文章发布前必须优先落实对应改进要点
+
+[配图来源规范]
+- Date: 2026-08-08
+- Context: 用户明确正文配图与封面图的来源与处理方式
+- Instructions:
+  - 正文配图从以下网站检索并确认所用为免费图（非付费/非授权受限），正文中直接引用图片链接：https://www.magnific.com/、https://www.pexels.com/zh-cn/、https://unsplash.com/、https://pixabay.com/
+  - 封面图必须下载到工作区再上传，保存目录按文章主题区分：/workspace/bot/covers/<主题关键词>/（如 ai、smart-manufacturing、cloud-native、industrial-internet）
+  - 封面图按主题归类，避免同一张图在多篇文章中混用
