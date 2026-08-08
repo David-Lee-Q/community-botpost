@@ -1,5 +1,7 @@
 import json
 import os
+import subprocess
+import sys
 import time
 import requests
 
@@ -69,6 +71,7 @@ def main():
     with open(os.path.join(DATA_DIR, "articles.json"), "w", encoding="utf-8") as f:
         json.dump(payload, f, ensure_ascii=False)
     print(f"已拉取 {len(articles)} 篇文章 -> {DATA_DIR}/articles.json")
+    subprocess.run([sys.executable, os.path.join(BOT_DIR, "auto_review.py")], check=False)
 
 
 if __name__ == "__main__":
