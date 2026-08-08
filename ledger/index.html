@@ -83,6 +83,17 @@
   .pager span { font-size: 13px; color: var(--muted); }
   .empty { text-align: center; color: var(--muted); padding: 40px 0; }
   footer.watermark { text-align: center; font-size: 13px; letter-spacing: 1px; color: #c0c4cc; opacity: .75; padding: 18px 16px 28px; user-select: none; }
+  .fab { position: fixed; right: 28px; bottom: 28px; z-index: 90; padding: 12px 22px; border: none; border-radius: 30px; font-size: 15px; font-weight: 700; color: #fff; cursor: pointer; background: linear-gradient(135deg, #2f6fed, #1f3b8f); box-shadow: 0 6px 18px rgba(47,111,237,.45); transition: transform .2s, box-shadow .2s; }
+  .fab:hover { transform: translateY(-3px); box-shadow: 0 10px 24px rgba(47,111,237,.55); }
+  #oneshotMask textarea { width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: 8px; font-size: 14px; font-family: inherit; resize: vertical; margin: 8px 0; }
+  .oneshot-actions { display: flex; gap: 10px; justify-content: flex-end; }
+  .fab-btn { padding: 8px 20px; border: none; border-radius: 6px; font-size: 14px; font-weight: 600; cursor: pointer; color: #fff; background: var(--primary); }
+  .fab-btn.ghost { background: #f0f2f5; color: var(--muted); }
+  .fab-btn:disabled { opacity: .5; cursor: not-allowed; }
+  .oneshot-status { margin-top: 12px; font-size: 13px; line-height: 1.7; color: var(--muted); }
+  .oneshot-status.ok { color: #19be6b; }
+  .oneshot-status.err { color: #f56c6c; }
+  .oneshot-status a { color: var(--primary); }
 </style>
 </head>
 <body>
@@ -164,6 +175,22 @@
 </div>
 
 <footer class="watermark">社区内容自运营智能体开发与运营@卡奥斯产品研发中心-李灯辉19029667</footer>
+
+<button class="fab" id="fabBtn" title="发一篇">发一篇</button>
+
+<div class="modal-mask" id="oneshotMask">
+  <div class="modal">
+    <span class="close" id="oneshotClose">&times;</span>
+    <h3>发一篇</h3>
+    <div class="meta">输入文章标题或关键词，将自动生成内容并立即发布（流程与定时发文一致）</div>
+    <textarea id="oneshotInput" rows="3" maxlength="60" placeholder="例如：工业软件赋能制造业数字化转型"></textarea>
+    <div class="oneshot-actions">
+      <button id="oneshotGo" class="fab-btn">发布</button>
+      <button id="oneshotCancel" class="fab-btn ghost">取消</button>
+    </div>
+    <div class="oneshot-status" id="oneshotStatus"></div>
+  </div>
+</div>
 
 <script>
 const PAGE_SIZE = 20;
@@ -612,6 +639,87 @@ Promise.all([
     document.getElementById('sub').textContent = '数据加载失败: ' + e.message;
     document.getElementById('tbody').innerHTML = `<tr><td colspan="9">数据加载失败</td></tr>`;
   });
+
+(function () {
+  const mask = document.getElementById('oneshotMask');
+  const input = document.getElementById('oneshotInput');
+  const goBtn = document.getElementById('oneshotGo');
+  const statusEl = document.getElementById('oneshotStatus');
+  let polling = null;
+
+  function open() { mask.classList.add('show'); input.value = ''; statusEl.textContent = ''; statusEl.className = 'oneshot-status'; setTimeout(() => input.focus(), 50); }
+  function close() { mask.classList.remove('show'); stopPoll(); }
+
+  function stopPoll() {
+    if (polling) { clearInterval(polling); polling = null; }
+  }
+
+  function setStatus(msg, cls) {
+    statusEl.textContent = msg;
+    statusEl.className = 'oneshot-status' + (cls ? ' ' + cls : '');
+  }
+
+  async function submit() {
+    const prompt = input.value.trim();
+    if (!prompt) { setStatus('请输入标题或关键词', 'err'); return; }
+    goBtn.disabled = true;
+    setStatus('已受理，正在生成内容并发布，预计 1-3 分钟...');
+    try {
+      const r = await fetch('/api/publish', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ prompt }),
+      });
+      const d = await r.json();
+      if (r.status !== 200) { setStatus('提交失败：' + (d.error || r.status), 'err'); goBtn.disabled = false; return; }
+      startPoll();
+    } catch (e) {
+      setStatus('提交失败：' + e.message, 'err');
+      goBtn.disabled = false;
+    }
+  }
+
+  function startPoll() {
+    stopPoll();
+    polling = setInterval(async () => {
+      try {
+        const r = await fetch('/api/status');
+        const d = await r.json();
+        if (d.state === 'done') {
+          stopPoll(); goBtn.disabled = false;
+          const res = d.result || {};
+          if (res.status === 'published') {
+            const url = `https://openlab.cosmoplat.com/article-detils?id=${res.article_id}&articleType=0`;
+            setStatus(`发布成功！文章《${d.title}》（ID ${res.article_id}）\n链接：${url}`, 'ok');
+            setTimeout(() => { close(); location.reload(); }, 6000);
+          } else if (res.status === 'exists') {
+            setStatus(`文章已存在（ID ${res.article_id}），未重复发布`, 'ok');
+            goBtn.disabled = false;
+          } else {
+            setStatus('发布失败：' + (res.error || '未知错误'), 'err'); goBtn.disabled = false;
+          }
+        } else if (d.state === 'failed') {
+          stopPoll(); goBtn.disabled = false;
+          setStatus('生成失败：' + (d.error || '未知错误'), 'err');
+        } else if (d.state === 'processing') {
+          setStatus('生成中，请稍候（AI 生成正文 + 封面 + 发布，约 1-3 分钟）...');
+        } else {
+          stopPoll(); goBtn.disabled = false;
+          setStatus('状态丢失，请重试', 'err');
+        }
+      } catch (e) {
+        setStatus('查询状态失败：' + e.message, 'err');
+      }
+    }, 3000);
+  }
+
+  document.getElementById('fabBtn').addEventListener('click', open);
+  document.getElementById('oneshotClose').addEventListener('click', close);
+  document.getElementById('oneshotCancel').addEventListener('click', close);
+  document.getElementById('oneshotGo').addEventListener('click', submit);
+  input.addEventListener('keydown', e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); submit(); } });
+  mask.addEventListener('click', e => { if (e.target === mask) close(); });
+})();
 </script>
 </body>
 </html>

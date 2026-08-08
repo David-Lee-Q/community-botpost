@@ -16,7 +16,7 @@ if [ -n "$pid" ]; then
 fi
 
 cd "$DIR"
-nohup python3 -m http.server "$PORT" --bind 0.0.0.0 >> http_server.log 2>&1 &
+PORT="$PORT" nohup python3 server.py >> http_server.log 2>&1 &
 
 for i in $(seq 1 20); do
   if curl -sf "http://localhost:$PORT/" -o /dev/null; then
