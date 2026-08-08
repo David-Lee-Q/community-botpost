@@ -134,6 +134,7 @@ python bot/report.py weekly --preview
 
 ## 相关文档
 
+- 功能描述：`.cosmocode/docs/功能描述.md`
 - 运营工作流（skill）：`.cosmocode/docs/内容运营工作流.md`
 - 定时任务：`bot/SCHEDULE.md`
 - 评价标准：`.cosmocode/docs/社区文章质量评价标准.md`
