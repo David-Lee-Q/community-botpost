@@ -44,6 +44,8 @@ def main():
     last_plan_day = None
     last_score_week = None
     last_fetch_hour = None
+    last_daily = None
+    last_weekly = None
     while True:
         now = datetime.datetime.now()
         with open(PLAN_FILE, encoding="utf-8") as f:
@@ -61,6 +63,32 @@ def main():
                     log("fetch_articles.py 失败: " + rf.stderr[-500:])
                 else:
                     log(rf.stdout.strip())
+
+        # 每日 18:00 推送飞书每日总结
+        if now.hour == 18 and last_daily != now.date().isoformat():
+            last_daily = now.date().isoformat()
+            report = os.path.join(BOT_DIR, "report.py")
+            if os.path.exists(report):
+                log("推送每日总结")
+                rd = subprocess.run([sys.executable, report, "daily"],
+                                    capture_output=True, text=True, timeout=120)
+                if rd.returncode != 0:
+                    log("每日总结推送失败: " + rd.stderr[-500:])
+                else:
+                    log(rd.stdout.strip())
+
+        # 每周一 10:00 推送飞书每周总结
+        if now.weekday() == 0 and now.hour == 10 and last_weekly != now.date().isoformat():
+            last_weekly = now.date().isoformat()
+            report = os.path.join(BOT_DIR, "report.py")
+            if os.path.exists(report):
+                log("推送每周总结")
+                rw = subprocess.run([sys.executable, report, "weekly"],
+                                    capture_output=True, text=True, timeout=120)
+                if rw.returncode != 0:
+                    log("每周总结推送失败: " + rw.stderr[-500:])
+                else:
+                    log(rw.stdout.strip())
 
         if now.hour == 6 and last_plan_day != now.date().isoformat():
             last_plan_day = now.date().isoformat()
