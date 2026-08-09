@@ -35,7 +35,7 @@ CATEGORY_IMAGES = {
 DEFAULT_IMAGES = ["photo-1451187580459-43490279c0fa", "photo-1504384308090-c894fdcc538d"]
 
 
-def _llm(messages, max_tokens=8000):
+def _llm(messages, max_tokens=12000):
     base = os.environ.get("MCAI_LLM_BASE_URL", "").rstrip("/")
     key = os.environ.get("MCAI_LLM_API_KEY", "")
     model = os.environ.get("MCAI_LLM_MODEL", "")
@@ -91,12 +91,17 @@ def _download_cover(url, path):
 
 
 def generate(prompt):
-    for attempt in range(2):
-        content = _llm([
-            {"role": "system", "content": SYSTEM_PROMPT},
-            {"role": "user", "content": "主题：" + prompt},
-        ])
-        data = _parse_json(content)
+    for attempt in range(3):
+        try:
+            content = _llm([
+                {"role": "system", "content": SYSTEM_PROMPT},
+                {"role": "user", "content": "主题：" + prompt},
+            ])
+            data = _parse_json(content)
+        except Exception as e:
+            if attempt < 2:
+                continue
+            raise RuntimeError("内容生成失败，请更换关键词重试（" + str(e)[:80] + "）")
         title = str(data.get("title", "")).strip()
         category = str(data.get("category", "")).strip()
         summary = str(data.get("summary", "")).strip()

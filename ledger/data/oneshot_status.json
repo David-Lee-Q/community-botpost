@@ -1,11 +1,5 @@
 {
-  "state": "done",
-  "time": "2026-08-08 16:50:14",
-  "title": "零基础者的AI编程实践指南",
-  "result": {
-    "status": "published",
-    "article_id": 35186,
-    "title": "零基础者的AI编程实践指南"
-  },
-  "cover": "/workspace/bot/covers/编程与开发/cover1.jpg"
+  "state": "processing",
+  "time": "2026-08-09 13:28:24",
+  "prompt": "AI cad"
 }
