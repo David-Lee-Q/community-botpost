@@ -75,12 +75,15 @@ Agent 在任务执行过程中发现的条目应遵循以下格式：
   - 周综合评分低于 85 时，下批文章发布前必须优先落实对应改进要点
 
 [配图来源规范]
-- Date: 2026-08-08
-- Context: 用户明确正文配图与封面图的来源与处理方式
+- Date: 2026-08-10
+- Context: 用户明确正文配图与封面图的来源与处理方式，并因文章配图重复要求扩展图源
 - Instructions:
   - 正文配图从以下网站检索并确认所用为免费图（非付费/非授权受限），正文中直接引用图片链接：https://www.magnific.com/、https://www.pexels.com/zh-cn/、https://unsplash.com/、https://pixabay.com/
   - 封面图必须下载到工作区再上传，保存目录按文章主题区分：/workspace/bot/covers/<主题关键词>/（如 ai、smart-manufacturing、cloud-native、industrial-internet）
   - 封面图按主题归类，避免同一张图在多篇文章中混用
+  - 2026-08-10 配图去重机制：IMAGE_POOL 为多源图池（101张=51 Unsplash+50 Pexels，均已批量验证直链可达），每次发文随机取3张（正文2+封面1），全局去重记录于 bot/used_images.json（site:ref 格式，池耗尽自动重置轮换）
+  - 图源可达性结论：images.unsplash.com 与 images.pexels.com 直链均可用，平台会抓取正文图转存 hd-oss.cosmoplat.com（无需担心外链失效）；magnific.com 是 AI 放大工具无免费图库；pixabay 搜索需 API key 且部分 CDN 图 hotlink 403，故暂未纳入池
+  - 发一篇配图流程：generate() 正文保留 IMAGE1/IMAGE2 占位→run() 调 pick_images() 选图替换占位并下载封面→发布成功后将3张图 keys 记入 used_images.json 对应文章
 
 [飞书报告定时推送]
 - Date: 2026-08-08
