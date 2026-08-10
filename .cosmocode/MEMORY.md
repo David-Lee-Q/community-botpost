@@ -51,6 +51,17 @@ Agent 在任务执行过程中发现的条目应遵循以下格式：
   - 发布必填字段：cateId（分类ID，见 publish.py CATEGORY_IDS）、thumbnail、title、description（摘要）、content（markdown正文，不含首行#标题）、viewRank=0
   - 封面要求 800×400、jpg/png、≤1MB；正文配图需至少2张，免费可商用图源见「配图来源规范」条目
 
+[内容源目录]
+- Date: 2026-08-10
+- Context: 用户提供内容源审计报告要求落地目录，注意去重
+- Category: 工作流协作
+- Instructions:
+  - 结构化配置位于 /workspace/bot/content_sources.json（来源 audit_report=documents/source-audit-2026-07-10.md）
+  - 36 个有效源：第一梯队25（RSS/API/HTML 直通，web_fetch 直接请求）、第二梯队6（web_fetch 可用）、第三梯队5（量子位/极客公园/CSDN AI/ModelScope/腾讯混元，browser 兜底）；15 个不可用源在 unavailable 字段
+  - 去重：原清单中 InfoQ 英文站、机器之心同时出现在第三梯队与不可用列表，已归类为不可用；全部条目 URL 唯一
+  - 采集去重规则：跨源标题去重（归一化标题仅采1次）、URL/标题 hash 去重、24 小时内不重复、多源转载优先权威源
+  - 2026-08-10 复验：29/31 个第一二梯队源可达（github.com 网页直连超时，建议用 web_fetch 或 api.github.com）；api.github.com 均正常
+
 [发布台账展示页]
 - Date: 2026-08-08
 - Context: Agent 构建社区发文台账前端展示页时发现

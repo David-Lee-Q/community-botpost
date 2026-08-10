@@ -1,0 +1,363 @@
+{
+  "name": "内容源目录",
+  "updated": "2026-08-10",
+  "audit_report": "documents/source-audit-2026-07-10.md",
+  "dedupe_note": "去重说明: 原清单第三梯队7项与不可用15项存在重复(InfoQ英文站、机器之心),已归类为不可用; 第三梯队净5项、不可用净13项; 全部条目URL唯一",
+  "dedupe_rules": [
+    "跨源标题去重: 同一标题/归一化标题(RSS title或HTML h1)仅采1次",
+    "按来源URL或标题hash去重, 24小时内不重复采集",
+    "多源转载同一新闻时优先权威源(官方Blog > 聚合站)"
+  ],
+  "sources": [
+    {
+      "name": "InfoQ 中国",
+      "url": "https://www.infoq.cn/feed",
+      "tier": 1,
+      "method": "rss",
+      "status": "200",
+      "last_check": "2026-08-10"
+    },
+    {
+      "name": "Hacker News",
+      "url": "https://hn.algolia.com/api/v1/search?tags=front_page&numericFilters=points>30&hitsPerPage=20",
+      "tier": 1,
+      "method": "rest",
+      "status": "200",
+      "last_check": "2026-08-10"
+    },
+    {
+      "name": "GitHub Trending",
+      "url": "https://github.com/trending?since=daily",
+      "tier": 1,
+      "method": "html",
+      "status": "000(直连超时,建议web_fetch或api.github.com)",
+      "last_check": "2026-08-10"
+    },
+    {
+      "name": "arXiv",
+      "url": "http://export.arxiv.org/api/query?search_query=cat:cs.AI&sortBy=submittedDate&sortOrder=descending&max_results=15",
+      "tier": 1,
+      "method": "atom",
+      "status": "200",
+      "last_check": "2026-08-10"
+    },
+    {
+      "name": "开源中国",
+      "url": "https://www.oschina.net/news/rss",
+      "tier": 1,
+      "method": "rss",
+      "status": "200",
+      "last_check": "2026-08-10"
+    },
+    {
+      "name": "掘金",
+      "url": "https://juejin.cn/rss",
+      "tier": 1,
+      "method": "rss",
+      "status": "200",
+      "last_check": "2026-08-10"
+    },
+    {
+      "name": "SegmentFault",
+      "url": "https://segmentfault.com/feeds",
+      "tier": 1,
+      "method": "atom",
+      "status": "200",
+      "last_check": "2026-08-10"
+    },
+    {
+      "name": "Dev.to",
+      "url": "https://dev.to/feed",
+      "tier": 1,
+      "method": "rss",
+      "status": "200",
+      "last_check": "2026-08-10"
+    },
+    {
+      "name": "OpenAI Blog",
+      "url": "https://openai.com/news/rss.xml",
+      "tier": 1,
+      "method": "rss",
+      "status": "200",
+      "last_check": "2026-08-10"
+    },
+    {
+      "name": "Microsoft Dev",
+      "url": "https://devblogs.microsoft.com/feed",
+      "tier": 1,
+      "method": "rss",
+      "status": "200",
+      "last_check": "2026-08-10"
+    },
+    {
+      "name": "Netflix TechBlog",
+      "url": "https://netflixtechblog.com/feed",
+      "tier": 1,
+      "method": "rss",
+      "status": "200",
+      "last_check": "2026-08-10"
+    },
+    {
+      "name": "Spotify Engineering",
+      "url": "https://engineering.atspotify.com/feed/",
+      "tier": 1,
+      "method": "rss",
+      "status": "200",
+      "last_check": "2026-08-10"
+    },
+    {
+      "name": "AWS ML Blog",
+      "url": "https://aws.amazon.com/blogs/machine-learning/feed/",
+      "tier": 1,
+      "method": "rss",
+      "status": "200",
+      "last_check": "2026-08-10"
+    },
+    {
+      "name": "The Verge",
+      "url": "https://www.theverge.com/rss/index.xml",
+      "tier": 1,
+      "method": "atom",
+      "status": "200",
+      "last_check": "2026-08-10"
+    },
+    {
+      "name": "博客园(编辑推荐)",
+      "url": "https://www.cnblogs.com/aggsite/headline",
+      "tier": 1,
+      "method": "html",
+      "status": "200",
+      "last_check": "2026-08-10"
+    },
+    {
+      "name": "36氪",
+      "url": "https://www.36kr.com/feed",
+      "tier": 1,
+      "method": "rss",
+      "status": "200",
+      "last_check": "2026-08-10"
+    },
+    {
+      "name": "VentureBeat",
+      "url": "https://venturebeat.com/feed/",
+      "tier": 1,
+      "method": "rss",
+      "status": "200",
+      "last_check": "2026-08-10"
+    },
+    {
+      "name": "Google AI Blog",
+      "url": "https://blog.google/technology/ai/rss/",
+      "tier": 1,
+      "method": "rss",
+      "status": "200",
+      "last_check": "2026-08-10"
+    },
+    {
+      "name": "Stack Overflow",
+      "url": "https://api.stackexchange.com/2.3/questions?order=desc&sort=votes&site=stackoverflow&pagesize=10",
+      "tier": 1,
+      "method": "rest",
+      "status": "200",
+      "last_check": "2026-08-10"
+    },
+    {
+      "name": "TechCrunch AI",
+      "url": "https://techcrunch.com/category/artificial-intelligence/feed/",
+      "tier": 1,
+      "method": "rss",
+      "status": "200",
+      "last_check": "2026-08-10"
+    },
+    {
+      "name": "Datawhale",
+      "url": "https://api.github.com/orgs/datawhalechina/repos",
+      "tier": 1,
+      "method": "rest",
+      "status": "200",
+      "last_check": "2026-08-10"
+    },
+    {
+      "name": "OpenAI Dev Forum",
+      "url": "https://community.openai.com/latest.json",
+      "tier": 1,
+      "method": "rest",
+      "status": "200",
+      "last_check": "2026-08-10"
+    },
+    {
+      "name": "EdgeX Foundry",
+      "url": "https://github.com/edgexfoundry/edgex-go/releases",
+      "tier": 1,
+      "method": "html",
+      "status": "000(直连超时,建议web_fetch或api.github.com)",
+      "last_check": "2026-08-10"
+    },
+    {
+      "name": "EEPW 电子产品世界",
+      "url": "https://www.eepw.com.cn/news/rss/",
+      "tier": 1,
+      "method": "rss",
+      "status": "200",
+      "last_check": "2026-08-10"
+    },
+    {
+      "name": "Meta Engineering",
+      "url": "https://engineering.fb.com/feed/",
+      "tier": 1,
+      "method": "rss",
+      "status": "200",
+      "last_check": "2026-08-10"
+    },
+    {
+      "name": "Cloudflare Blog",
+      "url": "https://blog.cloudflare.com/",
+      "tier": 2,
+      "method": "html",
+      "status": "200",
+      "last_check": "2026-08-10"
+    },
+    {
+      "name": "美团技术团队",
+      "url": "https://tech.meituan.com/",
+      "tier": 2,
+      "method": "html",
+      "status": "200",
+      "last_check": "2026-08-10"
+    },
+    {
+      "name": "Stack Overflow Blog",
+      "url": "https://stackoverflow.blog/",
+      "tier": 2,
+      "method": "html",
+      "status": "200",
+      "last_check": "2026-08-10"
+    },
+    {
+      "name": "工联网",
+      "url": "https://www.iitime.com.cn/",
+      "tier": 2,
+      "method": "html",
+      "status": "200",
+      "last_check": "2026-08-10"
+    },
+    {
+      "name": "物联网世界",
+      "url": "https://www.iot101.com/",
+      "tier": 2,
+      "method": "html",
+      "status": "200",
+      "last_check": "2026-08-10"
+    },
+    {
+      "name": "OFweek 工控网",
+      "url": "https://gongkong.ofweek.com/",
+      "tier": 2,
+      "method": "html",
+      "status": "200",
+      "last_check": "2026-08-10"
+    },
+    {
+      "name": "量子位",
+      "url": "https://www.qbitai.com/",
+      "tier": 3,
+      "method": "browser",
+      "status": "browser可抓",
+      "last_check": "2026-08-10"
+    },
+    {
+      "name": "极客公园",
+      "url": "https://www.geekpark.net/",
+      "tier": 3,
+      "method": "browser",
+      "status": "browser可抓",
+      "last_check": "2026-08-10"
+    },
+    {
+      "name": "CSDN AI 频道",
+      "url": "https://blog.csdn.net/nav/ai",
+      "tier": 3,
+      "method": "web_fetch优先",
+      "status": "抓取不稳定",
+      "last_check": "2026-08-10"
+    },
+    {
+      "name": "ModelScope 魔搭",
+      "url": "https://modelscope.cn/",
+      "tier": 3,
+      "method": "browser兜底",
+      "status": "纯JS渲染",
+      "last_check": "2026-08-10"
+    },
+    {
+      "name": "腾讯混元技术",
+      "url": "https://hy.tencent.com/research",
+      "tier": 3,
+      "method": "browser兜底",
+      "status": "纯JS渲染",
+      "last_check": "2026-08-10"
+    }
+  ],
+  "unavailable": [
+    {
+      "name": "Reddit",
+      "reason": "DNS被墙"
+    },
+    {
+      "name": "Medium",
+      "reason": "DNS被墙"
+    },
+    {
+      "name": "Meta AI",
+      "reason": "DNS被墙"
+    },
+    {
+      "name": "Google Developers",
+      "reason": "超时"
+    },
+    {
+      "name": "HuggingFace Blog",
+      "reason": "中国加载极慢"
+    },
+    {
+      "name": "InfoQ 英文站",
+      "reason": "Cloudflare人机验证(与第三梯队重复,已去重归入此)"
+    },
+    {
+      "name": "新智元",
+      "reason": "WP故障"
+    },
+    {
+      "name": "工业中心论坛",
+      "reason": "不可用"
+    },
+    {
+      "name": "工业互联网世界网",
+      "reason": "不可用"
+    },
+    {
+      "name": "Google Blogspot",
+      "reason": "不可达"
+    },
+    {
+      "name": "知乎专栏",
+      "reason": "403"
+    },
+    {
+      "name": "百度百家号",
+      "reason": "JS渲染"
+    },
+    {
+      "name": "搜狗微信搜索",
+      "reason": "JS渲染"
+    },
+    {
+      "name": "Pushshift Reddit",
+      "reason": "认证要求"
+    },
+    {
+      "name": "机器之心",
+      "reason": "付费内容为主(与第三梯队重复,已去重归入此)"
+    }
+  ]
+}
