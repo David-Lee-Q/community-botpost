@@ -1,5 +1,11 @@
 {
-  "state": "processing",
-  "time": "2026-08-09 13:28:24",
-  "prompt": "AI cad"
+  "state": "done",
+  "time": "2026-08-09 13:31:11",
+  "title": "生成式设计 工业软件的新引擎",
+  "result": {
+    "status": "published",
+    "article_id": 35190,
+    "title": "生成式设计 工业软件的新引擎"
+  },
+  "cover": "/workspace/bot/covers/人工智能/cover1.jpg"
 }

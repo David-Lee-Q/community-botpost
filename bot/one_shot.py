@@ -1,6 +1,7 @@
 import datetime
 import json
 import os
+import re
 import subprocess
 import sys
 
@@ -52,14 +53,26 @@ def _llm(messages, max_tokens=12000):
 
 
 SYSTEM_PROMPT = (
-    "你是卡奥斯开源社区的科技文章作者。输出必须是合法 JSON 对象，不要输出任何其他文字。JSON 结构："
+    "你是卡奥斯开源社区的资深科技文章作者，擅长写出高传播、高可读的深度技术文章。"
+    "输出必须是合法 JSON 对象，不要输出任何其他文字。JSON 结构："
     '{"title":"标题(不超过24字,不含冒号)","category":"分类","summary":"约120字摘要",'
-    '"body":"markdown正文"}。要求：'
-    "1. 正文不少于1000字，每段不少于200字，共4-6段，段间用二级标题分隔；"
-    "2. 正文第1段后插入图片标记 ![配图1](IMAGE1)，第3段后插入 ![配图2](IMAGE2)；"
-    "3. 正文内容围绕用户给出的主题，观点明确、逻辑递进、术语准确；"
-    "4. 标题与正文均不得重复用户输入的原文标题；"
-    "5. category 只能从以下选一：智能制造、云计算、云原生、物联网、边缘计算、人工智能、大数据、"
+    '"body":"markdown正文"}。'
+    "内容质量要求（严格执行）："
+    "1. 标题信息量大且有钩子：用具体数字、强观点、反差对比或读者痛点，"
+    "避免「赋能」「新引擎」「新范式」「加速落地」「驶入快车道」等空泛套话；"
+    "2. 摘要直击读者痛点并点明文章价值：先抛出问题或结论，再给出阅读价值；"
+    "3. 正文不少于1200字，4-6段，每段200-400字，段间用二级标题分隔："
+    "   a. 首段前三句必须抓住读者：用具体数据、真实痛点、反差场景或争议观点切入，"
+    "   严禁「在...浪潮下」「随着...的发展」「近年来...成为热点」「众所周知」等套话开场；"
+    "   b. 每段聚焦单一论点：段首第一句给出观点句，后文用论据支撑，"
+    "   段落中不罗列并列条目（避免「第一...第二...第三...」式堆砌）；"
+    "   c. 二级标题精炼有力、能概括段落核心观点，可带数字或反差；"
+    "   d. 正文第1段后插入图片标记 ![配图1](IMAGE1)，第3段后插入 ![配图2](IMAGE2)，"
+    "   图片说明文字与所在段落主题相关（图文呼应）；"
+    "   e. 结尾段给出落地建议或趋势判断，避免戛然而止；"
+    "4. 术语准确、数据克制、逻辑层层递进，围绕用户主题展开；"
+    "5. 标题与正文均不得重复用户输入的原文标题；"
+    "6. category 只能从以下选一：智能制造、云计算、云原生、物联网、边缘计算、人工智能、大数据、"
     "区块链、标识解析、中间件、微服务、安全、编程与开发、网络、机器视觉、工业操作系统、数据要素。"
 )
 
@@ -116,8 +129,14 @@ def generate(prompt):
         plain = body.replace("![配图1](" + IMG_BASE.format(imgs[0]) + ")", "") \
                     .replace("![配图2](" + IMG_BASE.format(imgs[1]) + ")", "")
         segments = [s for s in body.split("\n\n") if s.strip() and not s.startswith("!")]
-        ok = (len(title) >= 6 and len(plain) >= 1000
-              and all(len(s) >= 150 for s in segments if not s.startswith("#"))
+        paras = [s for s in segments if not s.startswith("#")]
+        first_para = paras[0] if paras else ""
+        weak_title = re.search(r"(赋能|新引擎|新范式|加速落地|驶入快车道|按下快进键|开启新篇章)", title)
+        cliche_open = re.search(
+            r"^(在[^，。]{0,18}浪潮|随着[^，。]{0,24}发展|近年来[^，。]{0,10}成为|众所周知|当前[^，。]{0,10}正)", first_para)
+        ok = (len(title) >= 6 and not weak_title and not cliche_open
+              and len(plain) >= 1200
+              and all(180 <= len(s) <= 420 for s in paras)
               and 100 <= len(summary) <= 160 and "IMAGE" not in body)
         if ok:
             return {"title": title, "category": category, "summary": summary,
