@@ -10,9 +10,12 @@ LEDGER = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(LEDGER)
 STATUS_FILE = os.path.join(LEDGER, "data", "oneshot_status.json")
 ONE_SHOT = os.path.join(ROOT, "bot", "one_shot.py")
+OPTIMIZE = os.path.join(LEDGER, "optimize.py")
 
+sys.path.insert(0, LEDGER)
 sys.path.insert(0, os.path.join(ROOT, "bot"))
 import sensitive  # noqa: E402
+import optimize as opt  # noqa: E402
 
 _lock = threading.Lock()
 
@@ -40,6 +43,12 @@ class Handler(http.server.SimpleHTTPRequestHandler):
             text = (data.get("text") or "").strip()
             hits = sensitive.check(text) if text else []
             self._json(200, {"hit": bool(hits), "words": hits})
+            return
+        if self.path == "/api/optimize":
+            self._handle_optimize()
+            return
+        if self.path == "/api/update":
+            self._handle_update()
             return
         if self.path != "/api/publish":
             self._json(404, {"error": "not found"})
@@ -72,6 +81,50 @@ class Handler(http.server.SimpleHTTPRequestHandler):
         threading.Thread(target=_run, args=(prompt,), daemon=True).start()
         self._json(200, {"state": "processing"})
 
+    def _body(self):
+        length = int(self.headers.get("Content-Length") or 0)
+        try:
+            return json.loads(self.rfile.read(length) or b"{}")
+        except ValueError:
+            return None
+
+    def _handle_optimize(self):
+        data = self._body()
+        if not data or not data.get("id"):
+            self._json(400, {"error": "参数缺失"})
+            return
+        try:
+            if data.get("content"):
+                article = {
+                    "title": data.get("title", ""), "summary": data.get("summary", ""),
+                    "content": data.get("content", ""),
+                }
+            else:
+                article = opt._load_article(data["id"])
+            result = opt.ai_optimize(article)
+            self._json(200, {"ok": True, "result": result})
+        except Exception as e:
+            self._json(200, {"ok": False, "error": str(e)[:300]})
+
+    def _handle_update(self):
+        data = self._body()
+        if not data or not data.get("id") or not data.get("title") or not data.get("content"):
+            self._json(400, {"error": "标题与正文不能为空"})
+            return
+        if _lock.locked():
+            self._json(429, {"error": "已有文章正在生成/更新，请稍候"})
+            return
+        _lock.acquire()
+        try:
+            result = opt.update_and_review(
+                str(data["id"]), str(data["title"]).strip(),
+                str(data.get("summary", "")).strip(), str(data["content"]).strip())
+            self._json(200, {"ok": True, "result": result})
+        except Exception as e:
+            self._json(200, {"ok": False, "error": str(e)[:300]})
+        finally:
+            _lock.release()
+
     def do_GET(self):
         if self.path.startswith("/api/commits"):
             commits = []
@@ -88,6 +141,20 @@ class Handler(http.server.SimpleHTTPRequestHandler):
             except Exception:
                 commits = []
             self._json(200, {"commits": commits})
+            return
+        if self.path.startswith("/api/article"):
+            try:
+                aid = self.path.split("?id=")[1].split("&")[0]
+                self._json(200, {"ok": True, "article": opt._load_article(aid)})
+            except Exception as e:
+                self._json(200, {"ok": False, "error": str(e)[:300]})
+            return
+        if self.path.startswith("/api/scores"):
+            try:
+                aid = self.path.split("?id=")[1].split("&")[0]
+                self._json(200, {"ok": True, "history": opt.get_history(aid)})
+            except Exception as e:
+                self._json(200, {"ok": False, "error": str(e)[:300]})
             return
         if self.path.startswith("/api/status"):
             try:

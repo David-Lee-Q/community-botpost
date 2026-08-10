@@ -100,6 +100,19 @@
   .oneshot-status.ok { color: #19be6b; }
   .oneshot-status.err { color: #f56c6c; }
   .oneshot-status a { color: var(--primary); }
+  .opt-btn { padding: 3px 10px; font-size: 12px; border: 1px solid var(--primary); color: var(--primary); background: #fff; border-radius: 4px; cursor: pointer; margin-right: 4px; }
+  .opt-btn:hover { background: var(--primary); color: #fff; }
+  .opt-btn.hist { border-color: var(--border); color: var(--muted); }
+  .opt-btn.hist:hover { background: #f0f2f5; color: var(--text); }
+  #optMask .modal { width: min(860px, 94vw); }
+  #optMask label { display: block; font-size: 12px; color: var(--muted); margin-top: 8px; }
+  #optMask input, #optMask textarea { width: 100%; padding: 9px 12px; border: 1px solid var(--border); border-radius: 8px; font-size: 13px; font-family: inherit; resize: vertical; margin: 5px 0 2px; line-height: 1.7; }
+  #optMask .body-ta { min-height: 320px; }
+  .opt-actions { display: flex; gap: 10px; justify-content: flex-end; flex-wrap: wrap; align-items: center; margin-top: 10px; }
+  .opt-actions .hint { font-size: 12px; color: var(--muted); margin-right: auto; }
+  #histMask .modal { width: min(680px, 92vw); }
+  .hist-table td { white-space: normal; }
+  .hist-table td.num { text-align: center; white-space: nowrap; }
 </style>
 </head>
 <body>
@@ -166,7 +179,7 @@
       <table>
         <thead><tr>
           <th>标题</th><th>分类</th><th>发布时间</th><th>状态</th><th>评价</th>
-          <th class="num">浏览</th><th class="num">评论</th><th class="num">点赞</th><th class="num">收藏</th>
+          <th class="num">浏览</th><th class="num">评论</th><th class="num">点赞</th><th class="num">收藏</th><th>操作</th>
         </tr></thead>
         <tbody id="tbody"></tbody>
       </table>
@@ -207,14 +220,49 @@
   </div>
 </div>
 
+<div class="modal-mask" id="optMask">
+  <div class="modal">
+    <span class="close" id="optClose">&times;</span>
+    <h3>文章优化</h3>
+    <div class="meta" id="optMeta">加载中...</div>
+    <label>标题（≤24字，不含冒号）</label>
+    <input id="optTitle" maxlength="30" placeholder="文章标题">
+    <label>摘要（约120字）</label>
+    <textarea id="optSummary" rows="3" placeholder="文章摘要"></textarea>
+    <label>正文（Markdown，可直接编辑；图片标记行请保留）</label>
+    <textarea id="optContent" class="body-ta" rows="14" placeholder="文章正文"></textarea>
+    <div class="opt-actions">
+      <span class="hint" id="optHint"></span>
+      <button id="optAi" class="fab-btn">AI优化</button>
+      <button id="optSave" class="fab-btn">提交更新</button>
+      <button id="optCancel" class="fab-btn ghost">取消</button>
+    </div>
+    <div class="oneshot-status" id="optStatus"></div>
+  </div>
+</div>
+
+<div class="modal-mask" id="histMask">
+  <div class="modal">
+    <span class="close" id="histClose">&times;</span>
+    <h3>评分历史</h3>
+    <div class="meta" id="histMeta"></div>
+    <table class="hist-table"><thead><tr>
+      <th>时间</th><th>分数</th><th>档位</th><th>类型</th><th>说明</th>
+    </tr></thead><tbody id="histBody"></tbody></table>
+    <div class="empty" id="histEmpty" style="display:none">暂无评分历史记录</div>
+  </div>
+</div>
+
 <script>
 const PAGE_SIZE = 20;
 let ARTICLES = [];
 let REVIEWS = {};
 let SCORE = null;
+let SCORES = {};
 let filtered = [];
 let page = 1;
 let charts = {};
+let OPT_AID = null;
 
 function fmtNum(n) { return n == null ? 0 : Number(n).toLocaleString(); }
 
@@ -555,6 +603,10 @@ function renderTable() {
       const cls = rv.grade === '优秀' ? 'tag g' : rv.grade === '不合格' ? 'tag s' : rv.grade === '合格' ? 'tag o' : 'tag';
       evalCell = `<td><span class="${cls}" title="${escapeHtml(rv.comment)}">${rv.grade} ${rv.score}分</span></td>`;
     }
+    let opCell = '<td>';
+    if (status === '已发布') opCell += `<button class="opt-btn" onclick="openOpt(${a.id})">优化</button>`;
+    if (SCORES[String(a.id)] && SCORES[String(a.id)].length) opCell += `<button class="opt-btn hist" onclick="openHist(${a.id})">历史</button>`;
+    opCell += '</td>';
     tr.innerHTML = `
       <td class="title"><a href="${link}" target="_blank">${escapeHtml(a.title || '')}</a></td>
       <td><span class="tag">${escapeHtml(a.cateName || '未分类')}</span></td>
@@ -564,7 +616,8 @@ function renderTable() {
       <td class="num">${fmtNum(a.viewCount)}</td>
       <td class="num">${fmtNum(a.commentCount)}</td>
       <td class="num">${fmtNum(a.favor)}</td>
-      <td class="num">${fmtNum(a.collect)}</td>`;
+      <td class="num">${fmtNum(a.collect)}</td>
+      ${opCell}`;
     tb.appendChild(tr);
   });
   const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
@@ -641,18 +694,20 @@ function renderAll() {
 Promise.all([
   fetch('data/articles.json').then(r => r.json()),
   fetch('data/reviews.json').then(r => r.json()).catch(() => ({})),
-  fetch('data/bot_score.json').then(r => r.json()).catch(() => null)
+  fetch('data/bot_score.json').then(r => r.json()).catch(() => null),
+  fetch('data/article_scores.json').then(r => r.json()).catch(() => ({}))
 ])
-  .then(([json, reviews, score]) => {
+  .then(([json, reviews, score, scores]) => {
     REVIEWS = reviews || {};
     SCORE = score || null;
+    SCORES = scores || {};
     parseData(json);
     renderScore();
     document.getElementById('sub').textContent = `账号 ${json.memberId} · 共 ${json.total} 篇文章 · 数据更新 ${json.updatedAt}`;
   })
   .catch(e => {
     document.getElementById('sub').textContent = '数据加载失败: ' + e.message;
-    document.getElementById('tbody').innerHTML = `<tr><td colspan="9">数据加载失败</td></tr>`;
+    document.getElementById('tbody').innerHTML = `<tr><td colspan="10">数据加载失败</td></tr>`;
   });
 
 (function () {
@@ -768,6 +823,127 @@ Promise.all([
   document.getElementById('commitClose').addEventListener('click', () => mask.classList.remove('show'));
   mask.addEventListener('click', e => { if (e.target === mask) mask.classList.remove('show'); });
 })();
+
+function openOpt(aid) {
+  OPT_AID = aid;
+  const meta = document.getElementById('optMeta');
+  meta.textContent = '加载中...';
+  document.getElementById('optHint').textContent = '';
+  document.getElementById('optStatus').innerHTML = '';
+  document.getElementById('optTitle').value = '';
+  document.getElementById('optSummary').value = '';
+  document.getElementById('optContent').value = '';
+  document.getElementById('optMask').classList.add('show');
+  fetch(`/api/article?id=${aid}`).then(r => r.json()).then(d => {
+    if (!d.ok) {
+      document.getElementById('optStatus').innerHTML = '<span class="err">' + escapeHtml(d.error) + '</span>';
+      return;
+    }
+    const a = d.article;
+    meta.textContent = `文章ID ${a.id} · 浏览 ${a.viewCount} · 创建 ${a.createTime}`;
+    document.getElementById('optTitle').value = a.title || '';
+    document.getElementById('optSummary').value = a.summary || '';
+    document.getElementById('optContent').value = a.content || '';
+  }).catch(() => {
+    document.getElementById('optStatus').innerHTML = '<span class="err">加载失败，请重试</span>';
+  });
+}
+
+function closeOpt() {
+  document.getElementById('optMask').classList.remove('show');
+}
+
+function aiOptimize() {
+  const t = document.getElementById('optTitle').value.trim();
+  const s = document.getElementById('optSummary').value.trim();
+  const c = document.getElementById('optContent').value.trim();
+  if (!c) { document.getElementById('optStatus').innerHTML = '<span class="err">正文不能为空</span>'; return; }
+  const ai = document.getElementById('optAi');
+  ai.disabled = true;
+  document.getElementById('optHint').textContent = 'AI 优化生成中（约1-2分钟）...';
+  document.getElementById('optStatus').innerHTML = '';
+  fetch('/api/optimize', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ id: OPT_AID, title: t, summary: s, content: c })
+  }).then(r => r.json()).then(d => {
+    ai.disabled = false;
+    document.getElementById('optHint').textContent = '';
+    if (!d.ok) {
+      document.getElementById('optStatus').innerHTML = '<span class="err">' + escapeHtml(d.error) + '</span>';
+      return;
+    }
+    document.getElementById('optTitle').value = d.result.title;
+    document.getElementById('optSummary').value = d.result.summary;
+    document.getElementById('optContent').value = d.result.body;
+    document.getElementById('optStatus').innerHTML = '<span class="ok">已生成优化稿，请核对后提交更新</span>';
+  }).catch(() => {
+    ai.disabled = false;
+    document.getElementById('optStatus').innerHTML = '<span class="err">AI优化请求失败，请重试</span>';
+  });
+}
+
+function submitUpdate() {
+  const t = document.getElementById('optTitle').value.trim();
+  const s = document.getElementById('optSummary').value.trim();
+  const c = document.getElementById('optContent').value.trim();
+  if (!t || !c) { document.getElementById('optStatus').innerHTML = '<span class="err">标题与正文不能为空</span>'; return; }
+  const sv = document.getElementById('optSave');
+  sv.disabled = true;
+  document.getElementById('optStatus').innerHTML = '<span>提交保存中，随后将自动重新评分...</span>';
+  fetch('/api/update', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ id: OPT_AID, title: t, summary: s, content: c })
+  }).then(r => r.json()).then(d => {
+    sv.disabled = false;
+    if (!d.ok) {
+      document.getElementById('optStatus').innerHTML = '<span class="err">' + escapeHtml(d.error) + '</span>';
+      return;
+    }
+    const res = d.result;
+    document.getElementById('optStatus').innerHTML = `<span class="ok">更新成功，重新评分：${res.score}分（${res.grade}），评分历史已记录</span>`;
+    setTimeout(() => location.reload(), 1600);
+  }).catch(() => {
+    sv.disabled = false;
+    document.getElementById('optStatus').innerHTML = '<span class="err">提交失败，请重试</span>';
+  });
+}
+
+function openHist(aid) {
+  const a = ARTICLES.find(x => x.id === aid);
+  document.getElementById('histMeta').textContent = a ? (a.title || '') : ('文章 ' + aid);
+  const tb = document.getElementById('histBody');
+  tb.innerHTML = '';
+  document.getElementById('histEmpty').style.display = 'none';
+  document.getElementById('histMask').classList.add('show');
+  fetch(`/api/scores?id=${aid}`).then(r => r.json()).then(d => {
+    const h = d.ok ? (d.history || []) : [];
+    document.getElementById('histEmpty').style.display = h.length ? 'none' : 'block';
+    (h || []).forEach(e => {
+      const tr = document.createElement('tr');
+      const g = e.grade;
+      const cls = g === '优秀' ? 'tag g' : g === '不合格' ? 'tag s' : g === '合格' ? 'tag o' : 'tag';
+      tr.innerHTML = `<td>${escapeHtml(e.time || '')}</td>` +
+        `<td class="num"><span class="${cls}">${e.score}分</span></td>` +
+        `<td class="num">${escapeHtml(e.grade || '')}</td>` +
+        `<td class="num">${escapeHtml(e.kind || '')}</td>` +
+        `<td>${escapeHtml(e.comment || '')}</td>`;
+      tb.appendChild(tr);
+    });
+  }).catch(() => {
+    document.getElementById('histEmpty').style.display = 'block';
+    document.getElementById('histEmpty').textContent = '历史记录加载失败';
+  });
+}
+
+document.getElementById('optClose').addEventListener('click', closeOpt);
+document.getElementById('optCancel').addEventListener('click', closeOpt);
+document.getElementById('optMask').addEventListener('click', e => { if (e.target === e.currentTarget) closeOpt(); });
+document.getElementById('optAi').addEventListener('click', aiOptimize);
+document.getElementById('optSave').addEventListener('click', submitUpdate);
+document.getElementById('histClose').addEventListener('click', () => document.getElementById('histMask').classList.remove('show'));
+document.getElementById('histMask').addEventListener('click', e => { if (e.target === e.currentTarget) document.getElementById('histMask').classList.remove('show'); });
 </script>
 </body>
 </html>
