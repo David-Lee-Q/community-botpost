@@ -41,107 +41,79 @@ def _img_url(item, kind):
     return ref
 
 IMAGE_POOL = [
-    {"site": "unsplash", "ref": "photo-1504384308090-c894fdcc538d"},
-    {"site": "unsplash", "ref": "photo-1451187580459-43490279c0fa"},
-    {"site": "unsplash", "ref": "photo-1486312338219-ce68d2c6f44d"},
-    {"site": "unsplash", "ref": "photo-1550751827-4bd374c3f58b"},
-    {"site": "unsplash", "ref": "photo-1563770660941-20978e870e26"},
-    {"site": "unsplash", "ref": "photo-1581091226825-a6a2a5aee158"},
-    {"site": "unsplash", "ref": "photo-1620712943543-bcc4688e7485"},
-    {"site": "unsplash", "ref": "photo-1677442136019-21780ecad995"},
-    {"site": "unsplash", "ref": "photo-1531297484001-80022131f5a1"},
-    {"site": "unsplash", "ref": "photo-1518770660439-4636190af475"},
-    {"site": "unsplash", "ref": "photo-1555617981-dac3880eac6e"},
-    {"site": "unsplash", "ref": "photo-1519389950473-47ba0277781c"},
-    {"site": "unsplash", "ref": "photo-1526374965328-7f61d4dc18c5"},
-    {"site": "unsplash", "ref": "photo-1551288049-bebda4e38f71"},
-    {"site": "unsplash", "ref": "photo-1569012871812-f38ee64cd54c"},
-    {"site": "unsplash", "ref": "photo-1580757468214-c73f7062a5cb"},
-    {"site": "unsplash", "ref": "photo-1526628953301-3e589a6a8b74"},
-    {"site": "unsplash", "ref": "photo-1498050108023-c5249f4df085"},
-    {"site": "unsplash", "ref": "photo-1461749280684-dccba630e2f6"},
-    {"site": "unsplash", "ref": "photo-1555066931-4365d14bab8c"},
-    {"site": "unsplash", "ref": "photo-1544197150-b99a580bb7a8"},
-    {"site": "unsplash", "ref": "photo-1523287562758-66c7fc58967f"},
-    {"site": "unsplash", "ref": "photo-1527430253228-e93688616381"},
-    {"site": "unsplash", "ref": "photo-1635070041078-e363dbe005cb"},
-    {"site": "unsplash", "ref": "photo-1622979135225-d2ba269cf1ac"},
-    {"site": "unsplash", "ref": "photo-1521737852567-6949f3f9f2b5"},
-    {"site": "unsplash", "ref": "photo-1551650975-87deedd944c3"},
-    {"site": "unsplash", "ref": "photo-1535378620166-273708d44e4c"},
-    {"site": "unsplash", "ref": "photo-1542831371-29b0f74f9713"},
-    {"site": "unsplash", "ref": "photo-1564865878688-9a244444042a"},
-    {"site": "unsplash", "ref": "photo-1460925895917-afdab827c52f"},
-    {"site": "unsplash", "ref": "photo-1558591710-4b4a1ae0f04d"},
-    {"site": "unsplash", "ref": "photo-1560958089-b8a1929cea89"},
-    {"site": "unsplash", "ref": "photo-1593642632823-8f785ba67e45"},
-    {"site": "unsplash", "ref": "photo-1517420704952-d9f39e95b43e"},
-    {"site": "unsplash", "ref": "photo-1607252650355-f7fd0460ccdb"},
-    {"site": "unsplash", "ref": "photo-1639762681485-074b7f938ba0"},
-    {"site": "unsplash", "ref": "photo-1620714223084-8fcacc6dfd8d"},
-    {"site": "unsplash", "ref": "photo-1516321318423-f06f85e504b3"},
-    {"site": "unsplash", "ref": "photo-1487058792275-0ad4aaf24ca7"},
-    {"site": "unsplash", "ref": "photo-1537432376769-00f5c2f4c8d2"},
-    {"site": "unsplash", "ref": "photo-1543286386-713bdd548da4"},
-    {"site": "unsplash", "ref": "photo-1535223289827-42f1e9919769"},
-    {"site": "unsplash", "ref": "photo-1581291518857-4e27b48ff24e"},
-    {"site": "unsplash", "ref": "photo-1519452575417-564c1401ecc0"},
-    {"site": "unsplash", "ref": "photo-1573164713988-8665fc963095"},
-    {"site": "unsplash", "ref": "photo-1554224155-6726b3ff858f"},
-    {"site": "unsplash", "ref": "photo-1573855619003-97b4799dcd8b"},
-    {"site": "unsplash", "ref": "photo-1454165804606-c3d57bc86b40"},
-    {"site": "unsplash", "ref": "photo-1467232004584-a241de8bcf5d"},
-    {"site": "unsplash", "ref": "photo-1504868584819-f8e8b4b6d7e3"},
-    {"site": "pexels", "ref": "18840864"},
-    {"site": "pexels", "ref": "31668532"},
-    {"site": "pexels", "ref": "28295995"},
-    {"site": "pexels", "ref": "1746234"},
-    {"site": "pexels", "ref": "26886211"},
-    {"site": "pexels", "ref": "16388475"},
-    {"site": "pexels", "ref": "32830796"},
-    {"site": "pexels", "ref": "10043140"},
-    {"site": "pexels", "ref": "36035572"},
-    {"site": "pexels", "ref": "28570244"},
-    {"site": "pexels", "ref": "9146318"},
-    {"site": "pexels", "ref": "29842165"},
-    {"site": "pexels", "ref": "3378320"},
-    {"site": "pexels", "ref": "844212"},
-    {"site": "pexels", "ref": "326999"},
-    {"site": "pexels", "ref": "37916686"},
-    {"site": "pexels", "ref": "33959311"},
-    {"site": "pexels", "ref": "154484"},
-    {"site": "pexels", "ref": "26545607"},
-    {"site": "pexels", "ref": "10300074"},
-    {"site": "pexels", "ref": "17229912"},
-    {"site": "pexels", "ref": "9309801"},
-    {"site": "pexels", "ref": "7090811"},
-    {"site": "pexels", "ref": "20843797"},
-    {"site": "pexels", "ref": "6849089"},
-    {"site": "pexels", "ref": "30194589"},
-    {"site": "pexels", "ref": "11481064"},
-    {"site": "pexels", "ref": "37235391"},
-    {"site": "pexels", "ref": "30828046"},
-    {"site": "pexels", "ref": "30058838"},
-    {"site": "pexels", "ref": "32962209"},
-    {"site": "pexels", "ref": "9683482"},
-    {"site": "pexels", "ref": "28638251"},
-    {"site": "pexels", "ref": "12617517"},
-    {"site": "pexels", "ref": "16347735"},
-    {"site": "pexels", "ref": "8983684"},
-    {"site": "pexels", "ref": "18124248"},
-    {"site": "pexels", "ref": "32968828"},
-    {"site": "pexels", "ref": "3546499"},
-    {"site": "pexels", "ref": "10914950"},
-    {"site": "pexels", "ref": "38263378"},
-    {"site": "pexels", "ref": "31139390"},
-    {"site": "pexels", "ref": "6829990"},
-    {"site": "pexels", "ref": "29657077"},
-    {"site": "pexels", "ref": "38350360"},
-    {"site": "pexels", "ref": "28854377"},
-    {"site": "pexels", "ref": "11103626"},
-    {"site": "pexels", "ref": "35750176"},
-    {"site": "pexels", "ref": "35694597"},
-    {"site": "pexels", "ref": "18313276"},
+    {"site": "unsplash", "ref": "photo-1485827404703-89b55fcc595e", "theme": "ai"},
+    {"site": "unsplash", "ref": "photo-1555255707-c07966088b7b", "theme": "ai"},
+    {"site": "unsplash", "ref": "photo-1531746790731-6c087fecd65a", "theme": "ai"},
+    {"site": "unsplash", "ref": "photo-1484557985045-edf25e08da73", "theme": "ai"},
+    {"site": "unsplash", "ref": "photo-1580757468214-c73f7062a5cb", "theme": "ai"},
+    {"site": "unsplash", "ref": "photo-1620712943543-bcc4688e7485", "theme": "ai"},
+    {"site": "unsplash", "ref": "photo-1677442136019-21780ecad995", "theme": "ai"},
+    {"site": "unsplash", "ref": "photo-1569012871812-f38ee64cd54c", "theme": "ai"},
+    {"site": "unsplash", "ref": "photo-1639762681485-074b7f938ba0", "theme": "ai"},
+    {"site": "unsplash", "ref": "photo-1639762681057-408e52192e55", "theme": "ai"},
+    {"site": "unsplash", "ref": "photo-1620714223084-8fcacc6dfd8d", "theme": "ai"},
+    {"site": "unsplash", "ref": "photo-1526374965328-7f61d4dc18c5", "theme": "code"},
+    {"site": "unsplash", "ref": "photo-1498050108023-c5249f4df085", "theme": "code"},
+    {"site": "unsplash", "ref": "photo-1461749280684-dccba630e2f6", "theme": "code"},
+    {"site": "unsplash", "ref": "photo-1555066931-4365d14bab8c", "theme": "code"},
+    {"site": "unsplash", "ref": "photo-1542831371-29b0f74f9713", "theme": "code"},
+    {"site": "unsplash", "ref": "photo-1555949963-aa79dcee981c", "theme": "code"},
+    {"site": "unsplash", "ref": "photo-1504639725590-34d0984388bd", "theme": "code"},
+    {"site": "unsplash", "ref": "photo-1580927752452-89d86da3fa0a", "theme": "code"},
+    {"site": "unsplash", "ref": "photo-1551650975-87deedd944c3", "theme": "code"},
+    {"site": "unsplash", "ref": "photo-1526628953301-3e589a6a8b74", "theme": "dc"},
+    {"site": "unsplash", "ref": "photo-1607252650355-f7fd0460ccdb", "theme": "dc"},
+    {"site": "unsplash", "ref": "photo-1558494949-4314304c7b42", "theme": "dc"},
+    {"site": "unsplash", "ref": "photo-1590959651373-a3db0f38a961", "theme": "dc"},
+    {"site": "unsplash", "ref": "photo-1555617981-dac3880eac6e", "theme": "dc"},
+    {"site": "unsplash", "ref": "photo-1518770660439-4636190af475", "theme": "dc"},
+    {"site": "unsplash", "ref": "photo-1555664424-778a1e5e1b48", "theme": "dc"},
+    {"site": "unsplash", "ref": "photo-1593642632823-8f785ba67e45", "theme": "dc"},
+    {"site": "unsplash", "ref": "photo-1544197150-b99a580bb7a8", "theme": "dc"},
+    {"site": "unsplash", "ref": "photo-1467232004584-a241de8bcf5d", "theme": "dc"},
+    {"site": "unsplash", "ref": "photo-1504868584819-f8e8b4b6d7e3", "theme": "dc"},
+    {"site": "unsplash", "ref": "photo-1593642532744-d377ab507dc8", "theme": "dc"},
+    {"site": "unsplash", "ref": "photo-1565043666747-69f6646db940", "theme": "ind"},
+    {"site": "unsplash", "ref": "photo-1581092160562-40aa08e78837", "theme": "ind"},
+    {"site": "unsplash", "ref": "photo-1581091226825-a6a2a5aee158", "theme": "ind"},
+    {"site": "unsplash", "ref": "photo-1563770660941-20978e870e26", "theme": "ind"},
+    {"site": "unsplash", "ref": "photo-1531297484001-80022131f5a1", "theme": "ind"},
+    {"site": "unsplash", "ref": "photo-1581094794329-c8112a89af12", "theme": "ind"},
+    {"site": "unsplash", "ref": "photo-1565793298595-6a879b1d9492", "theme": "ind"},
+    {"site": "unsplash", "ref": "photo-1516937941344-00b4e0337589", "theme": "ind"},
+    {"site": "unsplash", "ref": "photo-1565193566173-7a0ee3dbe261", "theme": "ind"},
+    {"site": "unsplash", "ref": "photo-1586528116311-ad8dd3c8310d", "theme": "ind"},
+    {"site": "unsplash", "ref": "photo-1537462715879-360eeb61a0ad", "theme": "ind"},
+    {"site": "unsplash", "ref": "photo-1587049352846-4a222e784d38", "theme": "ind"},
+    {"site": "unsplash", "ref": "photo-1532073150508-0c1df022bdd1", "theme": "ind"},
+    {"site": "unsplash", "ref": "photo-1524749292158-7540c2494485", "theme": "ind"},
+    {"site": "unsplash", "ref": "photo-1587620962725-abab7fe55159", "theme": "ind"},
+    {"site": "unsplash", "ref": "photo-1551288049-bebda4e38f71", "theme": "data"},
+    {"site": "unsplash", "ref": "photo-1460925895917-afdab827c52f", "theme": "data"},
+    {"site": "unsplash", "ref": "photo-1564865878688-9a244444042a", "theme": "data"},
+    {"site": "unsplash", "ref": "photo-1558591710-4b4a1ae0f04d", "theme": "data"},
+    {"site": "unsplash", "ref": "photo-1553877522-43269d4ea984", "theme": "data"},
+    {"site": "unsplash", "ref": "photo-1559526324-4b87b5e36e44", "theme": "data"},
+    {"site": "unsplash", "ref": "photo-1560472354-b33ff0c44a43", "theme": "data"},
+    {"site": "unsplash", "ref": "photo-1450101499163-c8848c66ca85", "theme": "data"},
+    {"site": "unsplash", "ref": "photo-1551434678-e076c223a692", "theme": "data"},
+    {"site": "unsplash", "ref": "photo-1451187580459-43490279c0fa", "theme": "abs"},
+    {"site": "unsplash", "ref": "photo-1504384308090-c894fdcc538d", "theme": "abs"},
+    {"site": "unsplash", "ref": "photo-1486312338219-ce68d2c6f44d", "theme": "abs"},
+    {"site": "unsplash", "ref": "photo-1550751827-4bd374c3f58b", "theme": "abs"},
+    {"site": "unsplash", "ref": "photo-1527430253228-e93688616381", "theme": "abs"},
+    {"site": "unsplash", "ref": "photo-1531403009284-440f080d1e12", "theme": "abs"},
+    {"site": "unsplash", "ref": "photo-1526666923127-b2970f64b422", "theme": "abs"},
+    {"site": "unsplash", "ref": "photo-1554224155-6726b3ff858f", "theme": "abs"},
+    {"site": "unsplash", "ref": "photo-1573855619003-97b4799dcd8b", "theme": "abs"},
+    {"site": "unsplash", "ref": "photo-1568819317551-31051b8b7f8e", "theme": "abs"},
+    {"site": "unsplash", "ref": "photo-1622979135225-d2ba269cf1ac", "theme": "abs"},
+    {"site": "unsplash", "ref": "photo-1523287562758-66c7fc58967f", "theme": "abs"},
+    {"site": "unsplash", "ref": "photo-1537432376769-00f5c2f4c8d2", "theme": "abs"},
+    {"site": "unsplash", "ref": "photo-1535223289827-42f1e9919769", "theme": "abs"},
+    {"site": "unsplash", "ref": "photo-1535378620166-273708d44e4c", "theme": "abs"},
+    {"site": "unsplash", "ref": "photo-1550745165-9bc0b252726f", "theme": "abs"},
+    {"site": "unsplash", "ref": "photo-1519452575417-564c1401ecc0", "theme": "abs"},
 ]
 
 
@@ -157,23 +129,51 @@ def _save_used(used):
         json.dump(used, f, ensure_ascii=False, indent=2)
 
 
-def pick_images(aid=None):
-    """从池中随机取 3 张（正文2+封面1），排除已用图并记录。
+THEMES = {
+    "人工智能": ["ai", "data", "abs"],
+    "智能制造": ["ind", "ai", "abs"],
+    "机器视觉": ["ai", "ind", "abs"],
+    "云计算": ["dc", "abs", "data"],
+    "云原生": ["dc", "abs", "code"],
+    "物联网": ["abs", "dc", "ind"],
+    "边缘计算": ["dc", "abs", "code"],
+    "大数据": ["data", "abs", "dc"],
+    "安全": ["abs", "dc", "code"],
+    "工业操作系统": ["ind", "abs", "dc"],
+    "数据要素": ["data", "abs", "dc"],
+    "编程与开发": ["code", "abs", "dc"],
+    "中间件": ["code", "abs", "dc"],
+    "微服务": ["code", "abs", "dc"],
+    "区块链": ["abs", "dc", "code"],
+    "标识解析": ["abs", "dc"],
+    "网络": ["abs", "dc"],
+}
+_DEFAULT_THEMES = ["abs", "dc", "ai"]
+
+
+def pick_images(category="人工智能"):
+    """按文章分类从对应主题组随机取 3 张（正文2+封面1），排除已用图并记录。
+    主题组不足 3 张时扩展相邻组；全池耗尽时重置（保留最近 9 张避免立即重复）。
     返回 {"body": [url1, url2], "cover": url, "items": [item1, item2, item3]}。"""
     used = _load_used()
     used_ids = set(used.get("used_ids", []))
-    avail = [i for i in IMAGE_POOL if _img_key(i) not in used_ids]
-    if len(avail) < 3:
-        used_ids = set()
-        used["used_ids"] = []
-        used["articles"] = {}
-        avail = list(IMAGE_POOL)
-    random.shuffle(avail)
-    picks = avail[:3]
+    themes = THEMES.get(category) or _DEFAULT_THEMES
+    cand = []
+    for t in themes:
+        cand += [i for i in IMAGE_POOL if i["theme"] == t and _img_key(i) not in used_ids]
+    if len(cand) < 3:
+        cand += [i for i in IMAGE_POOL if _img_key(i) not in used_ids and i not in cand]
+    if len(cand) < 3:
+        recent = used.get("recent", [])
+        used_ids = set(recent)
+        used["used_ids"] = list(recent)
+        cand = [i for i in IMAGE_POOL if _img_key(i) not in used_ids]
+    random.shuffle(cand)
+    picks = cand[:3]
     keys = [_img_key(i) for i in picks]
-    used["used_ids"] = sorted(used_ids | set(keys))
-    if aid is not None:
-        used["articles"][str(aid)] = keys
+    new_ids = sorted(set(used_ids) | set(keys))
+    used["used_ids"] = new_ids
+    used["recent"] = new_ids[-9:]
     _save_used(used)
     return {"body": [_img_url(picks[0], "body"), _img_url(picks[1], "body")],
             "cover": _img_url(picks[2], "cover"),
@@ -296,7 +296,7 @@ def build_cover_path(category):
 
 def run(prompt):
     gen = generate(prompt)
-    imgs = pick_images()
+    imgs = pick_images(gen["category"])
     gen["body"] = (gen["body"].replace("IMAGE1", imgs["body"][0])
                    .replace("IMAGE2", imgs["body"][1]))
     cover_path = build_cover_path(gen["category"])

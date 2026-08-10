@@ -14,6 +14,7 @@
 | 计划时间 | 标题 | 分类 | 文章ID | 详情URL | 状态 |
 |----------|------|------|--------|---------|------|
 | 08-10 17:52 | 推理存储瓶颈 比训练更致命 | 人工智能 | 35206 | https://openlab.cosmoplat.com/article-detils?id=35206&articleType=0 | 已发布 |
+| 08-10 18:20 | 大模型进工厂失败率80% 卡点不在算力 | 人工智能 | 35208 | https://openlab.cosmoplat.com/article-detils?id=35208&articleType=0 | 已发布 |
 | 08-10 16:55 | 工厂上5G七成项目连数据都没打通 | 智能制造 | 35202 | https://openlab.cosmoplat.com/article-detils?id=35202&articleType=0 | 已发布 |
 | 08-10 17:33 | 八成数字孪生项目败在数据而非模型 | 人工智能 | 35204 | https://openlab.cosmoplat.com/article-detils?id=35204&articleType=0 | 已发布 |
 
