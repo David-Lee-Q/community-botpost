@@ -93,6 +93,8 @@ Agent 在任务执行过程中发现的条目应遵循以下格式：
   - 封面图必须下载到工作区再上传，保存目录按文章主题区分：/workspace/bot/covers/<主题关键词>/（如 ai、smart-manufacturing、cloud-native、industrial-internet）
   - 封面图按主题归类，避免同一张图在多篇文章中混用
   - 2026-08-10 配图去重机制：IMAGE_POOL 为多源图池（101张=51 Unsplash+50 Pexels，均已批量验证直链可达），每次发文随机取3张（正文2+封面1），全局去重记录于 bot/used_images.json（site:ref 格式，池耗尽自动重置轮换）
+  - 2026-08-10 配图主题化：因配图与内容不相关，改为主题化池——IMAGE_POOL 73 张全部为记忆确认主题的 Unsplash 图，按 theme 分组（ai 11/code 9/dc 12/ind 15/data 9/abs 17）；THEMES 映射文章分类→主题组，pick_images(category) 优先分类主题组取图、不足时扩展相邻组、全池耗尽重置（保留 recent 最近9张避免立即重复）；Pexels 随机扫描图（主题未知）已移除
+  - 主题分组：ai=机器人/AI/对话，code=代码编程，dc=数据中心/服务器/芯片，ind=工业制造/自动化，data=数据图表/分析，abs=抽象科技/网络；LLM 无视觉能力、Pexels/Unsplash 检索与详情页均反爬，故主题标签靠记忆标注并逐一验证可达性
   - 图源可达性结论：images.unsplash.com 与 images.pexels.com 直链均可用，平台会抓取正文图转存 hd-oss.cosmoplat.com（无需担心外链失效）；magnific.com 是 AI 放大工具无免费图库；pixabay 搜索需 API key 且部分 CDN 图 hotlink 403，故暂未纳入池
   - 发一篇配图流程：generate() 正文保留 IMAGE1/IMAGE2 占位→run() 调 pick_images() 选图替换占位并下载封面→发布成功后将3张图 keys 记入 used_images.json 对应文章
 
