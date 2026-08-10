@@ -90,3 +90,15 @@ Agent 在任务执行过程中发现的条目应遵循以下格式：
   - 脚本 `bot/report.py`（daily/weekly，`--preview` 仅打印不推送）；Webhook 常量在 report.py 顶部
   - 样式：interactive 卡片，日报蓝色 / 周报绿色 header；文章表现用 `column_set` 表格（# / 标题[超链接] / 浏览-互动），标题链接格式 `https://openlab.cosmoplat.com/article-detils?id={id}&articleType=0`；综合评分按 85/70 分档着色（绿/橙/红）
   - 所有定时任务清单见 `bot/SCHEDULE.md`；分类名映射以 `GET /api/cate/list` 返回为准（id 含 -1 工业操作系统、-2 数据要素）
+
+[不合格文章自动优化流程]
+- Date: 2026-08-10
+- Context: 用户要求评分<60的bot文章自动执行AI优化并重新评分直至达标
+- Instructions:
+  - 触发：runner.py 每6小时刷新台账后调用 ledger/automate_optimize.py，扫描 bot_posts.json 中评分<60的bot文章
+  - 流程：AI优化→平台save更新→存内容分缓存→fetch刷新→重评，每篇最多3轮；达标(≥60)或达上限即停
+  - 评分机制：auto 评分 = 0.4*传播百分位 + 0.6*内容质量分(规则化)；传播分 clamp 40-95；内容分仅对优化过的文章启用（content_scores.json 缓存，articles.json 无正文无法全量计算）
+  - bot 文章台账 ledger/data/bot_posts.json：发一篇/定时发文发布成功后自动注册（one_shot.py/publish.py 的 _register_post）
+  - 评分历史 ledger/data/article_scores.json：每次优化/重评记录（kind=优化前/自动优化第N轮/重评），前端「历史」按钮展示
+  - 文章优化API在 server.py：GET /api/article?id=、POST /api/optimize、POST /api/update、GET /api/scores?id=；AI优化复用 one_shot._llm，保留原图片标记
+  - 平台更新接口：POST /api/article/save 带 id/articleId 即更新已发布文章，更新后 status 短暂为0约2秒自动恢复，公开访问不受影响；正文获取用 GET /api/article/detail/{id}

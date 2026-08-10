@@ -22,6 +22,7 @@ import sensitive  # noqa: E402
 ARTICLES_FILE = os.path.join(DATA, "articles.json")
 REVIEWS_FILE = os.path.join(DATA, "reviews.json")
 SCORES_FILE = os.path.join(DATA, "article_scores.json")
+CONTENT_SCORES_FILE = os.path.join(DATA, "content_scores.json")
 
 OPTIMIZE_PROMPT = (
     "你是卡奥斯开源社区的资深科技文章编辑，负责在不改变原文事实与结构的前提下提升传播表现。"
@@ -156,42 +157,53 @@ def _load_scores():
     return json.load(open(SCORES_FILE, encoding="utf-8"))
 
 
-def _score_article(aid, arts):
+def _load_content_scores():
+    if not os.path.exists(CONTENT_SCORES_FILE):
+        return {}
+    return json.load(open(CONTENT_SCORES_FILE, encoding="utf-8"))
+
+
+def _save_content_score(aid, title, summary, body):
+    from auto_review import content_score
+    cs = _load_content_scores()
+    total, detail, dims = content_score(title, summary, body)
+    cs[str(aid)] = {"content_total": total, "detail": detail, "dims": dims,
+                    "updated": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")}
+    with open(CONTENT_SCORES_FILE, "w", encoding="utf-8") as f:
+        json.dump(cs, f, ensure_ascii=False, indent=2)
+    return total, dims
+
+
+def _score_article(aid, arts, live=None):
     published = [a for a in arts if a.get("status") == 1]
-    from auto_review import percentile, grade_of
+    from auto_review import percentile, grade_of, score_entry
     view_pct = percentile(published, "viewCount")
     engage_pct = percentile(published, "commentCount")
     a = next((x for x in arts if str(x.get("id")) == str(aid)), None)
     if not a:
         return None
-    v = a.get("viewCount", 0)
-    e = a.get("commentCount", 0) + a.get("favor", 0) + a.get("collect", 0)
-    score = round(0.7 * view_pct.get(v, 0) + 0.3 * engage_pct.get(e, 0))
-    score = max(40, min(95, score))
+    v = (live or a).get("viewCount", 0)
+    e = (live or a).get("commentCount", 0) + (live or a).get("favor", 0) + (live or a).get("collect", 0)
+    view_score = round(0.7 * view_pct.get(v, 0) + 0.3 * engage_pct.get(e, 0))
+    cached = _load_content_scores().get(str(aid))
+    score, content_total, breakdown = score_entry(str(aid), a.get("title", ""), view_score, cached)
     grade = grade_of(score)
     return {
         "title": a.get("title", ""),
         "score": score, "grade": grade, "auto": True,
-        "comment": (f"自动化评价：按传播表现百分位评定（浏览 {v}、互动 {e}），"
-                    f"评分 {score}，档位{grade}，详见《社区文章质量评价标准》"),
-        "breakdown": {
-            "内容原创性": None, "技术准确性": None, "完整性结构": None,
-            "可读表达": None, "规范合规": None, "传播表现": score,
-        },
+        "comment": (f"自动化评价：传播表现百分位 {view_score} 分（浏览 {v}、互动 {e}），"
+                    f"内容质量分 {content_total if content_total is not None else '—'}，"
+                    f"综合 {score} 分，档位{grade}，详见《社区文章质量评价标准》"),
+        "breakdown": breakdown,
     }
 
 
-def re_review(aid, old=None):
-    arts = json.load(open(ARTICLES_FILE, encoding="utf-8")).get("articles", [])
-    entry = _score_article(aid, arts)
-    if not entry:
-        raise RuntimeError("台账中未找到该文章，请先刷新数据")
+def record_review(aid, entry, old=None, kind="重评"):
+    """写回 reviews.json 并记录评分历史，随后刷新综合评分。"""
     reviews = _load_reviews()
     scores = _load_scores()
     now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     hist = scores.get(str(aid), [])
-    if old is None:
-        old = reviews.get(str(aid))
     if old and old.get("score") != entry["score"]:
         hist.append({
             "time": now, "score": old.get("score"), "grade": old.get("grade"),
@@ -201,9 +213,9 @@ def re_review(aid, old=None):
     hist.append({
         "time": now, "score": entry["score"], "grade": entry["grade"],
         "comment": entry.get("comment", ""), "breakdown": entry.get("breakdown", {}),
-        "kind": "重评",
+        "kind": kind,
     })
-    hist = hist[-20:]
+    hist = hist[-30:]
     scores[str(aid)] = hist
     reviews[str(aid)] = entry
     with open(REVIEWS_FILE, "w", encoding="utf-8") as f:
@@ -216,6 +228,16 @@ def re_review(aid, old=None):
     except Exception:
         pass
     return entry, hist
+
+
+def re_review(aid, old=None, kind="重评"):
+    arts = json.load(open(ARTICLES_FILE, encoding="utf-8")).get("articles", [])
+    entry = _score_article(aid, arts)
+    if not entry:
+        raise RuntimeError("台账中未找到该文章，请先刷新数据")
+    if old is None:
+        old = _load_reviews().get(str(aid))
+    return record_review(aid, entry, old=old, kind=kind)
 
 
 def get_history(aid):
@@ -233,6 +255,7 @@ def update_and_review(aid, title, summary, content):
         })
         raise RuntimeError("内容包含敏感词，无法保存：" + "、".join(sorted(set(hits))))
     save_update(article, title, summary, content)
+    _save_content_score(aid, title, summary, content)
     time.sleep(2)
     old = _load_reviews().get(str(aid))
     subprocess.run([sys.executable, os.path.join(LEDGER, "fetch_articles.py")],

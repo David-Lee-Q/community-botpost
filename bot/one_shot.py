@@ -197,6 +197,18 @@ def _write_status(state, detail):
         json.dump(data, f, ensure_ascii=False, indent=2)
 
 
+def _register_post(aid, title):
+    posts_file = os.path.join(LEDGER, "data", "bot_posts.json")
+    try:
+        posts = json.load(open(posts_file, encoding="utf-8")) if os.path.exists(posts_file) else {}
+    except (OSError, ValueError):
+        posts = {}
+    if str(aid) not in posts:
+        posts[str(aid)] = {"title": title, "cateName": "", "createTime": "", "source": "发一篇"}
+        with open(posts_file, "w", encoding="utf-8") as f:
+            json.dump(posts, f, ensure_ascii=False, indent=2)
+
+
 def main():
     prompt = sys.argv[1] if len(sys.argv) > 1 else ""
     if not prompt:
@@ -215,6 +227,8 @@ def main():
         gen, result, cover_path = run(prompt)
         _write_status("done", {"title": gen["title"], "result": result, "cover": cover_path})
         print(json.dumps({"state": "done", "title": gen["title"], "result": result}, ensure_ascii=False))
+        if result.get("status") == "published":
+            _register_post(result["article_id"], gen["title"])
         subprocess.run([sys.executable, os.path.join(LEDGER, "fetch_articles.py")],
                        capture_output=True, timeout=300)
     except Exception as e:

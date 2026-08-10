@@ -9,6 +9,7 @@ import sensitive  # noqa: E402
 
 BASE = "https://openlab.cosmoplat.com/api"
 BOT_DIR = os.path.dirname(os.path.abspath(__file__))
+LEDGER = os.path.join(os.path.dirname(BOT_DIR), "ledger")
 TOKEN_FILE = os.path.join(BOT_DIR, "token.txt")
 
 CATEGORY_IDS = {
@@ -195,6 +196,19 @@ def show_improvements():
     print("=========================")
 
 
+def _register_post(aid, title, category):
+    posts_file = os.path.join(LEDGER, "data", "bot_posts.json")
+    try:
+        posts = json.load(open(posts_file, encoding="utf-8")) if os.path.exists(posts_file) else {}
+    except (OSError, ValueError):
+        posts = {}
+    if str(aid) not in posts:
+        posts[str(aid)] = {"title": title, "cateName": category, "createTime": "",
+                           "source": "定时发文"}
+        with open(posts_file, "w", encoding="utf-8") as f:
+            json.dump(posts, f, ensure_ascii=False, indent=2)
+
+
 def main():
     show_improvements()
     token = get_token()
@@ -211,6 +225,8 @@ def main():
             item["status"] = "published"
             item["article_id"] = result.get("article_id")
             print(f"OK {result['status']} id={result.get('article_id')} {item['title']}")
+            if result["status"] == "published":
+                _register_post(result["article_id"], item["title"], item.get("category", ""))
         else:
             print(f"FAIL {item['title']}: {result.get('error')}")
     with open(os.path.join(BOT_DIR, "plan.json"), "w", encoding="utf-8") as f:

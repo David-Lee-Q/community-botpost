@@ -63,6 +63,16 @@ def main():
                     log("fetch_articles.py 失败: " + rf.stderr[-500:])
                 else:
                     log(rf.stdout.strip())
+            # 刷新后自动优化评分不合格的 bot 文章（评分<60 → AI优化+重新评分，直至达标或达上限）
+            auto_opt = os.path.join(os.path.dirname(BOT_DIR), "ledger", "automate_optimize.py")
+            if os.path.exists(auto_opt):
+                log("检查并自动优化不合格文章")
+                ao = subprocess.run([sys.executable, auto_opt],
+                                    capture_output=True, text=True, timeout=1800)
+                if ao.returncode != 0:
+                    log("automate_optimize.py 失败: " + ao.stderr[-500:])
+                else:
+                    log(ao.stdout.strip())
 
         # 每日 18:00 推送飞书每日总结
         if now.hour == 18 and last_daily != now.date().isoformat():
