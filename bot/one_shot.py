@@ -22,34 +22,126 @@ import sensitive  # noqa: E402
 
 IMG_BASE = "https://images.unsplash.com/{}?w=800&q=80"
 COVER_BASE = "https://images.unsplash.com/{}?w=800&h=400&fit=crop&q=80"
+PEXELS_BASE = "https://images.pexels.com/photos/{}/pexels-photo-{}.jpeg?auto=compress&cs=tinysrgb"
+
+
+def _img_key(item):
+    return "{}:{}".format(item["site"], item["ref"])
+
+
+def _img_url(item, kind):
+    """kind: body | cover"""
+    site, ref = item["site"], item["ref"]
+    if site == "unsplash":
+        return IMG_BASE.format(ref) if kind == "body" else COVER_BASE.format(ref)
+    if site == "pexels":
+        if kind == "body":
+            return PEXELS_BASE.format(ref, ref) + "&w=800"
+        return PEXELS_BASE.format(ref, ref) + "&w=800&h=400&fit=crop"
+    return ref
 
 IMAGE_POOL = [
-    "photo-1504384308090-c894fdcc538d", "photo-1451187580459-43490279c0fa",
-    "photo-1486312338219-ce68d2c6f44d", "photo-1550751827-4bd374c3f58b",
-    "photo-1563770660941-20978e870e26", "photo-1581091226825-a6a2a5aee158",
-    "photo-1620712943543-bcc4688e7485", "photo-1677442136019-21780ecad995",
-    "photo-1531297484001-80022131f5a1", "photo-1518770660439-4636190af475",
-    "photo-1555617981-dac3880eac6e", "photo-1519389950473-47ba0277781c",
-    "photo-1526374965328-7f61d4dc18c5", "photo-1551288049-bebda4e38f71",
-    "photo-1569012871812-f38ee64cd54c", "photo-1580757468214-c73f7062a5cb",
-    "photo-1526628953301-3e589a6a8b74", "photo-1498050108023-c5249f4df085",
-    "photo-1461749280684-dccba630e2f6", "photo-1555066931-4365d14bab8c",
-    "photo-1544197150-b99a580bb7a8", "photo-1523287562758-66c7fc58967f",
-    "photo-1527430253228-e93688616381", "photo-1635070041078-e363dbe005cb",
-    "photo-1622979135225-d2ba269cf1ac", "photo-1521737852567-6949f3f9f2b5",
-    "photo-1551650975-87deedd944c3", "photo-1535378620166-273708d44e4c",
-    "photo-1542831371-29b0f74f9713", "photo-1564865878688-9a244444042a",
-    "photo-1460925895917-afdab827c52f", "photo-1558591710-4b4a1ae0f04d",
-    "photo-1560958089-b8a1929cea89", "photo-1593642632823-8f785ba67e45",
-    "photo-1517420704952-d9f39e95b43e", "photo-1607252650355-f7fd0460ccdb",
-    "photo-1639762681485-074b7f938ba0", "photo-1620714223084-8fcacc6dfd8d",
-    "photo-1516321318423-f06f85e504b3", "photo-1487058792275-0ad4aaf24ca7",
-    "photo-1537432376769-00f5c2f4c8d2", "photo-1543286386-713bdd548da4",
-    "photo-1535223289827-42f1e9919769", "photo-1581291518857-4e27b48ff24e",
-    "photo-1519452575417-564c1401ecc0", "photo-1573164713988-8665fc963095",
-    "photo-1554224155-6726b3ff858f", "photo-1573855619003-97b4799dcd8b",
-    "photo-1454165804606-c3d57bc86b40", "photo-1467232004584-a241de8bcf5d",
-    "photo-1504868584819-f8e8b4b6d7e3",
+    {"site": "unsplash", "ref": "photo-1504384308090-c894fdcc538d"},
+    {"site": "unsplash", "ref": "photo-1451187580459-43490279c0fa"},
+    {"site": "unsplash", "ref": "photo-1486312338219-ce68d2c6f44d"},
+    {"site": "unsplash", "ref": "photo-1550751827-4bd374c3f58b"},
+    {"site": "unsplash", "ref": "photo-1563770660941-20978e870e26"},
+    {"site": "unsplash", "ref": "photo-1581091226825-a6a2a5aee158"},
+    {"site": "unsplash", "ref": "photo-1620712943543-bcc4688e7485"},
+    {"site": "unsplash", "ref": "photo-1677442136019-21780ecad995"},
+    {"site": "unsplash", "ref": "photo-1531297484001-80022131f5a1"},
+    {"site": "unsplash", "ref": "photo-1518770660439-4636190af475"},
+    {"site": "unsplash", "ref": "photo-1555617981-dac3880eac6e"},
+    {"site": "unsplash", "ref": "photo-1519389950473-47ba0277781c"},
+    {"site": "unsplash", "ref": "photo-1526374965328-7f61d4dc18c5"},
+    {"site": "unsplash", "ref": "photo-1551288049-bebda4e38f71"},
+    {"site": "unsplash", "ref": "photo-1569012871812-f38ee64cd54c"},
+    {"site": "unsplash", "ref": "photo-1580757468214-c73f7062a5cb"},
+    {"site": "unsplash", "ref": "photo-1526628953301-3e589a6a8b74"},
+    {"site": "unsplash", "ref": "photo-1498050108023-c5249f4df085"},
+    {"site": "unsplash", "ref": "photo-1461749280684-dccba630e2f6"},
+    {"site": "unsplash", "ref": "photo-1555066931-4365d14bab8c"},
+    {"site": "unsplash", "ref": "photo-1544197150-b99a580bb7a8"},
+    {"site": "unsplash", "ref": "photo-1523287562758-66c7fc58967f"},
+    {"site": "unsplash", "ref": "photo-1527430253228-e93688616381"},
+    {"site": "unsplash", "ref": "photo-1635070041078-e363dbe005cb"},
+    {"site": "unsplash", "ref": "photo-1622979135225-d2ba269cf1ac"},
+    {"site": "unsplash", "ref": "photo-1521737852567-6949f3f9f2b5"},
+    {"site": "unsplash", "ref": "photo-1551650975-87deedd944c3"},
+    {"site": "unsplash", "ref": "photo-1535378620166-273708d44e4c"},
+    {"site": "unsplash", "ref": "photo-1542831371-29b0f74f9713"},
+    {"site": "unsplash", "ref": "photo-1564865878688-9a244444042a"},
+    {"site": "unsplash", "ref": "photo-1460925895917-afdab827c52f"},
+    {"site": "unsplash", "ref": "photo-1558591710-4b4a1ae0f04d"},
+    {"site": "unsplash", "ref": "photo-1560958089-b8a1929cea89"},
+    {"site": "unsplash", "ref": "photo-1593642632823-8f785ba67e45"},
+    {"site": "unsplash", "ref": "photo-1517420704952-d9f39e95b43e"},
+    {"site": "unsplash", "ref": "photo-1607252650355-f7fd0460ccdb"},
+    {"site": "unsplash", "ref": "photo-1639762681485-074b7f938ba0"},
+    {"site": "unsplash", "ref": "photo-1620714223084-8fcacc6dfd8d"},
+    {"site": "unsplash", "ref": "photo-1516321318423-f06f85e504b3"},
+    {"site": "unsplash", "ref": "photo-1487058792275-0ad4aaf24ca7"},
+    {"site": "unsplash", "ref": "photo-1537432376769-00f5c2f4c8d2"},
+    {"site": "unsplash", "ref": "photo-1543286386-713bdd548da4"},
+    {"site": "unsplash", "ref": "photo-1535223289827-42f1e9919769"},
+    {"site": "unsplash", "ref": "photo-1581291518857-4e27b48ff24e"},
+    {"site": "unsplash", "ref": "photo-1519452575417-564c1401ecc0"},
+    {"site": "unsplash", "ref": "photo-1573164713988-8665fc963095"},
+    {"site": "unsplash", "ref": "photo-1554224155-6726b3ff858f"},
+    {"site": "unsplash", "ref": "photo-1573855619003-97b4799dcd8b"},
+    {"site": "unsplash", "ref": "photo-1454165804606-c3d57bc86b40"},
+    {"site": "unsplash", "ref": "photo-1467232004584-a241de8bcf5d"},
+    {"site": "unsplash", "ref": "photo-1504868584819-f8e8b4b6d7e3"},
+    {"site": "pexels", "ref": "18840864"},
+    {"site": "pexels", "ref": "31668532"},
+    {"site": "pexels", "ref": "28295995"},
+    {"site": "pexels", "ref": "1746234"},
+    {"site": "pexels", "ref": "26886211"},
+    {"site": "pexels", "ref": "16388475"},
+    {"site": "pexels", "ref": "32830796"},
+    {"site": "pexels", "ref": "10043140"},
+    {"site": "pexels", "ref": "36035572"},
+    {"site": "pexels", "ref": "28570244"},
+    {"site": "pexels", "ref": "9146318"},
+    {"site": "pexels", "ref": "29842165"},
+    {"site": "pexels", "ref": "3378320"},
+    {"site": "pexels", "ref": "844212"},
+    {"site": "pexels", "ref": "326999"},
+    {"site": "pexels", "ref": "37916686"},
+    {"site": "pexels", "ref": "33959311"},
+    {"site": "pexels", "ref": "154484"},
+    {"site": "pexels", "ref": "26545607"},
+    {"site": "pexels", "ref": "10300074"},
+    {"site": "pexels", "ref": "17229912"},
+    {"site": "pexels", "ref": "9309801"},
+    {"site": "pexels", "ref": "7090811"},
+    {"site": "pexels", "ref": "20843797"},
+    {"site": "pexels", "ref": "6849089"},
+    {"site": "pexels", "ref": "30194589"},
+    {"site": "pexels", "ref": "11481064"},
+    {"site": "pexels", "ref": "37235391"},
+    {"site": "pexels", "ref": "30828046"},
+    {"site": "pexels", "ref": "30058838"},
+    {"site": "pexels", "ref": "32962209"},
+    {"site": "pexels", "ref": "9683482"},
+    {"site": "pexels", "ref": "28638251"},
+    {"site": "pexels", "ref": "12617517"},
+    {"site": "pexels", "ref": "16347735"},
+    {"site": "pexels", "ref": "8983684"},
+    {"site": "pexels", "ref": "18124248"},
+    {"site": "pexels", "ref": "32968828"},
+    {"site": "pexels", "ref": "3546499"},
+    {"site": "pexels", "ref": "10914950"},
+    {"site": "pexels", "ref": "38263378"},
+    {"site": "pexels", "ref": "31139390"},
+    {"site": "pexels", "ref": "6829990"},
+    {"site": "pexels", "ref": "29657077"},
+    {"site": "pexels", "ref": "38350360"},
+    {"site": "pexels", "ref": "28854377"},
+    {"site": "pexels", "ref": "11103626"},
+    {"site": "pexels", "ref": "35750176"},
+    {"site": "pexels", "ref": "35694597"},
+    {"site": "pexels", "ref": "18313276"},
 ]
 
 
@@ -66,10 +158,11 @@ def _save_used(used):
 
 
 def pick_images(aid=None):
-    """从池中随机取 3 张（正文2+封面1），排除已用图并记录。"""
+    """从池中随机取 3 张（正文2+封面1），排除已用图并记录。
+    返回 {"body": [url1, url2], "cover": url, "items": [item1, item2, item3]}。"""
     used = _load_used()
     used_ids = set(used.get("used_ids", []))
-    avail = [i for i in IMAGE_POOL if i not in used_ids]
+    avail = [i for i in IMAGE_POOL if _img_key(i) not in used_ids]
     if len(avail) < 3:
         used_ids = set()
         used["used_ids"] = []
@@ -77,11 +170,14 @@ def pick_images(aid=None):
         avail = list(IMAGE_POOL)
     random.shuffle(avail)
     picks = avail[:3]
-    used["used_ids"] = sorted(used_ids | set(picks))
+    keys = [_img_key(i) for i in picks]
+    used["used_ids"] = sorted(used_ids | set(keys))
     if aid is not None:
-        used["articles"][str(aid)] = picks
+        used["articles"][str(aid)] = keys
     _save_used(used)
-    return picks
+    return {"body": [_img_url(picks[0], "body"), _img_url(picks[1], "body")],
+            "cover": _img_url(picks[2], "cover"),
+            "items": picks}
 
 
 def _llm(messages, max_tokens=12000):
@@ -200,11 +296,11 @@ def build_cover_path(category):
 
 def run(prompt):
     gen = generate(prompt)
-    picks = pick_images()
-    gen["body"] = (gen["body"].replace("IMAGE1", IMG_BASE.format(picks[0]))
-                   .replace("IMAGE2", IMG_BASE.format(picks[1])))
+    imgs = pick_images()
+    gen["body"] = (gen["body"].replace("IMAGE1", imgs["body"][0])
+                   .replace("IMAGE2", imgs["body"][1]))
     cover_path = build_cover_path(gen["category"])
-    _download_cover(COVER_BASE.format(picks[2]), cover_path)
+    _download_cover(imgs["cover"], cover_path)
 
     os.makedirs(ARTICLES_DIR, exist_ok=True)
     article_file = os.path.join(ARTICLES_DIR,
@@ -227,14 +323,15 @@ def run(prompt):
         })
         item["title"] = sensitive.optimize_text(gen["title"], sensitive.check(gen["title"]), "标题") or gen["title"]
         item["summary"] = sensitive.optimize_text(gen["summary"], sensitive.check(gen["summary"]), "摘要") or gen["summary"]
+        opt_body = sensitive.optimize_text(gen["body"], hits, "正文") or gen["body"]
         with open(article_file, "w", encoding="utf-8") as f:
-            f.write("# " + item["title"] + "\n\n" + sensitive.optimize_text(gen["body"], hits, "正文"))
+            f.write("# " + item["title"] + "\n\n" + opt_body)
         gen["title"] = item["title"]
 
     result = publish_one(token, item)
     if result.get("status") == "published" and result.get("article_id"):
         used = _load_used()
-        used["articles"][str(result["article_id"])] = picks
+        used["articles"][str(result["article_id"])] = [_img_key(i) for i in imgs["items"]]
         _save_used(used)
     return gen, result, cover_path
 

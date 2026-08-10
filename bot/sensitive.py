@@ -102,11 +102,17 @@ def optimize_text(text, hits, role="正文"):
         "请改写该" + role + "，保留原意与结构，去掉/替换所有敏感表达，"
         "输出改写后的完整文本，不要输出任何其他说明。\n\n" + text
     )
-    out = _llm([
-        {"role": "system", "content": "你是内容安全编辑，输出仅为改写后的文本。"},
-        {"role": "user", "content": prompt},
-    ])
-    return out.strip()
+    try:
+        out = _llm([
+            {"role": "system", "content": "你是内容安全编辑，输出仅为改写后的文本。"},
+            {"role": "user", "content": prompt},
+        ])
+    except Exception:
+        return text
+    out = out.strip()
+    if not out:
+        return text
+    return out
 
 
 def log_record(record):
