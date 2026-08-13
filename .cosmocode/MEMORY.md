@@ -107,6 +107,16 @@ Agent 在任务执行过程中发现的条目应遵循以下格式：
   - 样式：interactive 卡片，日报蓝色 / 周报绿色 header；文章表现用 `column_set` 表格（# / 标题[超链接] / 浏览-互动），标题链接格式 `https://openlab.cosmoplat.com/article-detils?id={id}&articleType=0`；综合评分按 85/70 分档着色（绿/橙/红）
   - 所有定时任务清单见 `bot/SCHEDULE.md`；分类名映射以 `GET /api/cate/list` 返回为准（id 含 -1 工业操作系统、-2 数据要素）
 
+[定时发布排期与计划生成机制]
+- Date: 2026-08-13
+- Context: 用户要求每天保持 4 篇定时发文；8-8 后定时发布曾因计划池耗尽（gen_plan 扩展点未实现）停摆，已修复
+- Category: 运维部署
+- Instructions:
+  - 每天定时发布 4 篇，时段 09:00/12:00/15:00/18:00，未来 3 天计划由 bot/gen_plan.py 自动补足（gen_plan.py 的 PUBLISH_TIMES/DAILY_COUNT 配置）
+  - gen_plan.py：按 17 分类选题池用 LLM 生成标题/摘要/正文，复用 one_shot 主题图池配图+封面，写入 plan.json（status=pending）；封面下载失败自动换图重试（Unsplash 个别图已失效 404）
+  - runner.py 每天 6 点调用 gen_plan.py 补足计划；到点由 runner 触发 publish.py 发布并登记台账
+  - 调整排期配置后需清理 plan.json 中旧时段 pending 条目再重新生成，避免单日超过设定篇数
+
 [不合格文章自动优化流程]
 - Date: 2026-08-10
 - Context: 用户要求评分<60的bot文章自动执行AI优化并重新评分直至达标

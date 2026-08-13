@@ -12,9 +12,9 @@ ARTICLES_DIR = os.path.join(ROOT, "bot-articles")
 sys.path.insert(0, BOT_DIR)
 import one_shot as osx  # noqa: E402
 
-PUBLISH_TIMES = ["10:00", "16:00"]
+PUBLISH_TIMES = ["09:00", "12:00", "15:00", "18:00"]
 LOOKAHEAD_DAYS = 3
-DAILY_COUNT = 2
+DAILY_COUNT = 4
 
 TOPICS = {
     "人工智能": ["大模型推理成本下降对产业的影响", "多模态大模型在工业场景的落地", "AI Agent 重塑企业工作流",

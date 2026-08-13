@@ -49,29 +49,159 @@
       "detail_url": "https://openlab.cosmoplat.com/article-detils?id=35180&articleType=0"
     },
     {
-      "time": "2026-08-14 10:00",
-      "title": "90%的人选工业相机先看错了参数",
-      "category": "机器视觉",
-      "file": "/workspace/bot-articles/scheduled-20260813104445-827.md",
-      "summary": "工业相机选型时，像素不是第一指标。很多人花大价钱买高像素相机，却因忽略快门类型、传感器靶面尺寸和接口带宽，导致运动拖影、边缘暗角或传输丢帧。本文从产线真实需求出发，讲清工业相机的核心参数取舍，并给出从测量精度反向推导选型清单的方法，帮你避开常见陷阱，把钱花在刀刃上。",
+      "time": "2026-08-14 09:00",
+      "title": "私有化部署让模型微调成本骤降七成",
+      "category": "人工智能",
+      "file": "/workspace/bot-articles/scheduled-20260813174120-717.md",
+      "summary": "大模型微调动辄数十万GPU成本，数据安全更是悬顶之剑。本文基于真实项目，拆解私有化部署下的微调全流程：从LoRA参数高效微调到vLLM推理加速，最终让单次训练成本下降70%，同时推理延迟压至50毫秒内。适合技术决策者与AI工程师。",
       "images": [
-        "https://images.unsplash.com/photo-1516937941344-00b4e0337589?w=800&q=80",
-        "https://images.unsplash.com/photo-1639762681057-408e52192e55?w=800&q=80"
+        "https://images.unsplash.com/photo-1639762681485-074b7f938ba0?w=800&q=80",
+        "https://images.unsplash.com/photo-1551434678-e076c223a692?w=800&q=80"
       ],
-      "cover": "/workspace/bot/covers/机器视觉/cover1.jpg",
+      "cover": "/workspace/bot/covers/人工智能/cover5.jpg",
       "status": "pending"
     },
     {
-      "time": "2026-08-14 16:00",
-      "title": "算力不够用其实是调度不够聪明",
-      "category": "云计算",
-      "file": "/workspace/bot-articles/scheduled-20260813104639-801.md",
-      "summary": "GPU集群利用率长期不足50%，业务高峰却不断扩容——问题不在算力总量，而在调度逻辑。文章拆解从集中式分配走向智能协同的关键跃迁：AI驱动的动态编排、算力路由与全域调度，以及可观测性建设。读完你会理解为什么说“调度比算力更值钱”，并获得一条可落地的优化路径。",
+      "time": "2026-08-14 12:00",
+      "title": "从切片到确定性，工业网络要的是准时而非高速",
+      "category": "网络",
+      "file": "/workspace/bot-articles/scheduled-20260813174245-947.md",
+      "summary": "5G网络切片能隔离带宽，却给不出毫秒级时延下界，工业控制要的不是“快”而是“准”。很多工程师把切片当成确定性网络的替代品，结果在运动控制中碰壁。本文对比二者本质差异，剖析TSN/DetNet如何把网络行为变成可控承诺，并结合3GPP R16架构给出融合落地路径。读完后，你会知道下一步该从哪条产线开始动手。",
       "images": [
-        "https://images.unsplash.com/photo-1555664424-778a1e5e1b48?w=800&q=80",
-        "https://images.unsplash.com/photo-1531403009284-440f080d1e12?w=800&q=80"
+        "https://images.unsplash.com/photo-1558494949-4314304c7b42?w=800&q=80",
+        "https://images.unsplash.com/photo-1535223289827-42f1e9919769?w=800&q=80"
       ],
-      "cover": "/workspace/bot/covers/云计算/cover1.jpg",
+      "cover": "/workspace/bot/covers/网络/cover1.jpg",
+      "status": "pending"
+    },
+    {
+      "time": "2026-08-14 15:00",
+      "title": "算力下沉产线，数据不必再绕道云端",
+      "category": "边缘计算",
+      "file": "/workspace/bot-articles/scheduled-20260813174420-874.md",
+      "summary": "产线上的质检、控制、预测性维护，依赖云端计算往往面临高延迟、网络抖动和数据安全风险。把算力放到产线旁边，正成为制造业数字化转型的关键一步。本文剖析产线级边缘算力的核心价值、落地挑战与云边协同路径，帮助读者理解如何在工业现场实现毫秒级响应与高可靠运行，为实际部署提供可参考的决策逻辑。",
+      "images": [
+        "https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=800&q=80",
+        "https://images.unsplash.com/photo-1607252650355-f7fd0460ccdb?w=800&q=80"
+      ],
+      "cover": "/workspace/bot/covers/边缘计算/cover1.jpg",
+      "status": "pending"
+    },
+    {
+      "time": "2026-08-14 18:00",
+      "title": "柔性生产为何总在个性化定制上翻车？",
+      "category": "智能制造",
+      "file": "/workspace/bot-articles/scheduled-20260813174726-402.md",
+      "summary": "个性化需求爆发让柔性生产炙手可热，但盲目改造产线往往陷入“越柔性越亏损”的窘境。文章拆解柔性生产落地的三大关键：模块化设计降低复杂度、实时数据调度提升响应速度、延迟策略平衡成本与个性，并结合汽车、电子行业案例给出从瓶颈工序入手的实操路径，助力制造企业真正实现小批量多品种盈利。",
+      "images": [
+        "https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?w=800&q=80",
+        "https://images.unsplash.com/photo-1581092160562-40aa08e78837?w=800&q=80"
+      ],
+      "cover": "/workspace/bot/covers/智能制造/cover6.jpg",
+      "status": "pending"
+    },
+    {
+      "time": "2026-08-15 09:00",
+      "title": "工业物联网连接数翻倍，仅两成数据产生价值",
+      "category": "物联网",
+      "file": "/workspace/bot-articles/scheduled-20260813175011-381.md",
+      "summary": "工业物联网连接数高速增长，但数据利用率低、平台孤岛问题突出。本文分析连接数暴增背后的结构性矛盾，指出“连接”本身不是目的，提出从数据治理、边缘计算和互操作性切入的落地路径，帮助企业把连接数增长转化为实际收益。",
+      "images": [
+        "https://images.unsplash.com/photo-1587049352846-4a222e784d38?w=800&q=80",
+        "https://images.unsplash.com/photo-1467232004584-a241de8bcf5d?w=800&q=80"
+      ],
+      "cover": "/workspace/bot/covers/物联网/cover1.jpg",
+      "status": "pending"
+    },
+    {
+      "time": "2026-08-15 12:00",
+      "title": "AI Agent 让流程快三倍，但数据孤岛先得解决",
+      "category": "人工智能",
+      "file": "/workspace/bot-articles/scheduled-20260813175455-897.md",
+      "summary": "企业流程冗长、响应迟缓，AI Agent 正把审批时间从48小时压缩到4小时。但很多企业导入后卡在数据孤岛与流程碎片化上，收益远低于预期。本文用真实场景拆解 AI Agent 的决策机制，剖析落地陷阱，并给出从试点到规模化应用的具体路径，帮助你在下一轮效率竞赛中不掉队。",
+      "images": [
+        "https://images.unsplash.com/photo-1537432376769-00f5c2f4c8d2?w=800&q=80",
+        "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&q=80"
+      ],
+      "cover": "/workspace/bot/covers/人工智能/cover6.jpg",
+      "status": "pending"
+    },
+    {
+      "time": "2026-08-15 15:00",
+      "title": "云上HPC成本账 算力单价跌了总账涨三倍",
+      "category": "云计算",
+      "file": "/workspace/bot-articles/scheduled-20260813175756-204.md",
+      "summary": "云上高性能计算看似按需付费，但算力成本仅占整体账单的六成。存储访问、数据出站、资源空转才是真正的隐性开支。本文从实例选型、数据流转、竞价实例和调度管理四个维度拆解云上HPC的真实成本构成，梳理可落地的优化手段，帮助你在享受弹性算力的同时，不让月底账单失控。",
+      "images": [
+        "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=800&q=80",
+        "https://images.unsplash.com/photo-1518770660439-4636190af475?w=800&q=80"
+      ],
+      "cover": "/workspace/bot/covers/云计算/cover2.jpg",
+      "status": "pending"
+    },
+    {
+      "time": "2026-08-15 18:00",
+      "title": "七成数据在沉睡 万亿市场卡在确权难",
+      "category": "数据要素",
+      "file": "/workspace/bot-articles/scheduled-20260813175914-117.md",
+      "summary": "政策热炒数年，数据交易却雷声大雨点小。七成数据资产沉睡在服务器里，确权模糊、定价无标、流通受阻成为三大症结。本文基于多地交易所实操案例，拆解数据要素从资源到资产的四道关卡，指出隐私计算与数据空间带来的破局可能，并给出企业参与市场化的现实路径。",
+      "images": [
+        "https://images.unsplash.com/photo-1593642532744-d377ab507dc8?w=800&q=80",
+        "https://images.unsplash.com/photo-1590959651373-a3db0f38a961?w=800&q=80"
+      ],
+      "cover": "/workspace/bot/covers/数据要素/cover2.jpg",
+      "status": "pending"
+    },
+    {
+      "time": "2026-08-16 09:00",
+      "title": "中间件治理失控，就用3个维度自救",
+      "category": "中间件",
+      "file": "/workspace/bot-articles/scheduled-20260813180224-986.md",
+      "summary": "微服务规模越滚越大，中间件却成了事故重灾区：配置散落、版本不一、故障连环爆炸。本文结合一线实践，提出从架构标准、平台能力、流程闭环三大维度构建治理体系，帮助团队把中间件从“定时炸弹”变成稳定底座，降低故障率，提升交付节奏。",
+      "images": [
+        "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=800&q=80",
+        "https://images.unsplash.com/photo-1542831371-29b0f74f9713?w=800&q=80"
+      ],
+      "cover": "/workspace/bot/covers/中间件/cover1.jpg",
+      "status": "pending"
+    },
+    {
+      "time": "2026-08-16 12:00",
+      "title": "大模型进厂七成POC烂尾",
+      "category": "智能制造",
+      "file": "/workspace/bot-articles/scheduled-20260813180340-260.md",
+      "summary": "大模型在办公室能写诗，一进工厂就失灵。数据脏乱差、算力实时性受限、老师傅不信任、ROI算不清，四道坎让七成项目止步于POC。本文基于一线实践案例，拆解大模型进厂的真实阻力，并从场景选择、大小模型协同与组织信任三个维度给出落地路径，帮助你在立项前避开深坑。",
+      "images": [
+        "https://images.unsplash.com/photo-1569012871812-f38ee64cd54c?w=800&q=80",
+        "https://images.unsplash.com/photo-1531297484001-80022131f5a1?w=800&q=80"
+      ],
+      "cover": "/workspace/bot/covers/智能制造/cover7.jpg",
+      "status": "pending"
+    },
+    {
+      "time": "2026-08-16 15:00",
+      "title": "70%边缘算力闲置 调度器破局实战",
+      "category": "边缘计算",
+      "file": "/workspace/bot-articles/scheduled-20260813180459-884.md",
+      "summary": "边缘节点的算力规模已超过数据中心，但实际利用率却常年徘徊在20%～30%。资源碎片化、可预测性差、调度迟滞，让传统算法在边缘失效。文章从边缘资源调度现状出发，剖析失败根源，结合KubeEdge、Volcano等开源机制，提出一套分层的动态调度策略，并给出可直接落地的优化清单，帮你在不换硬件的情况下榨干边缘算力。",
+      "images": [
+        "https://images.unsplash.com/photo-1551650975-87deedd944c3?w=800&q=80",
+        "https://images.unsplash.com/photo-1555949963-aa79dcee981c?w=800&q=80"
+      ],
+      "cover": "/workspace/bot/covers/边缘计算/cover2.jpg",
+      "status": "pending"
+    },
+    {
+      "time": "2026-08-16 18:00",
+      "title": "工业OS 七成平台化项目死于POC之后",
+      "category": "工业操作系统",
+      "file": "/workspace/bot-articles/scheduled-20260813180726-774.md",
+      "summary": "很多制造企业把工业操作系统的平台化当成软件选型，结果陷入POC成功、推广失败的怪圈。文章从控制权重构、技术碎片化、数据治理和生态边界四个维度拆解平台化失败的深层原因，并给出分阶段落地的路线图，帮助企业避开“大平台、空转、死平台”的陷阱。",
+      "images": [
+        "https://images.unsplash.com/photo-1532073150508-0c1df022bdd1?w=800&q=80",
+        "https://images.unsplash.com/photo-1587620962725-abab7fe55159?w=800&q=80"
+      ],
+      "cover": "/workspace/bot/covers/工业操作系统/cover1.jpg",
       "status": "pending"
     }
   ]
