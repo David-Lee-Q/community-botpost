@@ -103,7 +103,14 @@ def main():
         if now.hour == 6 and last_plan_day != now.date().isoformat():
             last_plan_day = now.date().isoformat()
             log("6点已到，生成新一批计划")
-            # 扩展点：调用 gen_plan 生成新计划并补充文章
+            gen_plan = os.path.join(BOT_DIR, "gen_plan.py")
+            if os.path.exists(gen_plan):
+                gp = subprocess.run([sys.executable, gen_plan],
+                                    capture_output=True, text=True, timeout=3600)
+                if gp.returncode != 0:
+                    log("gen_plan.py 失败: " + gp.stderr[-500:])
+                else:
+                    log(gp.stdout.strip())
             # 每周一 6 点更新综合评分（评分周期为上一完整周）
             if now.weekday() == 0:
                 score_week = now.date().isoformat()

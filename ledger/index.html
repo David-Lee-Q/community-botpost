@@ -3,6 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#2f6fed">
+<link rel="icon" type="image/png" href="icon.png">
+<link rel="icon" type="image/x-icon" href="/favicon.ico">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
 <title>社区内容自运营智能体</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <style>
@@ -178,7 +182,7 @@
     <div style="max-height:520px;overflow:auto">
       <table>
         <thead><tr>
-          <th>标题</th><th>分类</th><th>发布时间</th><th>状态</th><th>评价</th>
+          <th>标题</th><th>分类</th><th>发布时间</th><th>来源</th><th>状态</th><th>评价</th>
           <th class="num">浏览</th><th class="num">评论</th><th class="num">点赞</th><th class="num">收藏</th><th>操作</th>
         </tr></thead>
         <tbody id="tbody"></tbody>
@@ -259,6 +263,7 @@ let ARTICLES = [];
 let REVIEWS = {};
 let SCORE = null;
 let SCORES = {};
+let POSTS = {};
 let filtered = [];
 let page = 1;
 let charts = {};
@@ -607,10 +612,14 @@ function renderTable() {
     if (status === '已发布') opCell += `<button class="opt-btn" onclick="openOpt(${a.id})">优化</button>`;
     if (SCORES[String(a.id)] && SCORES[String(a.id)].length) opCell += `<button class="opt-btn hist" onclick="openHist(${a.id})">历史</button>`;
     opCell += '</td>';
+    const srcMeta = POSTS[String(a.id)];
+    const srcTxt = srcMeta ? (srcMeta.source || '手动') : '—';
+    const srcCls = srcTxt === '定时发文' ? 'tag g' : srcTxt === '发一篇' ? 'tag o' : 'tag';
     tr.innerHTML = `
       <td class="title"><a href="${link}" target="_blank">${escapeHtml(a.title || '')}</a></td>
       <td><span class="tag">${escapeHtml(a.cateName || '未分类')}</span></td>
       <td>${escapeHtml(a.createTime || '')}</td>
+      <td><span class="${srcCls}">${escapeHtml(srcTxt)}</span></td>
       <td><span class="tag">${status}</span></td>
       ${evalCell}
       <td class="num">${fmtNum(a.viewCount)}</td>
@@ -695,19 +704,21 @@ Promise.all([
   fetch('data/articles.json').then(r => r.json()),
   fetch('data/reviews.json').then(r => r.json()).catch(() => ({})),
   fetch('data/bot_score.json').then(r => r.json()).catch(() => null),
-  fetch('data/article_scores.json').then(r => r.json()).catch(() => ({}))
+  fetch('data/article_scores.json').then(r => r.json()).catch(() => ({})),
+  fetch('data/bot_posts.json').then(r => r.json()).catch(() => ({}))
 ])
-  .then(([json, reviews, score, scores]) => {
+  .then(([json, reviews, score, scores, posts]) => {
     REVIEWS = reviews || {};
     SCORE = score || null;
     SCORES = scores || {};
+    POSTS = posts || {};
     parseData(json);
     renderScore();
     document.getElementById('sub').textContent = `账号 ${json.memberId} · 共 ${json.total} 篇文章 · 数据更新 ${json.updatedAt}`;
   })
   .catch(e => {
     document.getElementById('sub').textContent = '数据加载失败: ' + e.message;
-    document.getElementById('tbody').innerHTML = `<tr><td colspan="10">数据加载失败</td></tr>`;
+    document.getElementById('tbody').innerHTML = `<tr><td colspan="11">数据加载失败</td></tr>`;
   });
 
 (function () {

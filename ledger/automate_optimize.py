@@ -35,6 +35,8 @@ def candidates():
     posts = load_posts()
     out = []
     for aid in posts:
+        if posts[str(aid)].get("source") == "手动":
+            continue
         rv = reviews.get(str(aid))
         if rv and rv.get("auto") and (rv.get("score") or 0) < PASS_SCORE:
             out.append((str(aid), posts[str(aid)], rv))

@@ -47,6 +47,32 @@
       "status": "published",
       "article_id": 35180,
       "detail_url": "https://openlab.cosmoplat.com/article-detils?id=35180&articleType=0"
+    },
+    {
+      "time": "2026-08-14 10:00",
+      "title": "90%的人选工业相机先看错了参数",
+      "category": "机器视觉",
+      "file": "/workspace/bot-articles/scheduled-20260813104445-827.md",
+      "summary": "工业相机选型时，像素不是第一指标。很多人花大价钱买高像素相机，却因忽略快门类型、传感器靶面尺寸和接口带宽，导致运动拖影、边缘暗角或传输丢帧。本文从产线真实需求出发，讲清工业相机的核心参数取舍，并给出从测量精度反向推导选型清单的方法，帮你避开常见陷阱，把钱花在刀刃上。",
+      "images": [
+        "https://images.unsplash.com/photo-1516937941344-00b4e0337589?w=800&q=80",
+        "https://images.unsplash.com/photo-1639762681057-408e52192e55?w=800&q=80"
+      ],
+      "cover": "/workspace/bot/covers/机器视觉/cover1.jpg",
+      "status": "pending"
+    },
+    {
+      "time": "2026-08-14 16:00",
+      "title": "算力不够用其实是调度不够聪明",
+      "category": "云计算",
+      "file": "/workspace/bot-articles/scheduled-20260813104639-801.md",
+      "summary": "GPU集群利用率长期不足50%，业务高峰却不断扩容——问题不在算力总量，而在调度逻辑。文章拆解从集中式分配走向智能协同的关键跃迁：AI驱动的动态编排、算力路由与全域调度，以及可观测性建设。读完你会理解为什么说“调度比算力更值钱”，并获得一条可落地的优化路径。",
+      "images": [
+        "https://images.unsplash.com/photo-1555664424-778a1e5e1b48?w=800&q=80",
+        "https://images.unsplash.com/photo-1531403009284-440f080d1e12?w=800&q=80"
+      ],
+      "cover": "/workspace/bot/covers/云计算/cover1.jpg",
+      "status": "pending"
     }
   ]
 }
