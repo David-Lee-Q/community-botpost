@@ -109,7 +109,8 @@
   .plan-next td { background: #f8faff; }
   .num { text-align: right; color: var(--muted); }
   .pager { display: flex; justify-content: center; gap: 8px; margin-top: 14px; align-items: center; }
-  .commit-toggle { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: var(--muted); margin-bottom: 8px; cursor: pointer; }
+  .commit-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+  .commit-toggle { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: var(--muted); cursor: pointer; }
   .pager button { padding: 6px 14px; border: 1px solid var(--border); border-radius: 6px; background: #fff; cursor: pointer; font-size: 13px; }
   .pager button:disabled { opacity: .4; cursor: not-allowed; }
   .pager span { font-size: 13px; color: var(--muted); }
@@ -279,8 +280,10 @@
   <div class="modal">
     <span class="close" id="commitClose">&times;</span>
     <h3>版本记录</h3>
-    <div class="meta" id="commitMeta">按时间倒序</div>
-    <label class="commit-toggle"><input type="checkbox" id="commitFeatOnly" checked> 仅显示 feat 变更</label>
+    <div class="commit-bar">
+      <span class="meta" id="commitMeta">按时间倒序</span>
+      <label class="commit-toggle"><input type="checkbox" id="commitFeatOnly" checked> 仅显示 feat 变更</label>
+    </div>
     <div id="commitList" style="max-height: 52vh; overflow: auto;"></div>
   </div>
 </div>
