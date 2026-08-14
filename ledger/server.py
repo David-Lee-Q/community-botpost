@@ -132,7 +132,7 @@ class Handler(http.server.SimpleHTTPRequestHandler):
             try:
                 out = subprocess.run(
                     ["git", "-C", ROOT, "log", "--pretty=format:%h|%ad|%s",
-                     "--date=format:%Y-%m-%d %H:%M", "-n", "60"],
+                     "--date=format:%Y-%m-%d %H:%M"],
                     capture_output=True, text=True, timeout=10,
                 ).stdout
                 for line in out.splitlines():
@@ -141,7 +141,7 @@ class Handler(http.server.SimpleHTTPRequestHandler):
                         commits.append({"hash": parts[0], "date": parts[1], "message": parts[2]})
             except Exception:
                 commits = []
-            self._json(200, {"commits": commits})
+            self._json(200, {"commits": commits, "total": len(commits)})
             return
         if self.path.startswith("/api/article"):
             try:

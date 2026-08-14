@@ -279,7 +279,7 @@
   <div class="modal">
     <span class="close" id="commitClose">&times;</span>
     <h3>版本记录</h3>
-    <div class="meta">按时间倒序，最近 60 条提交</div>
+    <div class="meta" id="commitMeta">按时间倒序</div>
     <label class="commit-toggle"><input type="checkbox" id="commitFeatOnly" checked> 仅显示 feat 变更</label>
     <div id="commitList" style="max-height: 52vh; overflow: auto;"></div>
   </div>
@@ -1091,6 +1091,8 @@ function loadTodayPlan() {
       const r = await fetch('/api/commits');
       const d = await r.json();
       COMMITS = d.commits || [];
+      document.getElementById('commitMeta').textContent =
+        `按时间倒序，共 ${d.total != null ? d.total : COMMITS.length} 条提交`;
       renderCommits();
     } catch (e) {
       list.innerHTML = '<div class="empty">加载失败</div>';
