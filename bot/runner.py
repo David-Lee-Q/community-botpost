@@ -127,7 +127,7 @@ def main():
                             log(r4.stdout.strip())
 
         due = [it for it in plan["schedule"] if it.get("status") == "pending"
-               and it.get("time") and it["time"] <= now.strftime("%Y-%m-%d %H:%M")]
+               and it.get("time") and it["time"] <= now.strftime("%Y-%m-%d %H:%M:%S")]
         if due:
             log(f"{len(due)} 篇文章到点，开始发布")
             r = subprocess.run([sys.executable, os.path.join(BOT_DIR, "publish.py")],

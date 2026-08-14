@@ -12,9 +12,9 @@ ARTICLES_DIR = os.path.join(ROOT, "bot-articles")
 sys.path.insert(0, BOT_DIR)
 import one_shot as osx  # noqa: E402
 
-PUBLISH_TIMES = ["09:00", "12:00", "15:00", "18:00"]
 LOOKAHEAD_DAYS = 3
 DAILY_COUNT = 4
+DAY_START, DAY_END = 8, 20  # 随机发布时间范围 08:00-20:00
 
 TOPICS = {
     "人工智能": ["大模型推理成本下降对产业的影响", "多模态大模型在工业场景的落地", "AI Agent 重塑企业工作流",
@@ -40,7 +40,23 @@ TOPICS = {
 
 
 def _now_str():
-    return datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
+    return datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+
+def random_times(date_str, n):
+    """在 08:00-20:00 之间生成 n 个不重复的随机时分秒，升序返回。"""
+    used = set()
+    times = []
+    while len(times) < n:
+        h = random.randint(DAY_START, DAY_END - 1)
+        m = random.randint(0, 59)
+        s = random.randint(0, 59)
+        key = (h, m, s)
+        if key in used:
+            continue
+        used.add(key)
+        times.append("%s %02d:%02d:%02d" % (date_str, h, m, s))
+    return sorted(times)
 
 
 def gen_one(direction, time_str, existing_titles):
@@ -85,13 +101,18 @@ def main():
 
     now = datetime.datetime.now()
     added = 0
+    count_by_date = {}
+    for it in schedule:
+        if it.get("status") in ("pending", "published") and it.get("time"):
+            k = it["time"][:10]
+            count_by_date[k] = count_by_date.get(k, 0) + 1
     for day in range(1, days + 1):
         d = now + datetime.timedelta(days=day)
         date_str = d.strftime("%Y-%m-%d")
-        for t in PUBLISH_TIMES[:DAILY_COUNT]:
-            time_str = f"{date_str} {t}"
-            if time_str in pending_times:
-                continue
+        need = DAILY_COUNT - count_by_date.get(date_str, 0)
+        if need <= 0:
+            continue
+        for time_str in random_times(date_str, need):
             category = random.choice(list(osx.CATEGORY_IDS.keys()))
             direction = random.choice(TOPICS[category])
             item = None

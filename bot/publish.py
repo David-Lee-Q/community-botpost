@@ -235,7 +235,7 @@ def main():
 
 def _now_str():
     import datetime
-    return datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
+    return datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
 
 if __name__ == "__main__":

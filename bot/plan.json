@@ -59,10 +59,12 @@
         "https://images.unsplash.com/photo-1551434678-e076c223a692?w=800&q=80"
       ],
       "cover": "/workspace/bot/covers/人工智能/cover5.jpg",
-      "status": "pending"
+      "status": "published",
+      "article_id": 35244,
+      "detail_url": "https://openlab.cosmoplat.com/article-detils?id=35244&articleType=0"
     },
     {
-      "time": "2026-08-14 12:00",
+      "time": "2026-08-14 12:27:20",
       "title": "从切片到确定性，工业网络要的是准时而非高速",
       "category": "网络",
       "file": "/workspace/bot-articles/scheduled-20260813174245-947.md",
@@ -72,10 +74,11 @@
         "https://images.unsplash.com/photo-1535223289827-42f1e9919769?w=800&q=80"
       ],
       "cover": "/workspace/bot/covers/网络/cover1.jpg",
-      "status": "pending"
+      "status": "pending",
+      "detail_url": null
     },
     {
-      "time": "2026-08-14 15:00",
+      "time": "2026-08-14 15:13:19",
       "title": "算力下沉产线，数据不必再绕道云端",
       "category": "边缘计算",
       "file": "/workspace/bot-articles/scheduled-20260813174420-874.md",
@@ -85,10 +88,11 @@
         "https://images.unsplash.com/photo-1607252650355-f7fd0460ccdb?w=800&q=80"
       ],
       "cover": "/workspace/bot/covers/边缘计算/cover1.jpg",
-      "status": "pending"
+      "status": "pending",
+      "detail_url": null
     },
     {
-      "time": "2026-08-14 18:00",
+      "time": "2026-08-14 15:39:35",
       "title": "柔性生产为何总在个性化定制上翻车？",
       "category": "智能制造",
       "file": "/workspace/bot-articles/scheduled-20260813174726-402.md",
@@ -98,10 +102,11 @@
         "https://images.unsplash.com/photo-1581092160562-40aa08e78837?w=800&q=80"
       ],
       "cover": "/workspace/bot/covers/智能制造/cover6.jpg",
-      "status": "pending"
+      "status": "pending",
+      "detail_url": null
     },
     {
-      "time": "2026-08-15 09:00",
+      "time": "2026-08-15 09:17:44",
       "title": "工业物联网连接数翻倍，仅两成数据产生价值",
       "category": "物联网",
       "file": "/workspace/bot-articles/scheduled-20260813175011-381.md",
@@ -111,10 +116,11 @@
         "https://images.unsplash.com/photo-1467232004584-a241de8bcf5d?w=800&q=80"
       ],
       "cover": "/workspace/bot/covers/物联网/cover1.jpg",
-      "status": "pending"
+      "status": "pending",
+      "detail_url": null
     },
     {
-      "time": "2026-08-15 12:00",
+      "time": "2026-08-15 11:39:49",
       "title": "AI Agent 让流程快三倍，但数据孤岛先得解决",
       "category": "人工智能",
       "file": "/workspace/bot-articles/scheduled-20260813175455-897.md",
@@ -124,10 +130,11 @@
         "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&q=80"
       ],
       "cover": "/workspace/bot/covers/人工智能/cover6.jpg",
-      "status": "pending"
+      "status": "pending",
+      "detail_url": null
     },
     {
-      "time": "2026-08-15 15:00",
+      "time": "2026-08-15 12:55:35",
       "title": "云上HPC成本账 算力单价跌了总账涨三倍",
       "category": "云计算",
       "file": "/workspace/bot-articles/scheduled-20260813175756-204.md",
@@ -137,10 +144,11 @@
         "https://images.unsplash.com/photo-1518770660439-4636190af475?w=800&q=80"
       ],
       "cover": "/workspace/bot/covers/云计算/cover2.jpg",
-      "status": "pending"
+      "status": "pending",
+      "detail_url": null
     },
     {
-      "time": "2026-08-15 18:00",
+      "time": "2026-08-15 18:50:51",
       "title": "七成数据在沉睡 万亿市场卡在确权难",
       "category": "数据要素",
       "file": "/workspace/bot-articles/scheduled-20260813175914-117.md",
@@ -150,10 +158,11 @@
         "https://images.unsplash.com/photo-1590959651373-a3db0f38a961?w=800&q=80"
       ],
       "cover": "/workspace/bot/covers/数据要素/cover2.jpg",
-      "status": "pending"
+      "status": "pending",
+      "detail_url": null
     },
     {
-      "time": "2026-08-16 09:00",
+      "time": "2026-08-16 08:15:01",
       "title": "中间件治理失控，就用3个维度自救",
       "category": "中间件",
       "file": "/workspace/bot-articles/scheduled-20260813180224-986.md",
@@ -163,10 +172,11 @@
         "https://images.unsplash.com/photo-1542831371-29b0f74f9713?w=800&q=80"
       ],
       "cover": "/workspace/bot/covers/中间件/cover1.jpg",
-      "status": "pending"
+      "status": "pending",
+      "detail_url": null
     },
     {
-      "time": "2026-08-16 12:00",
+      "time": "2026-08-16 08:23:08",
       "title": "大模型进厂七成POC烂尾",
       "category": "智能制造",
       "file": "/workspace/bot-articles/scheduled-20260813180340-260.md",
@@ -176,10 +186,11 @@
         "https://images.unsplash.com/photo-1531297484001-80022131f5a1?w=800&q=80"
       ],
       "cover": "/workspace/bot/covers/智能制造/cover7.jpg",
-      "status": "pending"
+      "status": "pending",
+      "detail_url": null
     },
     {
-      "time": "2026-08-16 15:00",
+      "time": "2026-08-16 11:15:23",
       "title": "70%边缘算力闲置 调度器破局实战",
       "category": "边缘计算",
       "file": "/workspace/bot-articles/scheduled-20260813180459-884.md",
@@ -189,10 +200,11 @@
         "https://images.unsplash.com/photo-1555949963-aa79dcee981c?w=800&q=80"
       ],
       "cover": "/workspace/bot/covers/边缘计算/cover2.jpg",
-      "status": "pending"
+      "status": "pending",
+      "detail_url": null
     },
     {
-      "time": "2026-08-16 18:00",
+      "time": "2026-08-16 14:07:16",
       "title": "工业OS 七成平台化项目死于POC之后",
       "category": "工业操作系统",
       "file": "/workspace/bot-articles/scheduled-20260813180726-774.md",
@@ -202,7 +214,64 @@
         "https://images.unsplash.com/photo-1587620962725-abab7fe55159?w=800&q=80"
       ],
       "cover": "/workspace/bot/covers/工业操作系统/cover1.jpg",
-      "status": "pending"
+      "status": "pending",
+      "detail_url": null
+    },
+    {
+      "time": "2026-08-17 08:03:34",
+      "title": "API网关部署的五个反直觉真相",
+      "category": "微服务",
+      "file": "/workspace/bot-articles/scheduled-20260814060128-470.md",
+      "summary": "API网关是微服务架构的流量枢纽，但配置不当会引发性能下降、安全漏洞和成本失控。本文基于生产环境半年实战，总结五个反直觉真相：超时设置、限流算法、认证转发、日志采样和压测时机。通过实测数据揭示网关延迟占比和故障场景，给出可落地的调优策略，帮助你在网关选型和运维中避免踩坑。",
+      "images": [
+        "https://images.unsplash.com/photo-1524749292158-7540c2494485?w=800&q=80",
+        "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&q=80"
+      ],
+      "cover": "/workspace/bot/covers/微服务/cover1.jpg",
+      "status": "pending",
+      "detail_url": null
+    },
+    {
+      "time": "2026-08-17 12:09:11",
+      "title": "从怀疑到真香 我用AI编程的180天",
+      "category": "编程与开发",
+      "file": "/workspace/bot-articles/scheduled-20260814060342-150.md",
+      "summary": "AI编程工具层出不穷，但盲目跟风只会让代码库雪上加霜。本文基于180天真实项目实践，剖析AI辅助开发的优与劣，揭露“看起来很美”背后的认知误区。从工具选型、代码审查到风险控制，给出可落地的建议，帮助你建立一套人机协作的流程，在提升效率的同时守住质量底线。",
+      "images": [
+        "https://images.unsplash.com/photo-1544197150-b99a580bb7a8?w=800&q=80",
+        "https://images.unsplash.com/photo-1565043666747-69f6646db940?w=800&q=80"
+      ],
+      "cover": "/workspace/bot/covers/编程与开发/cover2.jpg",
+      "status": "pending",
+      "detail_url": null
+    },
+    {
+      "time": "2026-08-17 12:10:09",
+      "title": "服务网格很成熟，普及卡在三个隐性门槛",
+      "category": "云原生",
+      "file": "/workspace/bot-articles/scheduled-20260814060633-818.md",
+      "summary": "服务网格技术早已成熟，但真正让企业停步的往往不是性能，而是团队协作与运维模型。本文通过真实场景拆解服务网格生产化过程中最容易被忽略的四个隐性门槛，给出从选型到规模化推广的路径建议，帮助你少走大多数团队都踩过的坑。",
+      "images": [
+        "https://images.unsplash.com/photo-1519452575417-564c1401ecc0?w=800&q=80",
+        "https://images.unsplash.com/photo-1555949963-aa79dcee981c?w=800&q=80"
+      ],
+      "cover": "/workspace/bot/covers/云原生/cover1.jpg",
+      "status": "pending",
+      "detail_url": null
+    },
+    {
+      "time": "2026-08-17 13:36:59",
+      "title": "万亿数据交易预期为何卡在三个死结",
+      "category": "数据要素",
+      "file": "/workspace/bot-articles/scheduled-20260814060729-625.md",
+      "summary": "数据交易写进顶层文件，市场却陷入“场外火爆、场内冷清”的怪圈。企业不是不想买，而是怕确权不清、定价没谱、出问题没人担责。本文拆解数据交易与流通的三大核心症结，给出从确权、定价到安全落地的实操路径，帮助你判断数据资产可以如何进入市场。",
+      "images": [
+        "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=800&q=80",
+        "https://images.unsplash.com/photo-1526628953301-3e589a6a8b74?w=800&q=80"
+      ],
+      "cover": "/workspace/bot/covers/数据要素/cover3.jpg",
+      "status": "pending",
+      "detail_url": null
     }
   ]
 }
