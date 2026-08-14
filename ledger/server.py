@@ -11,6 +11,7 @@ ROOT = os.path.dirname(LEDGER)
 STATUS_FILE = os.path.join(LEDGER, "data", "oneshot_status.json")
 ONE_SHOT = os.path.join(ROOT, "bot", "one_shot.py")
 OPTIMIZE = os.path.join(LEDGER, "optimize.py")
+PLAN_FILE = os.path.join(ROOT, "bot", "plan.json")
 
 sys.path.insert(0, LEDGER)
 sys.path.insert(0, os.path.join(ROOT, "bot"))
@@ -163,6 +164,14 @@ class Handler(http.server.SimpleHTTPRequestHandler):
             except (OSError, ValueError):
                 st = {"state": "none"}
             self._json(200, st)
+            return
+        if self.path.startswith("/api/plan"):
+            try:
+                with open(PLAN_FILE, encoding="utf-8") as f:
+                    plan = json.load(f)
+                self._json(200, {"ok": True, "schedule": plan.get("schedule", [])})
+            except (OSError, ValueError) as e:
+                self._json(200, {"ok": False, "error": str(e)[:300]})
             return
         super().do_GET()
 

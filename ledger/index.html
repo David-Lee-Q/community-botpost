@@ -80,6 +80,11 @@
   .tag.s { background: #fef0f0; color: #f56c6c; }
   .tag.g { background: #f0f9eb; color: #67c23a; }
   .tag.o { background: #fdf6ec; color: #e6a23c; }
+  .tag.pending { background: #fdf6ec; color: #e6a23c; }
+  .tag.ok { background: #f0f9eb; color: #67c23a; }
+  .nowrap { white-space: nowrap; }
+  .plan-done td { opacity: .65; }
+  .plan-next td { background: #f8faff; }
   .num { text-align: right; color: var(--muted); }
   .pager { display: flex; justify-content: center; gap: 8px; margin-top: 14px; align-items: center; }
   .pager button { padding: 6px 14px; border: 1px solid var(--border); border-radius: 6px; background: #fff; cursor: pointer; font-size: 13px; }
@@ -193,6 +198,19 @@
       <button id="prevBtn" disabled>上一页</button>
       <span id="pageInfo"></span>
       <button id="nextBtn">下一页</button>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h2>今日发文计划</h2>
+    <div style="max-height:360px;overflow:auto">
+      <table>
+        <thead><tr>
+          <th class="num">序号</th><th>时间</th><th>标题</th><th>分类</th><th>摘要</th><th>状态</th>
+        </tr></thead>
+        <tbody id="planBody"></tbody>
+      </table>
+      <div class="empty" id="planEmpty" style="display:none">今日无发文计划</div>
     </div>
   </div>
 </div>
@@ -715,11 +733,55 @@ Promise.all([
     parseData(json);
     renderScore();
     document.getElementById('sub').textContent = `账号 ${json.memberId} · 共 ${json.total} 篇文章 · 数据更新 ${json.updatedAt}`;
+    loadTodayPlan();
   })
   .catch(e => {
     document.getElementById('sub').textContent = '数据加载失败: ' + e.message;
     document.getElementById('tbody').innerHTML = `<tr><td colspan="11">数据加载失败</td></tr>`;
   });
+
+function todayStr() {
+  const d = new Date();
+  const p = n => String(n).padStart(2, '0');
+  return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}`;
+}
+
+function planStatus(s) {
+  if (s === 'pending') return '<span class="tag pending">待发布</span>';
+  if (s === 'published') return '<span class="tag ok">已发布</span>';
+  return '<span class="tag">' + (s || '未知') + '</span>';
+}
+
+function loadTodayPlan() {
+  const body = document.getElementById('planBody');
+  const empty = document.getElementById('planEmpty');
+  body.innerHTML = '';
+  empty.style.display = 'none';
+  fetch('/api/plan')
+    .then(r => r.json())
+    .then(data => {
+      const today = todayStr();
+      const items = (data.schedule || [])
+        .filter(it => it.time && it.time.slice(0, 10) === today)
+        .sort((a, b) => (a.time > b.time ? 1 : -1));
+      if (!items.length) { empty.style.display = 'block'; return; }
+      const rows = items.map((it, i) => {
+        const cls = it.status === 'published' ? 'done' : 'next';
+        return `<tr class="plan-${cls}">
+          <td class="num">${i + 1}</td>
+          <td class="nowrap">${(it.time || '').slice(11, 19)}</td>
+          <td>${it.title || ''}</td>
+          <td class="nowrap">${it.category || ''}</td>
+          <td style="color:var(--muted);font-size:13px">${it.summary || ''}</td>
+          <td>${planStatus(it.status)}</td>
+        </tr>`;
+      });
+      body.innerHTML = rows.join('');
+    })
+    .catch(e => {
+      body.innerHTML = `<tr><td colspan="6" style="color:var(--muted)">计划加载失败: ${e.message}</td></tr>`;
+    });
+}
 
 (function () {
   const mask = document.getElementById('oneshotMask');
