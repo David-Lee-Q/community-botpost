@@ -1078,7 +1078,7 @@ function loadTodayPlan() {
     const onlyFeat = document.getElementById('commitFeatOnly').checked;
     const items = COMMITS.filter(c => !onlyFeat || /^feat[(: ]/.test(c.message))
       .map(c =>
-        `<div class="commit-item"><span class="ch">${c.hash}</span><span class="cd">${c.date}</span><span class="cm">${escapeHtml(c.message)}</span></div>`
+        `<div class="commit-item"><span class="cd">${c.date}</span><span class="ch">${c.hash}</span><span class="cm">${escapeHtml(c.message)}</span></div>`
       ).join('');
     list.innerHTML = items || '<div class="empty">暂无记录</div>';
   }
