@@ -194,6 +194,19 @@
   </div>
 
   <div class="panel">
+    <h2>今日发文计划</h2>
+    <div style="max-height:360px;overflow:auto">
+      <table>
+        <thead><tr>
+          <th class="num">序号</th><th>状态</th><th>时间</th><th>标题</th><th>分类</th><th>摘要</th>
+        </tr></thead>
+        <tbody id="planBody"></tbody>
+      </table>
+      <div class="empty" id="planEmpty" style="display:none">今日无发文计划</div>
+    </div>
+  </div>
+
+  <div class="panel">
     <h2>发布台账明细</h2>
     <div class="filters">
       <input id="searchInput" placeholder="搜索标题关键词...">
@@ -255,19 +268,6 @@
       <button id="prevBtn" disabled>上一页</button>
       <span id="pageInfo"></span>
       <button id="nextBtn">下一页</button>
-    </div>
-  </div>
-
-  <div class="panel">
-    <h2>今日发文计划</h2>
-    <div style="max-height:360px;overflow:auto">
-      <table>
-        <thead><tr>
-          <th class="num">序号</th><th>状态</th><th>时间</th><th>标题</th><th>分类</th><th>摘要</th>
-        </tr></thead>
-        <tbody id="planBody"></tbody>
-      </table>
-      <div class="empty" id="planEmpty" style="display:none">今日无发文计划</div>
     </div>
   </div>
 </div>
