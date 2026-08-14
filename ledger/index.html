@@ -74,7 +74,23 @@
   .multi-panel { position: absolute; top: calc(100% + 4px); left: 0; z-index: 30; min-width: 170px; max-height: 250px; overflow: auto; background: #fff; border: 1px solid var(--border); border-radius: 8px; box-shadow: 0 6px 20px rgba(0,0,0,.14); padding: 8px; display: none; }
   .multi-panel label { display: flex; align-items: center; gap: 6px; padding: 3px 6px; font-size: 13px; cursor: pointer; white-space: nowrap; }
   .multi-panel .m-all { border-bottom: 1px solid var(--border); padding-bottom: 6px; margin-bottom: 4px; }
-  .date-in { flex: 0 0 auto !important; min-width: 0 !important; width: 118px; padding: 6px 4px; font-size: 12px; }
+  .cal-pop { position: absolute; top: calc(100% + 4px); left: 0; z-index: 30; width: 268px; background: #fff; border: 1px solid var(--border); border-radius: 8px; box-shadow: 0 6px 20px rgba(0,0,0,.14); padding: 10px; display: none; }
+  .cal-tabs { display: flex; gap: 6px; align-items: center; margin-bottom: 8px; }
+  .cal-tab { flex: 1; padding: 4px 0; border: 1px solid var(--border); border-radius: 6px; background: #fff; font-size: 12px; cursor: pointer; color: var(--text, #333); }
+  .cal-tab.active { background: var(--primary, #2f6fed); color: #fff; border-color: var(--primary, #2f6fed); }
+  .cal-range { flex: 1.6; font-size: 12px; color: var(--muted); text-align: right; }
+  .cal-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
+  .cal-nav { border: none; background: none; cursor: pointer; font-size: 14px; color: var(--muted); padding: 2px 7px; }
+  .cal-title { font-size: 13px; font-weight: 600; }
+  .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; }
+  .cal-dow { font-size: 11px; color: var(--muted); text-align: center; padding: 2px 0; }
+  .cal-day { border: none; background: none; font-size: 12px; padding: 5px 0; border-radius: 6px; cursor: pointer; color: var(--text, #333); }
+  .cal-day:hover { background: #eef2ff; }
+  .cal-day.sel { background: var(--primary, #2f6fed); color: #fff; }
+  .cal-day.inrange { background: #e8effd; }
+  .cal-day.blank { visibility: hidden; }
+  .cal-foot { display: flex; gap: 8px; justify-content: flex-end; margin-top: 8px; }
+  .cal-foot .fs-btn { font-size: 12px; padding: 4px 12px; }
   table { width: 100%; border-collapse: collapse; font-size: 13px; }
   th, td { padding: 10px 12px; text-align: left; border-bottom: 1px solid var(--border); white-space: nowrap; }
   th { background: #fafafa; color: var(--muted); font-weight: 600; position: sticky; top: 0; }
@@ -194,8 +210,28 @@
         <option value="week">本周</option>
         <option value="month">本月</option>
       </select>
-      <input type="date" id="dateFrom" class="date-in" title="自定义开始日期">
-      <input type="date" id="dateTo" class="date-in" title="自定义结束日期">
+      <div class="multisel" id="calWrap">
+        <button type="button" id="calBtn" class="fs-btn" title="自定义时间范围">自定义</button>
+        <div class="cal-pop" id="calPop">
+          <div class="cal-tabs">
+            <button type="button" class="cal-tab active" data-tab="from">开始</button>
+            <button type="button" class="cal-tab" data-tab="to">结束</button>
+            <span class="cal-range" id="calRange"></span>
+          </div>
+          <div class="cal-head">
+            <button type="button" class="cal-nav" data-nav="-year" title="上一年">«</button>
+            <button type="button" class="cal-nav" data-nav="-month" title="上一月">‹</button>
+            <span class="cal-title" id="calTitle"></span>
+            <button type="button" class="cal-nav" data-nav="+month" title="下一月">›</button>
+            <button type="button" class="cal-nav" data-nav="+year" title="下一年">»</button>
+          </div>
+          <div class="cal-grid" id="calGrid"></div>
+          <div class="cal-foot">
+            <button type="button" id="calClear" class="fs-btn">清空</button>
+            <button type="button" id="calDone" class="fs-btn">完成</button>
+          </div>
+        </div>
+      </div>
       <select id="srcFilter">
         <option value="">全部来源</option>
         <option value="定时发文">定时发文</option>
@@ -614,8 +650,8 @@ function applyFilters() {
   const kw = document.getElementById('searchInput').value.trim().toLowerCase();
   const period = document.getElementById('periodFilter').value;
   const src = document.getElementById('srcFilter').value;
-  const dFrom = document.getElementById('dateFrom').value;
-  const dTo = document.getElementById('dateTo').value;
+  const dFrom = calFrom;
+  const dTo = calTo;
   const now = new Date();
   const today = now.toISOString().slice(0, 10);
   const wd = (now.getDay() + 6) % 7;
@@ -735,10 +771,94 @@ document.getElementById('modalMask').addEventListener('click', e => {
 document.getElementById('searchInput').addEventListener('input', applyFilters);
 document.getElementById('periodFilter').addEventListener('change', applyFilters);
 document.getElementById('srcFilter').addEventListener('change', applyFilters);
-document.getElementById('dateFrom').addEventListener('change', applyFilters);
-document.getElementById('dateTo').addEventListener('change', applyFilters);
 document.getElementById('prevBtn').addEventListener('click', () => { page--; renderTable(); });
 document.getElementById('nextBtn').addEventListener('click', () => { page++; renderTable(); });
+
+let calFrom = '', calTo = '', calTab = 'from', calYear = 0, calMonth = 0;
+const CAL_WEEK = ['日', '一', '二', '三', '四', '五', '六'];
+
+function fmtDate(y, m, d) {
+  return `${y}-${String(m + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+}
+function updateCalBtn() {
+  document.getElementById('calBtn').textContent = (calFrom || calTo)
+    ? (calFrom ? calFrom.slice(5) : '…') + '~' + (calTo ? calTo.slice(5) : '…')
+    : '自定义';
+}
+function renderCal() {
+  document.getElementById('calTitle').textContent = `${calYear}年${calMonth + 1}月`;
+  document.querySelectorAll('.cal-tab').forEach(b => b.classList.toggle('active', b.dataset.tab === calTab));
+  document.getElementById('calRange').textContent =
+    (calFrom ? calFrom.slice(5) : '未选') + ' ~ ' + (calTo ? calTo.slice(5) : '未选');
+  const grid = document.getElementById('calGrid');
+  let html = CAL_WEEK.map(w => `<div class="cal-dow">${w}</div>`).join('');
+  const startDow = new Date(calYear, calMonth, 1).getDay();
+  const daysInMonth = new Date(calYear, calMonth + 1, 0).getDate();
+  for (let i = 0; i < startDow; i++) html += '<div class="cal-day blank"></div>';
+  for (let d = 1; d <= daysInMonth; d++) {
+    const ds = fmtDate(calYear, calMonth, d);
+    let cls = 'cal-day';
+    if (ds === calFrom || ds === calTo) cls += ' sel';
+    else if (calFrom && calTo && ds > calFrom && ds < calTo) cls += ' inrange';
+    html += `<button type="button" class="${cls}" data-date="${ds}">${d}</button>`;
+  }
+  grid.innerHTML = html;
+}
+function navCal(dir) {
+  if (dir === '-year') calYear--;
+  else if (dir === '+year') calYear++;
+  else if (dir === '-month') { calMonth--; if (calMonth < 0) { calMonth = 11; calYear--; } }
+  else { calMonth++; if (calMonth > 11) { calMonth = 0; calYear++; } }
+  renderCal();
+}
+function pickDate(ds) {
+  if (calTab === 'from') calFrom = ds;
+  else calTo = ds;
+  if (calFrom && calTo && calFrom > calTo) { const t = calFrom; calFrom = calTo; calTo = t; }
+  calTab = calTab === 'from' ? 'to' : 'from';
+  updateCalBtn();
+  applyFilters();
+  renderCal();
+}
+document.getElementById('calBtn').addEventListener('click', e => {
+  e.stopPropagation();
+  const pop = document.getElementById('calPop');
+  if (pop.style.display === 'block') { pop.style.display = 'none'; return; }
+  const ref = calFrom || calTo || '';
+  const base = ref ? new Date(ref + 'T00:00:00') : new Date();
+  calYear = base.getFullYear();
+  calMonth = base.getMonth();
+  renderCal();
+  pop.style.display = 'block';
+});
+document.querySelectorAll('.cal-tab').forEach(b => {
+  b.addEventListener('click', e => { e.stopPropagation(); calTab = b.dataset.tab; renderCal(); });
+});
+document.querySelectorAll('.cal-nav').forEach(b => {
+  b.addEventListener('click', e => { e.stopPropagation(); navCal(b.dataset.nav); });
+});
+document.getElementById('calGrid').addEventListener('click', e => {
+  const b = e.target.closest('.cal-day');
+  if (!b || b.classList.contains('blank')) return;
+  pickDate(b.dataset.date);
+});
+document.getElementById('calClear').addEventListener('click', e => {
+  e.stopPropagation();
+  calFrom = ''; calTo = '';
+  updateCalBtn();
+  applyFilters();
+  renderCal();
+});
+document.getElementById('calDone').addEventListener('click', e => {
+  e.stopPropagation();
+  document.getElementById('calPop').style.display = 'none';
+});
+document.addEventListener('click', e => {
+  const wrap = document.getElementById('cateWrap');
+  if (!wrap.contains(e.target)) document.getElementById('catePanel').style.display = 'none';
+  const cw = document.getElementById('calWrap');
+  if (!cw.contains(e.target)) document.getElementById('calPop').style.display = 'none';
+});
 
 function onCateChange(e) {
   const cb = e.target;
