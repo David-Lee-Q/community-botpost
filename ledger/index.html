@@ -69,6 +69,13 @@
   .filters { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-bottom: 12px; }
   .filters select, .filters input { padding: 7px 10px; border: 1px solid var(--border); border-radius: 6px; font-size: 13px; background: #fff; }
   .filters input { flex: 1; min-width: 200px; }
+  .fs-btn { padding: 7px 10px; border: 1px solid var(--border); border-radius: 6px; font-size: 13px; background: #fff; cursor: pointer; }
+  .multisel { position: relative; }
+  .multi-panel { position: absolute; top: calc(100% + 4px); left: 0; z-index: 30; min-width: 170px; max-height: 250px; overflow: auto; background: #fff; border: 1px solid var(--border); border-radius: 8px; box-shadow: 0 6px 20px rgba(0,0,0,.14); padding: 8px; display: none; }
+  .multi-panel label { display: flex; align-items: center; gap: 6px; padding: 3px 6px; font-size: 13px; cursor: pointer; white-space: nowrap; }
+  .multi-panel .m-all { border-bottom: 1px solid var(--border); padding-bottom: 6px; margin-bottom: 4px; }
+  .date-in { flex: 0 0 auto !important; min-width: 0 !important; }
+  .date-sep { color: var(--muted); font-size: 12px; }
   table { width: 100%; border-collapse: collapse; font-size: 13px; }
   th, td { padding: 10px 12px; text-align: left; border-bottom: 1px solid var(--border); white-space: nowrap; }
   th { background: #fafafa; color: var(--muted); font-weight: 600; position: sticky; top: 0; }
@@ -175,12 +182,28 @@
     <h2>发布台账明细</h2>
     <div class="filters">
       <input id="searchInput" placeholder="搜索标题关键词...">
-      <select id="cateFilter"><option value="">全部分类</option></select>
+      <div class="multisel" id="cateWrap">
+        <button type="button" id="cateBtn" class="fs-btn">全部分类</button>
+        <div class="multi-panel" id="catePanel">
+          <label class="m-all"><input type="checkbox" id="cateAll"> 全选</label>
+          <div id="cateList"></div>
+        </div>
+      </div>
       <select id="periodFilter">
         <option value="">全部时间</option>
         <option value="today">今日</option>
         <option value="week">本周</option>
         <option value="month">本月</option>
+      </select>
+      <input type="date" id="dateFrom" class="date-in" title="自定义开始日期">
+      <span class="date-sep">~</span>
+      <input type="date" id="dateTo" class="date-in" title="自定义结束日期">
+      <select id="srcFilter">
+        <option value="">全部来源</option>
+        <option value="定时发文">定时发文</option>
+        <option value="发一篇">发一篇</option>
+        <option value="手动">手动</option>
+        <option value="—">未知</option>
       </select>
       <span style="font-size:13px;color:var(--muted)" id="countInfo"></span>
     </div>
@@ -286,6 +309,7 @@ let filtered = [];
 let page = 1;
 let charts = {};
 let OPT_AID = null;
+let selectedCates = [];
 
 function fmtNum(n) { return n == null ? 0 : Number(n).toLocaleString(); }
 
@@ -313,13 +337,17 @@ function fillBuckets(buckets, from, to, stepFn) {
 function parseData(json) {
   ARTICLES = json.articles || [];
   const cats = json.categories || {};
-  // 分类下拉
-  const cateSel = document.getElementById('cateFilter');
+  // 分类多选列表
+  const cateList = document.getElementById('cateList');
   const used = [...new Set(ARTICLES.map(a => a.cateName || '未分类'))].sort();
   used.forEach(c => {
-    const opt = document.createElement('option');
-    opt.value = c; opt.textContent = c;
-    cateSel.appendChild(opt);
+    const lab = document.createElement('label');
+    const cb = document.createElement('input');
+    cb.type = 'checkbox'; cb.className = 'cate-cb';
+    cb.addEventListener('change', onCateChange);
+    lab.appendChild(cb);
+    lab.appendChild(document.createTextNode(' ' + c));
+    cateList.appendChild(lab);
   });
   renderAll();
 }
@@ -586,8 +614,10 @@ function chartOpts(yLabel) {
 
 function applyFilters() {
   const kw = document.getElementById('searchInput').value.trim().toLowerCase();
-  const cate = document.getElementById('cateFilter').value;
   const period = document.getElementById('periodFilter').value;
+  const src = document.getElementById('srcFilter').value;
+  const dFrom = document.getElementById('dateFrom').value;
+  const dTo = document.getElementById('dateTo').value;
   const now = new Date();
   const today = now.toISOString().slice(0, 10);
   const wd = (now.getDay() + 6) % 7;
@@ -597,11 +627,21 @@ function applyFilters() {
 
   filtered = ARTICLES.filter(a => {
     if (kw && !(a.title || '').toLowerCase().includes(kw)) return false;
-    if (cate && a.cateName !== cate) return false;
+    if (selectedCates.length && !selectedCates.includes(a.cateName || '未分类')) return false;
     const d = dateStr(a.createTime);
-    if (period === 'today' && d !== today) return false;
-    if (period === 'week' && !(d >= wstart && d <= today)) return false;
-    if (period === 'month' && d.slice(0, 7) !== ms) return false;
+    if (dFrom || dTo) {
+      if (dFrom && (!d || d < dFrom)) return false;
+      if (dTo && (!d || d > dTo)) return false;
+    } else {
+      if (period === 'today' && d !== today) return false;
+      if (period === 'week' && !(d >= wstart && d <= today)) return false;
+      if (period === 'month' && d.slice(0, 7) !== ms) return false;
+    }
+    if (src) {
+      const m = POSTS[String(a.id)];
+      const t = m ? (m.source || '手动') : '—';
+      if (t !== src) return false;
+    }
     return true;
   });
   filtered.sort((a, b) => (b.createTime || '').localeCompare(a.createTime || ''));
@@ -695,10 +735,43 @@ document.getElementById('modalMask').addEventListener('click', e => {
 });
 
 document.getElementById('searchInput').addEventListener('input', applyFilters);
-document.getElementById('cateFilter').addEventListener('change', applyFilters);
 document.getElementById('periodFilter').addEventListener('change', applyFilters);
+document.getElementById('srcFilter').addEventListener('change', applyFilters);
+document.getElementById('dateFrom').addEventListener('change', applyFilters);
+document.getElementById('dateTo').addEventListener('change', applyFilters);
 document.getElementById('prevBtn').addEventListener('click', () => { page--; renderTable(); });
 document.getElementById('nextBtn').addEventListener('click', () => { page++; renderTable(); });
+
+function onCateChange(e) {
+  const cb = e.target;
+  const c = cb.parentNode.textContent.trim();
+  if (cb.checked) selectedCates.push(c);
+  else selectedCates = selectedCates.filter(x => x !== c);
+  updateCateBtn();
+  applyFilters();
+}
+function updateCateBtn() {
+  document.getElementById('cateBtn').textContent =
+    selectedCates.length ? `分类 (${selectedCates.length})` : '全部分类';
+}
+document.getElementById('cateBtn').addEventListener('click', e => {
+  e.stopPropagation();
+  const p = document.getElementById('catePanel');
+  const show = p.style.display === 'none';
+  p.style.display = show ? 'block' : 'none';
+  document.getElementById('cateAll').checked = selectedCates.length === 0;
+});
+document.getElementById('cateAll').addEventListener('change', e => {
+  const on = e.target.checked;
+  document.querySelectorAll('.cate-cb').forEach(cb => { cb.checked = on; });
+  selectedCates = on ? [...new Set(ARTICLES.map(a => a.cateName || '未分类'))] : [];
+  updateCateBtn();
+  applyFilters();
+});
+document.addEventListener('click', e => {
+  const wrap = document.getElementById('cateWrap');
+  if (!wrap.contains(e.target)) document.getElementById('catePanel').style.display = 'none';
+});
 
 document.querySelectorAll('.seg button').forEach(btn => {
   btn.addEventListener('click', () => {
