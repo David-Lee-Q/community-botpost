@@ -109,6 +109,7 @@
   .plan-next td { background: #f8faff; }
   .num { text-align: right; color: var(--muted); }
   .pager { display: flex; justify-content: center; gap: 8px; margin-top: 14px; align-items: center; }
+  .commit-toggle { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: var(--muted); margin-bottom: 8px; cursor: pointer; }
   .pager button { padding: 6px 14px; border: 1px solid var(--border); border-radius: 6px; background: #fff; cursor: pointer; font-size: 13px; }
   .pager button:disabled { opacity: .4; cursor: not-allowed; }
   .pager span { font-size: 13px; color: var(--muted); }
@@ -279,6 +280,7 @@
     <span class="close" id="commitClose">&times;</span>
     <h3>版本记录</h3>
     <div class="meta">按时间倒序，最近 60 条提交</div>
+    <label class="commit-toggle"><input type="checkbox" id="commitFeatOnly" checked> 仅显示 feat 变更</label>
     <div id="commitList" style="max-height: 52vh; overflow: auto;"></div>
   </div>
 </div>
@@ -1070,16 +1072,26 @@ function loadTodayPlan() {
 (function () {
   const mask = document.getElementById('commitMask');
   const list = document.getElementById('commitList');
+  let COMMITS = [];
+
+  function renderCommits() {
+    const onlyFeat = document.getElementById('commitFeatOnly').checked;
+    const items = COMMITS.filter(c => !onlyFeat || /^feat[(: ]/.test(c.message))
+      .map(c =>
+        `<div class="commit-item"><span class="ch">${c.hash}</span><span class="cd">${c.date}</span><span class="cm">${escapeHtml(c.message)}</span></div>`
+      ).join('');
+    list.innerHTML = items || '<div class="empty">暂无记录</div>';
+  }
+
+  document.getElementById('commitFeatOnly').addEventListener('change', renderCommits);
   document.getElementById('versionLink').addEventListener('click', async () => {
     mask.classList.add('show');
     list.innerHTML = '<div class="empty" style="padding:20px 0">加载中...</div>';
     try {
       const r = await fetch('/api/commits');
       const d = await r.json();
-      const items = (d.commits || []).map(c =>
-        `<div class="commit-item"><span class="ch">${c.hash}</span><span class="cd">${c.date}</span><span class="cm">${escapeHtml(c.message)}</span></div>`
-      ).join('');
-      list.innerHTML = items || '<div class="empty">暂无记录</div>';
+      COMMITS = d.commits || [];
+      renderCommits();
     } catch (e) {
       list.innerHTML = '<div class="empty">加载失败</div>';
     }
