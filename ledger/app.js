@@ -1,5 +1,9 @@
 
 const PAGE_SIZE = 10;
+const ICON_EYE = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>';
+const ICON_PEN = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.8 2.8 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>';
+const ICON_CLOCK = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>';
+const ICON_SEND = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>';
 let ARTICLES = [];
 let REVIEWS = {};
 let SCORE = null;
@@ -407,9 +411,6 @@ function renderTable() {
       const cls = rv.grade === '优秀' ? 'tag g' : rv.grade === '不合格' ? 'tag s' : rv.grade === '合格' ? 'tag o' : 'tag';
       evalCell = `<td><span class="${cls}" title="${escapeHtml(rv.comment)}">${rv.grade} ${rv.score}分</span></td>`;
     }
-    const ICON_EYE = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>';
-    const ICON_PEN = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.8 2.8 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>';
-    const ICON_CLOCK = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>';
     let opCell = '<td style="white-space:nowrap">';
     opCell += `<button class="opt-btn" title="查看详情" onclick="openDetail(${a.id})">${ICON_EYE}</button>`;
     if (status === '已发布') opCell += `<button class="opt-btn" title="AI 优化" onclick="openOpt(${a.id})">${ICON_PEN}</button>`;
@@ -840,9 +841,11 @@ let planPollTimer = null;
 
 function planBtn(it) {
   const st = it.status || 'pending';
-  const txt = st === 'published' ? '已发布' : st === 'publishing' ? '发布中…' : '立即发布';
-  const dis = st === 'pending' ? '' : 'disabled';
-  return `<button type="button" class="plan-btn" data-tid="${escapeHtml(it.taskId || '')}" ${dis}>${txt}</button>`;
+  if (st === 'pending') {
+    return `<button type="button" class="plan-btn plan-icon-btn" data-tid="${escapeHtml(it.taskId || '')}" title="立即发布">${ICON_SEND}</button>`;
+  }
+  const txt = st === 'published' ? '已发布' : st === 'publishing' ? '发布中…' : '其他';
+  return `<button type="button" class="plan-btn" data-tid="${escapeHtml(it.taskId || '')}" disabled>${txt}</button>`;
 }
 
 let PLAN_EDIT_TID = null;
@@ -914,7 +917,7 @@ function loadTodayPlan() {
           <td class="plan-title" title="${escapeHtml(it.title || '')}">${escapeHtml(it.title || '')}</td>
           <td class="nowrap">${escapeHtml(it.category || '')}</td>
           <td class="plan-sum" title="${escapeHtml(it.summary || '')}">${escapeHtml(it.summary || '')}</td>
-          <td class="nowrap">${planBtn(it)}${it.status === 'pending' ? `<button type="button" class="plan-btn plan-edit" data-tid="${escapeHtml(it.taskId || '')}">编辑</button>` : ''}</td>
+          <td class="nowrap">${planBtn(it)}${it.status === 'pending' ? `<button type="button" class="plan-btn plan-icon-btn plan-edit" data-tid="${escapeHtml(it.taskId || '')}" title="编辑计划">${ICON_PEN}</button>` : ''}</td>
         </tr>`;
       });
       body.innerHTML = rows.join('');
