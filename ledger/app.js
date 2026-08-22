@@ -407,10 +407,13 @@ function renderTable() {
       const cls = rv.grade === '优秀' ? 'tag g' : rv.grade === '不合格' ? 'tag s' : rv.grade === '合格' ? 'tag o' : 'tag';
       evalCell = `<td><span class="${cls}" title="${escapeHtml(rv.comment)}">${rv.grade} ${rv.score}分</span></td>`;
     }
-    let opCell = '<td>';
-    opCell += `<button class="opt-btn" onclick="openDetail(${a.id})">详情</button>`;
-    if (status === '已发布') opCell += `<button class="opt-btn" onclick="openOpt(${a.id})">优化</button>`;
-    if (HISTCOUNTS[String(a.id)]) opCell += `<button class="opt-btn hist" onclick="openHist(${a.id})">历史</button>`;
+    const ICON_EYE = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>';
+    const ICON_PEN = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.8 2.8 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>';
+    const ICON_CLOCK = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>';
+    let opCell = '<td style="white-space:nowrap">';
+    opCell += `<button class="opt-btn" title="查看详情" onclick="openDetail(${a.id})">${ICON_EYE}</button>`;
+    if (status === '已发布') opCell += `<button class="opt-btn" title="AI 优化" onclick="openOpt(${a.id})">${ICON_PEN}</button>`;
+    if (HISTCOUNTS[String(a.id)]) opCell += `<button class="opt-btn hist" title="评分历史" onclick="openHist(${a.id})">${ICON_CLOCK}</button>`;
     opCell += '</td>';
     const srcMeta = POSTS[String(a.id)];
     const srcTxt = srcMeta ? (srcMeta.source || '手动') : '—';

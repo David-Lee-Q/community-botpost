@@ -87,6 +87,8 @@
   td.title { white-space: normal; min-width: 260px; max-width: 420px; }
   td.title a { color: var(--primary); text-decoration: none; }
   td.title a:hover { text-decoration: underline; }
+  .ledger-table th, .ledger-table td { text-align: center; }
+  .ledger-table td.title { text-align: center; }
   .tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 12px; background: #ecf5ff; color: var(--primary); }
   .tag.s { background: #fef0f0; color: #f56c6c; }
   .tag.g { background: #f0f9eb; color: #67c23a; }
@@ -174,7 +176,7 @@
   .oneshot-status.ok { color: #19be6b; }
   .oneshot-status.err { color: #f56c6c; }
   .oneshot-status a { color: var(--primary); }
-  .opt-btn { padding: 3px 10px; font-size: 12px; border: 1px solid var(--primary); color: var(--primary); background: #fff; border-radius: 4px; cursor: pointer; margin-right: 4px; }
+  .opt-btn { width: 26px; height: 26px; padding: 0; display: inline-flex; align-items: center; justify-content: center; border: 1px solid var(--primary); color: var(--primary); background: #fff; border-radius: 4px; cursor: pointer; margin-right: 4px; vertical-align: middle; }
   .opt-btn:hover { background: var(--primary); color: #fff; }
   .opt-btn.hist { border-color: var(--border); color: var(--muted); }
   .opt-btn.hist:hover { background: #f0f2f5; color: var(--text); }
