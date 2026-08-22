@@ -2,9 +2,11 @@ import hashlib
 import http.server
 import json
 import os
+import re
 import socketserver
 import subprocess
 import sys
+import tempfile
 import threading
 import time
 
@@ -30,6 +32,20 @@ _summary_cache = {"t": 0.0, "body": None, "etag": ""}
 SUMMARY_TTL = 30
 
 
+def _load_auth_token():
+    tok = os.environ.get("AUTH_TOKEN", "")
+    if not tok:
+        try:
+            with open(os.path.join(LEDGER, ".auth_token"), encoding="utf-8") as f:
+                tok = f.read().strip()
+        except OSError:
+            tok = ""
+    return tok
+
+
+_AUTH_TOKEN = _load_auth_token()
+
+
 def _read_json(path, fallback):
     try:
         with open(path, encoding="utf-8") as f:
@@ -44,7 +60,8 @@ def _build_summary():
     scores = _read_json(SCORES_FILE, {})
     bot_score = _read_json(BOT_SCORE_FILE, None)
     posts = _read_json(BOT_POSTS_FILE, {})
-    reviews_light = {aid: {"score": r.get("score"), "grade": r.get("grade"), "comment": r.get("comment", "")}
+    reviews_light = {aid: {"score": r.get("score"), "grade": r.get("grade"),
+                           "comment": r.get("comment", ""), "breakdown": r.get("breakdown")}
                      for aid, r in reviews.items()}
     hist_counts = {aid: len(h) for aid, h in scores.items() if isinstance(h, list)}
     payload = {
@@ -75,6 +92,12 @@ class Handler(http.server.SimpleHTTPRequestHandler):
         self.wfile.write(body)
 
     def do_POST(self):
+        if _AUTH_TOKEN and self.headers.get("X-Auth-Token") != _AUTH_TOKEN:
+            self._json(401, {"error": "需要操作口令（X-Auth-Token）"})
+            return
+        if self.path == "/api/plan-update":
+            self._handle_plan_update()
+            return
         if self.path == "/api/refresh":
             if _lock.locked():
                 self._json(429, {"error": "已有任务执行中，请稍候"})
@@ -204,6 +227,56 @@ class Handler(http.server.SimpleHTTPRequestHandler):
         _lock.acquire()
         threading.Thread(target=_run_publish_now, args=(tid,), daemon=True).start()
         self._json(200, {"ok": True, "state": "publishing"})
+
+    def _handle_plan_update(self):
+        data = self._body()
+        tid = str((data or {}).get("taskId") or "").strip()
+        if not tid:
+            self._json(400, {"error": "参数缺失"})
+            return
+        if _lock.locked():
+            self._json(429, {"error": "已有任务执行中，请稍候"})
+            return
+        try:
+            with open(PLAN_FILE, encoding="utf-8") as f:
+                plan = json.load(f)
+        except (OSError, ValueError):
+            self._json(500, {"error": "计划文件读取失败"})
+            return
+        item = next((it for it in plan.get("schedule", []) if it.get("taskId") == tid), None)
+        if item is None:
+            self._json(404, {"error": "计划不存在"})
+            return
+        if item.get("status") != "pending":
+            self._json(200, {"ok": False, "skip": True, "reason": "仅待发布计划可编辑"})
+            return
+        title = str(data.get("title") or "").strip()
+        if not title:
+            self._json(400, {"error": "标题不能为空"})
+            return
+        if len(title) > 60:
+            self._json(400, {"error": "标题过长（≤60字）"})
+            return
+        summary = str(data.get("summary") or "").strip()
+        if len(summary) > 300:
+            self._json(400, {"error": "摘要过长（≤300字）"})
+            return
+        time_str = str(data.get("time") or "").strip()
+        if time_str and not re.fullmatch(r"\d{4}-\d{2}-\d{2} \d{2}:\d{2}(:\d{2})?", time_str):
+            self._json(400, {"error": "计划时间格式应为 YYYY-MM-DD HH:MM"})
+            return
+        item["title"] = title
+        item["summary"] = summary
+        if time_str:
+            item["time"] = time_str
+        category = str(data.get("category") or "").strip()
+        if category:
+            item["category"] = category
+        fd, tmp = tempfile.mkstemp(dir=os.path.dirname(PLAN_FILE), suffix=".tmp")
+        with os.fdopen(fd, "w", encoding="utf-8") as f:
+            json.dump(plan, f, ensure_ascii=False, indent=2)
+        os.replace(tmp, PLAN_FILE)
+        self._json(200, {"ok": True})
 
     def do_GET(self):
         if self.path.startswith("/api/commits"):
