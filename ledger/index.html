@@ -128,6 +128,20 @@
   .std-link:hover { text-decoration: underline; }
   .panel h2 .std-btn { margin-left: auto; font-size: 13px; color: var(--primary); cursor: pointer; user-select: none; font-weight: 500; }
   .panel h2 .std-btn:hover { text-decoration: underline; }
+  .plan-date { margin-left: 10px; font-size: 13px; color: var(--muted); font-weight: 400; letter-spacing: .5px; }
+  .plan-table { table-layout: fixed; }
+  .plan-table th:nth-child(1), .plan-table td:nth-child(1) { width: 42px; }
+  .plan-table th:nth-child(2), .plan-table td:nth-child(2) { width: 64px; }
+  .plan-table th:nth-child(3), .plan-table td:nth-child(3) { width: 76px; }
+  .plan-table th:nth-child(5), .plan-table td:nth-child(5) { width: 84px; }
+  .plan-table th:nth-child(6), .plan-table td:nth-child(6) { width: 300px; }
+  .plan-table th:nth-child(7), .plan-table td:nth-child(7) { width: 96px; }
+  .plan-title, .plan-sum { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+  .plan-title { max-width: 100%; }
+  .plan-sum { color: var(--muted); font-size: 13px; }
+  .plan-btn { font-size: 12px; padding: 2px 12px; border: 1px solid var(--primary); color: var(--primary); background: #fff; border-radius: 4px; cursor: pointer; white-space: nowrap; }
+  .plan-btn:hover:not(:disabled) { background: var(--primary); color: #fff; }
+  .plan-btn:disabled { border-color: var(--border); color: var(--muted); background: #f5f7fa; cursor: not-allowed; }
   #stdMask .modal { width: min(860px, 94vw); }
   .empty { text-align: center; color: var(--muted); padding: 40px 0; }
   footer.watermark { text-align: center; font-size: 13px; letter-spacing: 1px; color: #c0c4cc; opacity: .75; padding: 18px 16px 28px; user-select: none; }
@@ -211,16 +225,15 @@
   </div>
 
   <div class="panel">
-    <h2>今日发文计划</h2>
+    <h2>今日发文计划<span class="plan-date" id="planDate"></span></h2>
     <div style="max-height:360px;overflow:auto">
-      <table>
+      <table class="plan-table">
         <thead><tr>
-          <th class="num">序号</th><th>状态</th><th>时间</th><th>标题</th><th>分类</th><th>摘要</th>
+          <th class="num">序号</th><th>状态</th><th>计划发布时间</th><th>标题</th><th>分类</th><th>摘要</th><th>操作</th>
         </tr></thead>
         <tbody id="planBody"></tbody>
       </table>
-      <div class="empty" id="planEmpty" style="display:none">今日无发文计划</div>
-    </div>
+      <div class="empty" id="planEmpty" style="display:none">今日无发文计划</div>    </div>
   </div>
 
   <div class="panel">
@@ -795,6 +808,7 @@ function applyFilters() {
   const ms = now.toISOString().slice(0, 7);
 
   filtered = ARTICLES.filter(a => {
+    if (a.status !== 1) return false;
     if (kw && !(a.title || '').toLowerCase().includes(kw)) return false;
     if (selectedCates.length && !selectedCates.includes(a.cateName || '未分类')) return false;
     const d = dateStr(a.createTime);
@@ -943,6 +957,7 @@ document.getElementById('stdMask').addEventListener('click', e => {
 });
 
 let calFrom = '', calTo = '', calTab = 'from', calYear = 0, calMonth = 0;
+let calFresh = { from: 0, to: 0 };
 const CAL_WEEK = ['日', '一', '二', '三', '四', '五', '六'];
 
 function fmtDate(y, m, d) {
@@ -980,18 +995,22 @@ function navCal(dir) {
   renderCal();
 }
 function pickDate(ds) {
-  if (calTab === 'from') calFrom = ds;
-  else calTo = ds;
+  if (calTab === 'from') { calFrom = ds; calFresh.from++; }
+  else { calTo = ds; calFresh.to++; }
   if (calFrom && calTo && calFrom > calTo) { const t = calFrom; calFrom = calTo; calTo = t; }
   calTab = calTab === 'from' ? 'to' : 'from';
   updateCalBtn();
   applyFilters();
   renderCal();
+  if (calFresh.from > 0 && calFresh.to > 0) {
+    document.getElementById('calPop').style.display = 'none';
+  }
 }
 document.getElementById('calBtn').addEventListener('click', e => {
   e.stopPropagation();
   const pop = document.getElementById('calPop');
   if (pop.style.display === 'block') { pop.style.display = 'none'; return; }
+  calFresh = { from: 0, to: 0 };
   const ref = calFrom || calTo || '';
   const base = ref ? new Date(ref + 'T00:00:00') : new Date();
   calYear = base.getFullYear();
@@ -1013,6 +1032,7 @@ document.getElementById('calGrid').addEventListener('click', e => {
 document.getElementById('calClear').addEventListener('click', e => {
   e.stopPropagation();
   calFrom = ''; calTo = '';
+  calFresh = { from: 0, to: 0 };
   updateCalBtn();
   applyFilters();
   renderCal();
@@ -1111,11 +1131,23 @@ function planStatus(s) {
   return '<span class="tag">' + (s || '未知') + '</span>';
 }
 
+let planPollTimer = null;
+
+function planBtn(it) {
+  const st = it.status || 'pending';
+  const txt = st === 'published' ? '已发布' : st === 'publishing' ? '发布中…' : '立即发布';
+  const dis = st === 'pending' ? '' : 'disabled';
+  return `<button type="button" class="plan-btn" data-tid="${it.taskId || ''}" ${dis}>${txt}</button>`;
+}
+
 function loadTodayPlan() {
   const body = document.getElementById('planBody');
   const empty = document.getElementById('planEmpty');
   body.innerHTML = '';
   empty.style.display = 'none';
+  const d = new Date();
+  const w = ['日', '一', '二', '三', '四', '五', '六'][d.getDay()];
+  document.getElementById('planDate').textContent = `${todayStr()} 星期${w}`;
   fetch('/api/plan')
     .then(r => r.json())
     .then(data => {
@@ -1130,17 +1162,53 @@ function loadTodayPlan() {
           <td class="num">${i + 1}</td>
           <td>${planStatus(it.status)}</td>
           <td class="nowrap">${(it.time || '').slice(11, 19)}</td>
-          <td>${it.title || ''}</td>
+          <td class="plan-title" title="${escapeHtml(it.title || '')}">${it.title || ''}</td>
           <td class="nowrap">${it.category || ''}</td>
-          <td style="color:var(--muted);font-size:13px">${it.summary || ''}</td>
+          <td class="plan-sum" title="${escapeHtml(it.summary || '')}">${it.summary || ''}</td>
+          <td class="nowrap">${planBtn(it)}</td>
         </tr>`;
       });
       body.innerHTML = rows.join('');
+      const busy = items.some(it => (it.status || '') === 'publishing');
+      if (!busy && planPollTimer) { clearInterval(planPollTimer); planPollTimer = null; }
+      if (busy && !planPollTimer) planPollTimer = setInterval(loadTodayPlan, 5000);
     })
     .catch(e => {
-      body.innerHTML = `<tr><td colspan="6" style="color:var(--muted)">计划加载失败: ${e.message}</td></tr>`;
+      body.innerHTML = `<tr><td colspan="7" style="color:var(--muted)">计划加载失败: ${e.message}</td></tr>`;
+      if (planPollTimer) { clearInterval(planPollTimer); planPollTimer = null; }
     });
 }
+
+document.getElementById('planBody').addEventListener('click', async e => {
+  const b = e.target.closest('.plan-btn');
+  if (!b || b.disabled) return;
+  const tid = b.dataset.tid;
+  if (!tid) return;
+  b.disabled = true;
+  b.textContent = '发布中…';
+  try {
+    const r = await fetch('/api/publish-now', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ taskId: tid }),
+    });
+    const d = await r.json();
+    if (r.status !== 200) {
+      alert('请求失败：' + (d.error || r.status));
+      loadTodayPlan();
+      return;
+    }
+    if (!d.ok) {
+      alert(d.reason || d.error || '无法发布');
+      loadTodayPlan();
+      return;
+    }
+    if (!planPollTimer) planPollTimer = setInterval(loadTodayPlan, 5000);
+    loadTodayPlan();
+  } catch (err) {
+    alert('请求失败：' + err.message);
+    loadTodayPlan();
+  }
+});
 
 (function () {
   const mask = document.getElementById('oneshotMask');
