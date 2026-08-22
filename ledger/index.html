@@ -114,6 +114,18 @@
   .pager button { padding: 6px 14px; border: 1px solid var(--border); border-radius: 6px; background: #fff; cursor: pointer; font-size: 13px; }
   .pager button:disabled { opacity: .4; cursor: not-allowed; }
   .pager span { font-size: 13px; color: var(--muted); }
+  .pager .pager-jump { display: inline-flex; align-items: center; gap: 6px; color: var(--muted); }
+  .pager input { width: 52px; padding: 5px 6px; border: 1px solid var(--border); border-radius: 6px; font-size: 13px; text-align: center; }
+  .pager input:focus { outline: none; border-color: var(--primary); }
+  .std-toggle { font-size: 13px; color: var(--primary); cursor: pointer; user-select: none; display: inline-block; margin-bottom: 10px; }
+  .std-toggle:hover { text-decoration: underline; }
+  .std-toggle .std-arrow { display: inline-block; transition: transform .2s; margin-left: 2px; }
+  .std-panel { background: #f7f9fc; border: 1px solid var(--border); border-radius: 8px; padding: 12px 14px; font-size: 12px; line-height: 1.7; color: var(--text); margin-bottom: 12px; }
+  .std-panel h4 { font-size: 13px; margin: 10px 0 4px; }
+  .std-panel table { font-size: 12px; }
+  .std-panel .red { color: #f56c6c; }
+  .std-link { color: var(--primary); cursor: pointer; }
+  .std-link:hover { text-decoration: underline; }
   .empty { text-align: center; color: var(--muted); padding: 40px 0; }
   footer.watermark { text-align: center; font-size: 13px; letter-spacing: 1px; color: #c0c4cc; opacity: .75; padding: 18px 16px 28px; user-select: none; }
   .version-link { display: inline-block; margin-top: 8px; font-size: 12px; color: #b0b4bd; cursor: pointer; user-select: none; }
@@ -270,6 +282,7 @@
       <button id="prevBtn" disabled>上一页</button>
       <span id="pageInfo"></span>
       <button id="nextBtn">下一页</button>
+      <span class="pager-jump">跳至 <input id="jumpInput" type="number" min="1" step="1" value="1"> 页 <button id="jumpBtn">跳转</button></span>
     </div>
   </div>
 </div>
@@ -330,6 +343,45 @@
     <span class="close" id="histClose">&times;</span>
     <h3>评分历史</h3>
     <div class="meta" id="histMeta"></div>
+    <span class="std-toggle" id="stdToggle">《社区文章质量评价标准》<span class="std-arrow">▾</span></span>
+    <div class="std-panel" id="stdPanel" style="display:none">
+      <b>评分方式：</b>100 分制，按 6 维度加权计分，另有 8 项一票否决红线。
+      <h4>一、评价维度与权重</h4>
+      <table>
+        <thead><tr><th>维度</th><th>权重</th><th>考察要点</th></tr></thead>
+        <tbody>
+          <tr><td>内容原创性</td><td>20%</td><td>原创度、同质化、增量价值、AI 痕迹控制</td></tr>
+          <tr><td>技术准确性</td><td>20%</td><td>事实、数据、术语、技术观点的正确性与时效</td></tr>
+          <tr><td>完整性结构</td><td>15%</td><td>主题聚焦、结构清晰、逻辑递进、深度充分</td></tr>
+          <tr><td>可读表达</td><td>15%</td><td>语言流畅、段落节奏、图文配合、术语通俗化</td></tr>
+          <tr><td>规范合规</td><td>15%</td><td>平台规则、格式规范、敏感内容、版权风险</td></tr>
+          <tr><td>传播表现</td><td>15%</td><td>标题吸引力、摘要价值、SEO 友好、互动引导</td></tr>
+        </tbody>
+      </table>
+      <h4>二、分档标准</h4>
+      <table>
+        <thead><tr><th>档位</th><th>分数</th><th>说明</th></tr></thead>
+        <tbody>
+          <tr><td>优秀</td><td>90-100</td><td>深度原创，数据扎实，结构典范，具备传播潜力</td></tr>
+          <tr><td>良好</td><td>75-89</td><td>内容充实准确，结构完整，小瑕疵不影响阅读</td></tr>
+          <tr><td>合格</td><td>60-74</td><td>满足发布底线，存在明显可改进项</td></tr>
+          <tr><td>不合格</td><td>&lt;60</td><td>低于发布门槛，需返工</td></tr>
+        </tbody>
+      </table>
+      <h4>三、一票否决红线（任一命中即拒绝发布）</h4>
+      <div class="red">
+        <div>1. 全文抄袭或拼接搬运超 30%，无来源说明</div>
+        <div>2. 存在事实性硬伤或传播虚假信息</div>
+        <div>3. 含违法、敏感、涉政或不良引导内容</div>
+        <div>4. 涉及侵权素材（未授权图片、商用字体、受版权保护内容）</div>
+        <div>5. 文不对题或标题严重误导</div>
+        <div>6. 含广告、外链引流、营销导流信息</div>
+        <div>7. 正文未达 1000 字（科普短文类除外，须单列审批）</div>
+        <div>8. 封面缺失或格式不符无法展示</div>
+      </div>
+      <h4>四、发布前自检要点</h4>
+      <div>标题 ≤30 字无冒号无夸大；摘要约 120 字；封面 800×400、≤1MB；正文 ≥1000 字、每段 ≥200 字、配图 ≥2 张；分类归属正确；关键数据标注来源；结尾有明确观点或行动建议。</div>
+    </div>
     <table class="hist-table"><thead><tr>
       <th>时间</th><th>分数</th><th>档位</th><th>类型</th><th>说明</th>
     </tr></thead><tbody id="histBody"></tbody></table>
@@ -338,7 +390,7 @@
 </div>
 
 <script>
-const PAGE_SIZE = 20;
+const PAGE_SIZE = 10;
 let ARTICLES = [];
 let REVIEWS = {};
 let SCORE = null;
@@ -730,6 +782,9 @@ function renderTable() {
   document.getElementById('pageInfo').textContent = `${page} / ${totalPages}`;
   document.getElementById('prevBtn').disabled = page <= 1;
   document.getElementById('nextBtn').disabled = page >= totalPages;
+  const jump = document.getElementById('jumpInput');
+  jump.max = totalPages;
+  jump.value = page;
 }
 
 function escapeHtml(s) {
@@ -776,8 +831,33 @@ document.getElementById('modalMask').addEventListener('click', e => {
 document.getElementById('searchInput').addEventListener('input', applyFilters);
 document.getElementById('periodFilter').addEventListener('change', applyFilters);
 document.getElementById('srcFilter').addEventListener('change', applyFilters);
-document.getElementById('prevBtn').addEventListener('click', () => { page--; renderTable(); });
-document.getElementById('nextBtn').addEventListener('click', () => { page++; renderTable(); });
+document.getElementById('prevBtn').addEventListener('click', () => goPage(page - 1));
+document.getElementById('nextBtn').addEventListener('click', () => goPage(page + 1));
+document.getElementById('jumpBtn').addEventListener('click', () => {
+  const v = parseInt(document.getElementById('jumpInput').value, 10);
+  if (!isNaN(v)) goPage(v);
+});
+document.getElementById('jumpInput').addEventListener('keydown', e => {
+  if (e.key === 'Enter') document.getElementById('jumpBtn').click();
+});
+
+function goPage(p) {
+  const total = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+  if (p < 1) p = 1;
+  if (p > total) p = total;
+  page = p;
+  renderTable();
+}
+
+function toggleStd() {
+  const p = document.getElementById('stdPanel');
+  const arrow = document.querySelector('#stdToggle .std-arrow');
+  const open = p.style.display !== 'none';
+  p.style.display = open ? 'none' : 'block';
+  arrow.style.transform = open ? '' : 'rotate(180deg)';
+  if (!open) p.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+document.getElementById('stdToggle').addEventListener('click', toggleStd);
 
 let calFrom = '', calTo = '', calTab = 'from', calYear = 0, calMonth = 0;
 const CAL_WEEK = ['日', '一', '二', '三', '四', '五', '六'];
@@ -1209,7 +1289,7 @@ function openHist(aid) {
         `<td class="num"><span class="${cls}">${e.score}分</span></td>` +
         `<td class="num">${escapeHtml(e.grade || '')}</td>` +
         `<td class="num">${escapeHtml(e.kind || '')}</td>` +
-        `<td>${escapeHtml(e.comment || '')}</td>`;
+        `<td>${escapeHtml(e.comment || '').replace(/《社区文章质量评价标准》/g, '<a class="std-link" onclick="toggleStd()">《社区文章质量评价标准》</a>')}</td>`;
       tb.appendChild(tr);
     });
   }).catch(() => {
