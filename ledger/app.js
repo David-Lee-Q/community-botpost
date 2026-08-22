@@ -1255,3 +1255,33 @@ function openDetail(aid) {
 
 document.getElementById('drawerClose').addEventListener('click', () => document.getElementById('drawerMask').classList.remove('show'));
 document.getElementById('drawerMask').addEventListener('click', e => { if (e.target === e.currentTarget) document.getElementById('drawerMask').classList.remove('show'); });
+
+function attachColResize() {
+  document.querySelectorAll('.plan-table, .ledger-table').forEach(tbl => {
+    tbl.querySelectorAll('th').forEach((th, i) => {
+      if (th.querySelector('.col-resizer')) return;
+      const rz = document.createElement('div');
+      rz.className = 'col-resizer';
+      th.appendChild(rz);
+      const key = 'colw_' + (tbl.className || 'tbl') + '_' + i + '_' + (th.textContent.trim().slice(0, 8) || 'c' + i);
+      const saved = localStorage.getItem(key);
+      if (saved) th.style.width = saved + 'px';
+      rz.addEventListener('mousedown', e => {
+        e.preventDefault();
+        const startX = e.clientX;
+        const startW = th.getBoundingClientRect().width;
+        const move = ev => {
+          th.style.width = Math.max(40, startW + (ev.clientX - startX)) + 'px';
+        };
+        const up = () => {
+          document.removeEventListener('mousemove', move);
+          document.removeEventListener('mouseup', up);
+          localStorage.setItem(key, th.getBoundingClientRect().width.toFixed(0));
+        };
+        document.addEventListener('mousemove', move);
+        document.addEventListener('mouseup', up);
+      });
+    });
+  });
+}
+attachColResize();
