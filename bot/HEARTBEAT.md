@@ -1,6 +1,6 @@
 # HEARTBEAT - 社区发文记录
 
-## 2026-08-22 发布清单
+## 2026-08-23 发布清单
 
 | 计划时间 | 标题 | 分类 | 文章ID | 详情URL | 状态 |
 |----------|------|------|--------|---------|------|
@@ -20,7 +20,10 @@
 | 2026-08-22 13:16:38 | 微服务成功了，中间件却拖垮了系统 | 中间件 | 35658 | https://openlab.cosmoplat.com/article-detils?id=35658&articleType=0 | 已发布 |
 | 2026-08-22 14:51:20 | 云边协同 让工业响应从秒级跨入毫秒级 | 边缘计算 | 35660 | https://openlab.cosmoplat.com/article-detils?id=35660&articleType=0 | 已发布 |
 | 2026-08-22 19:48:42 | 选相机别只看分辨率 帧率才是高速产线的命门 | 机器视觉 | 35684 | https://openlab.cosmoplat.com/article-detils?id=35684&articleType=0 | 已发布 |
+| 2026-08-23 00:10:05 | 超七成供应链数据失真 可信体系怎么建 | 区块链 | 35688 | https://openlab.cosmoplat.com/article-detils?id=35688&articleType=0 | 已发布 |
 | 2026-08-23 10:43:10 | 中间件失控？三招让微服务P99延迟降42% | 微服务 | 35686 | https://openlab.cosmoplat.com/article-detils?id=35686&articleType=0 | 已发布 |
+| 2026-08-23 15:58:02 | 数据资产化虚火，入表容易变现难 | 数据要素 | 35692 | https://openlab.cosmoplat.com/article-detils?id=35692&articleType=0 | 已发布 |
+| 2026-08-23 18:13:36 | 九成联盟链项目倒在三道门槛 | 区块链 | 35690 | https://openlab.cosmoplat.com/article-detils?id=35690&articleType=0 | 已发布 |
 
 ## 记录
 

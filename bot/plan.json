@@ -261,7 +261,7 @@
       "article_id": 35686
     },
     {
-      "time": "2026-08-23 14:05:44",
+      "time": "2026-08-23 00:10:05",
       "title": "超七成供应链数据失真 可信体系怎么建",
       "category": "区块链",
       "file": "/workspace/bot-articles/scheduled-20260820160207-498.md",
@@ -271,9 +271,10 @@
         "https://images.unsplash.com/photo-1516937941344-00b4e0337589?w=800&q=80"
       ],
       "cover": "/workspace/bot/covers/区块链/cover2.jpg",
-      "status": "pending",
-      "detail_url": null,
-      "taskId": "bb75047bc497471dad40ba7dcdc89683"
+      "status": "published",
+      "detail_url": "https://openlab.cosmoplat.com/article-detils?id=35688&articleType=0",
+      "taskId": "bb75047bc497471dad40ba7dcdc89683",
+      "article_id": 35688
     },
     {
       "time": "2026-08-23 15:58:02",
@@ -286,9 +287,10 @@
         "https://images.unsplash.com/photo-1524749292158-7540c2494485?w=800&q=80"
       ],
       "cover": "/workspace/bot/covers/数据要素/cover6.jpg",
-      "status": "pending",
-      "detail_url": null,
-      "taskId": "e33442ba685d4b118b821e916e65f90c"
+      "status": "published",
+      "detail_url": "https://openlab.cosmoplat.com/article-detils?id=35692&articleType=0",
+      "taskId": "e33442ba685d4b118b821e916e65f90c",
+      "article_id": "35692"
     },
     {
       "time": "2026-08-23 18:13:36",
@@ -301,9 +303,10 @@
         "https://images.unsplash.com/photo-1555664424-778a1e5e1b48?w=800&q=80"
       ],
       "cover": "/workspace/bot/covers/区块链/cover3.jpg",
-      "status": "pending",
-      "detail_url": null,
-      "taskId": "7ee4740dec944b8098b3e7a8d1e0695f"
+      "status": "published",
+      "detail_url": "https://openlab.cosmoplat.com/article-detils?id=35690&articleType=0",
+      "taskId": "7ee4740dec944b8098b3e7a8d1e0695f",
+      "article_id": "35690"
     },
     {
       "time": "2026-08-24 09:54:32",
