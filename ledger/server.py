@@ -1,3 +1,4 @@
+import hashlib
 import http.server
 import json
 import os
@@ -5,6 +6,7 @@ import socketserver
 import subprocess
 import sys
 import threading
+import time
 
 LEDGER = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(LEDGER)
@@ -12,6 +14,10 @@ STATUS_FILE = os.path.join(LEDGER, "data", "oneshot_status.json")
 ONE_SHOT = os.path.join(ROOT, "bot", "one_shot.py")
 OPTIMIZE = os.path.join(LEDGER, "optimize.py")
 PLAN_FILE = os.path.join(ROOT, "bot", "plan.json")
+REVIEWS_FILE = os.path.join(LEDGER, "data", "reviews.json")
+SCORES_FILE = os.path.join(LEDGER, "data", "article_scores.json")
+BOT_SCORE_FILE = os.path.join(LEDGER, "data", "bot_score.json")
+BOT_POSTS_FILE = os.path.join(LEDGER, "data", "bot_posts.json")
 
 sys.path.insert(0, LEDGER)
 sys.path.insert(0, os.path.join(ROOT, "bot"))
@@ -19,6 +25,41 @@ import sensitive  # noqa: E402
 import optimize as opt  # noqa: E402
 
 _lock = threading.Lock()
+_refreshing = False
+_summary_cache = {"t": 0.0, "body": None, "etag": ""}
+SUMMARY_TTL = 30
+
+
+def _read_json(path, fallback):
+    try:
+        with open(path, encoding="utf-8") as f:
+            return json.load(f)
+    except (OSError, ValueError):
+        return fallback
+
+
+def _build_summary():
+    arts = _read_json(os.path.join(LEDGER, "data", "articles.json"), None)
+    reviews = _read_json(REVIEWS_FILE, {})
+    scores = _read_json(SCORES_FILE, {})
+    bot_score = _read_json(BOT_SCORE_FILE, None)
+    posts = _read_json(BOT_POSTS_FILE, {})
+    reviews_light = {aid: {"score": r.get("score"), "grade": r.get("grade"), "comment": r.get("comment", "")}
+                     for aid, r in reviews.items()}
+    hist_counts = {aid: len(h) for aid, h in scores.items() if isinstance(h, list)}
+    payload = {
+        "updatedAt": arts.get("updatedAt", "") if arts else "",
+        "memberId": arts.get("memberId", "—") if arts else "—",
+        "total": arts.get("total", 0) if arts else 0,
+        "categories": arts.get("categories", {}) if arts else {},
+        "articles": arts.get("articles", []) if arts else [],
+        "reviews": reviews_light,
+        "histCounts": hist_counts,
+        "botScore": bot_score,
+        "posts": posts,
+    }
+    body = json.dumps(payload, ensure_ascii=False).encode("utf-8")
+    return body, hashlib.md5(body).hexdigest()
 
 
 class Handler(http.server.SimpleHTTPRequestHandler):
@@ -34,6 +75,14 @@ class Handler(http.server.SimpleHTTPRequestHandler):
         self.wfile.write(body)
 
     def do_POST(self):
+        if self.path == "/api/refresh":
+            if _lock.locked():
+                self._json(429, {"error": "已有任务执行中，请稍候"})
+                return
+            _lock.acquire()
+            threading.Thread(target=_run_refresh, daemon=True).start()
+            self._json(200, {"ok": True, "state": "refreshing"})
+            return
         if self.path == "/api/check":
             try:
                 length = int(self.headers.get("Content-Length") or 0)
@@ -187,6 +236,29 @@ class Handler(http.server.SimpleHTTPRequestHandler):
             except Exception as e:
                 self._json(200, {"ok": False, "error": str(e)[:300]})
             return
+        if self.path.startswith("/api/summary"):
+            now = time.time()
+            if not _summary_cache["body"] or now - _summary_cache["t"] > SUMMARY_TTL:
+                _summary_cache["body"], _summary_cache["etag"] = _build_summary()
+                _summary_cache["t"] = now
+            etag = _summary_cache["etag"]
+            if self.headers.get("If-None-Match") == etag:
+                self.send_response(304)
+                self.send_header("ETag", etag)
+                self.end_headers()
+                return
+            body = _summary_cache["body"]
+            self.send_response(200)
+            self.send_header("Content-Type", "application/json; charset=utf-8")
+            self.send_header("Cache-Control", "no-cache")
+            self.send_header("ETag", etag)
+            self.send_header("Content-Length", str(len(body)))
+            self.end_headers()
+            self.wfile.write(body)
+            return
+        if self.path.startswith("/api/refresh-status"):
+            self._json(200, {"refreshing": _refreshing})
+            return
         if self.path.startswith("/api/status"):
             try:
                 with open(STATUS_FILE, encoding="utf-8") as f:
@@ -220,6 +292,17 @@ def _run_publish_now(task_id):
                         "--now", task_id],
                        capture_output=True, timeout=900)
     finally:
+        _lock.release()
+
+
+def _run_refresh():
+    global _refreshing
+    _refreshing = True
+    try:
+        subprocess.run([sys.executable, os.path.join(LEDGER, "fetch_articles.py")],
+                       capture_output=True, timeout=1800)
+    finally:
+        _refreshing = False
         _lock.release()
 
 

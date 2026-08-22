@@ -283,6 +283,8 @@
         <option value="手动">手动</option>
         <option value="—">未知</option>
       </select>
+      <button type="button" id="exportBtn" class="fs-btn" title="导出当前筛选结果为 CSV">导出 CSV</button>
+      <button type="button" id="refreshBtn" class="fs-btn" title="重新拉取平台文章数据">刷新数据</button>
       <span style="font-size:13px;color:var(--muted)" id="countInfo"></span>
     </div>
     <div style="max-height:520px;overflow:auto">
@@ -486,7 +488,7 @@ const PAGE_SIZE = 10;
 let ARTICLES = [];
 let REVIEWS = {};
 let SCORE = null;
-let SCORES = {};
+let HISTCOUNTS = {};
 let POSTS = {};
 let DATA_UPDATED = '';
 let filtered = [];
@@ -853,7 +855,7 @@ function renderTable() {
     }
     let opCell = '<td>';
     if (status === '已发布') opCell += `<button class="opt-btn" onclick="openOpt(${a.id})">优化</button>`;
-    if (SCORES[String(a.id)] && SCORES[String(a.id)].length) opCell += `<button class="opt-btn hist" onclick="openHist(${a.id})">历史</button>`;
+    if (HISTCOUNTS[String(a.id)]) opCell += `<button class="opt-btn hist" onclick="openHist(${a.id})">历史</button>`;
     opCell += '</td>';
     const srcMeta = POSTS[String(a.id)];
     const srcTxt = srcMeta ? (srcMeta.source || '手动') : '—';
@@ -922,7 +924,11 @@ document.getElementById('modalMask').addEventListener('click', e => {
   if (e.target === e.currentTarget) document.getElementById('modalMask').classList.remove('show');
 });
 
-document.getElementById('searchInput').addEventListener('input', applyFilters);
+let searchTimer = null;
+document.getElementById('searchInput').addEventListener('input', () => {
+  clearTimeout(searchTimer);
+  searchTimer = setTimeout(applyFilters, 250);
+});
 document.getElementById('periodFilter').addEventListener('change', applyFilters);
 document.getElementById('srcFilter').addEventListener('change', applyFilters);
 document.getElementById('prevBtn').addEventListener('click', () => goPage(page - 1));
@@ -931,6 +937,65 @@ document.getElementById('jumpBtn').addEventListener('click', () => {
   const v = parseInt(document.getElementById('jumpInput').value, 10);
   if (!isNaN(v)) goPage(v);
 });
+
+function refreshData() {
+  const btn = document.getElementById('refreshBtn');
+  btn.disabled = true;
+  btn.textContent = '刷新中…';
+  fetch('api/refresh', { method: 'POST' })
+    .then(r => r.json().catch(() => ({})))
+    .then(d => {
+      if (d.error) { throw new Error(d.error); }
+      const poll = setInterval(() => {
+        fetchJson('api/refresh-status', { refreshing: false }).then(st => {
+          if (!st.refreshing) {
+            clearInterval(poll);
+            loadAll().then(ok => {
+              btn.disabled = false;
+              btn.textContent = '刷新数据';
+              alert(ok ? '数据已刷新' : '数据刷新完成，但加载失败');
+            });
+          }
+        });
+      }, 5000);
+    })
+    .catch(e => {
+      btn.disabled = false;
+      btn.textContent = '刷新数据';
+      alert('刷新失败: ' + e.message);
+    });
+}
+
+function exportCsv() {
+  const rows = [['标题', '分类', '发布时间', '来源', '状态', '评价', '浏览', '评论', '点赞', '收藏']];
+  filtered.forEach(a => {
+    const rv = REVIEWS[a.id];
+    const srcMeta = POSTS[String(a.id)];
+    const src = srcMeta ? (srcMeta.source || '手动') : '—';
+    rows.push([
+      a.title || '', a.cateName || '', a.createTime || '', src,
+      a.status === 1 ? '已发布' : '其他',
+      rv ? `${rv.grade} ${rv.score}` : '',
+      a.viewCount || 0, a.commentCount || 0, a.favor || 0, a.collect || 0
+    ]);
+  });
+  const csv = '\uFEFF' + rows.map(r => r.map(v => {
+    const s = String(v ?? '');
+    return /[",\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
+  }).join(',')).join('\n');
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const aEl = document.createElement('a');
+  aEl.href = url;
+  aEl.download = `台账导出_${todayStr()}.csv`;
+  document.body.appendChild(aEl);
+  aEl.click();
+  document.body.removeChild(aEl);
+  URL.revokeObjectURL(url);
+}
+
+document.getElementById('refreshBtn').addEventListener('click', refreshData);
+document.getElementById('exportBtn').addEventListener('click', exportCsv);
 document.getElementById('jumpInput').addEventListener('keydown', e => {
   if (e.key === 'Enter') document.getElementById('jumpBtn').click();
 });
@@ -1109,28 +1174,33 @@ function fetchJson(url, fallback, retries = 1) {
   return withTimeout(attempt(retries), 15000).catch(() => fallback);
 }
 
-Promise.all([
-  fetchJson('data/articles.json', { total: 0, memberId: '—', updatedAt: '', articles: [] }),
-  fetchJson('data/reviews.json', {}),
-  fetchJson('data/bot_score.json', null),
-  fetchJson('data/article_scores.json', {}),
-  fetchJson('data/bot_posts.json', {})
-])
-  .then(([json, reviews, score, scores, posts]) => {
-    REVIEWS = reviews || {};
-    SCORE = score || null;
-    SCORES = scores || {};
-    POSTS = posts || {};
-    parseData(json);
-    renderScore();
-    DATA_UPDATED = json.updatedAt || '';
-    document.getElementById('sub').textContent = `账号 ${json.memberId || '—'} · 共 ${json.total || 0} 篇文章 · 数据更新 ${DATA_UPDATED}`;
-    loadTodayPlan();
-  })
-  .catch(e => {
-    document.getElementById('sub').textContent = '数据加载失败: ' + e.message;
-    document.getElementById('tbody').innerHTML = `<tr><td colspan="11">数据加载失败</td></tr>`;
-  });
+function loadAll() {
+  return fetchJson('api/summary', null)
+    .then(summary => {
+      if (!summary) throw new Error('聚合数据为空');
+      const json = {
+        updatedAt: summary.updatedAt, memberId: summary.memberId,
+        total: summary.total, categories: summary.categories, articles: summary.articles
+      };
+      REVIEWS = summary.reviews || {};
+      SCORE = summary.botScore || null;
+      HISTCOUNTS = summary.histCounts || {};
+      POSTS = summary.posts || {};
+      parseData(json);
+      renderScore();
+      DATA_UPDATED = json.updatedAt || '';
+      document.getElementById('sub').textContent = `账号 ${json.memberId || '—'} · 共 ${json.total || 0} 篇文章 · 数据更新 ${DATA_UPDATED}`;
+      loadTodayPlan();
+      return true;
+    })
+    .catch(e => {
+      document.getElementById('sub').textContent = '数据加载失败: ' + e.message;
+      document.getElementById('tbody').innerHTML = `<tr><td colspan="11">数据加载失败</td></tr>`;
+      return false;
+    });
+}
+
+loadAll();
 
 function todayStr() {
   const d = new Date();
