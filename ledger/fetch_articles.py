@@ -60,17 +60,26 @@ def fetch_all(token):
 def main():
     token = get_token()
     articles, cate_map = fetch_all(token)
+    published = [a for a in articles if a.get("status") == 1]
+    seen = set()
+    uniq = []
+    for a in sorted(published, key=lambda x: x.get("createTime", "")):
+        t = (a.get("title") or "").strip()
+        if t in seen:
+            continue
+        seen.add(t)
+        uniq.append(a)
     payload = {
         "updatedAt": time.strftime("%Y-%m-%d %H:%M:%S"),
         "memberId": MEMBER_ID,
-        "total": len(articles),
+        "total": len(uniq),
         "categories": {str(k): v for k, v in cate_map.items()},
-        "articles": articles,
+        "articles": uniq,
     }
     os.makedirs(DATA_DIR, exist_ok=True)
     with open(os.path.join(DATA_DIR, "articles.json"), "w", encoding="utf-8") as f:
         json.dump(payload, f, ensure_ascii=False)
-    print(f"已拉取 {len(articles)} 篇文章 -> {DATA_DIR}/articles.json")
+    print(f"已拉取 {len(articles)} 篇，保留已发布去重后 {len(uniq)} 篇 -> {DATA_DIR}/articles.json")
     subprocess.run([sys.executable, os.path.join(BOT_DIR, "auto_review.py")], check=False)
 
 
