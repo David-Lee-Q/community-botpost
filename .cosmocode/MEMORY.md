@@ -128,3 +128,14 @@ Agent 在任务执行过程中发现的条目应遵循以下格式：
   - 评分历史 ledger/data/article_scores.json：每次优化/重评记录（kind=优化前/自动优化第N轮/重评），前端「历史」按钮展示
   - 文章优化API在 server.py：GET /api/article?id=、POST /api/optimize、POST /api/update、GET /api/scores?id=；AI优化复用 one_shot._llm，保留原图片标记
   - 平台更新接口：POST /api/article/save 带 id/articleId 即更新已发布文章，更新后 status 短暂为0约2秒自动恢复，公开访问不受影响；正文获取用 GET /api/article/detail/{id}
+
+[bot 守护进程排障要点]
+- Date: 2026-08-20
+- Context: Agent 排查 8-19 无发文（runner 崩溃停机）时掌握的运维知识
+- Category: 排错调试
+- Instructions:
+  - runner.py 的 __main__ 已加 while True+try/except 兜底：主循环任何异常（含 subprocess 超时）30 秒后自动重启 main()，不再整体退出；单次子任务崩溃会重建循环内状态变量，可能重复触发一次子任务属可接受
+  - publish.py 超时已从 300s 提高到 900s；积压过期 pending 会每 6 分钟反复触发发布且 300s 处理不完，导致 runner 崩溃，必须先清理 plan.json 过期 pending 再补计划
+  - gen_plan.py 已改为每篇排期成功立即落盘 plan.json；单篇 LLM 生成失败（如 JSONDecodeError）捕获跳过该时段继续，不再整体崩溃丢进度
+  - 恢复发布流程：POST /api/article/list 验证 token(code=0)→清理 plan.json 过期 pending→python3 gen_plan.py 3 补计划（12篇约40-60分钟）→重启 runner
+  - runner 启动优先用后台终端方式运行（本环境 shell 工具下 nohup 后台进程会被清理）

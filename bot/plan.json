@@ -61,7 +61,7 @@
       "cover": "/workspace/bot/covers/人工智能/cover5.jpg",
       "status": "published",
       "article_id": 35244,
-      "detail_url": "https://openlab.cosmoplat.com/article-detils?id=35244&articleType=0"
+      "detail_url": null
     },
     {
       "time": "2026-08-14 12:27:20",
@@ -74,8 +74,9 @@
         "https://images.unsplash.com/photo-1535223289827-42f1e9919769?w=800&q=80"
       ],
       "cover": "/workspace/bot/covers/网络/cover1.jpg",
-      "status": "pending",
-      "detail_url": null
+      "status": "published",
+      "detail_url": "https://openlab.cosmoplat.com/article-detils?id=35252&articleType=0",
+      "article_id": 35252
     },
     {
       "time": "2026-08-14 15:13:19",
@@ -88,8 +89,9 @@
         "https://images.unsplash.com/photo-1607252650355-f7fd0460ccdb?w=800&q=80"
       ],
       "cover": "/workspace/bot/covers/边缘计算/cover1.jpg",
-      "status": "pending",
-      "detail_url": null
+      "status": "published",
+      "detail_url": "https://openlab.cosmoplat.com/article-detils?id=35254&articleType=0",
+      "article_id": 35254
     },
     {
       "time": "2026-08-14 15:39:35",
@@ -102,174 +104,295 @@
         "https://images.unsplash.com/photo-1581092160562-40aa08e78837?w=800&q=80"
       ],
       "cover": "/workspace/bot/covers/智能制造/cover6.jpg",
-      "status": "pending",
-      "detail_url": null
+      "status": "published",
+      "detail_url": "https://openlab.cosmoplat.com/article-detils?id=35256&articleType=0",
+      "article_id": 35256
     },
     {
-      "time": "2026-08-15 09:17:44",
-      "title": "工业物联网连接数翻倍，仅两成数据产生价值",
+      "time": "2026-08-21 14:01:20",
+      "title": "过半平台工程烂尾，问题不在技术",
+      "category": "云原生",
+      "file": "/workspace/bot-articles/scheduled-20260820154152-586.md",
+      "summary": "平台工程被炒得火热，但真实落地中，多数企业内部平台沦为摆设。开发者绕过平台走野路，团队陷入工具堆砌的泥潭。这篇文章用三个反常识结论，揭示平台工程失败的根因在于开发者体验、切入点和产品化运营的缺失，并给出从最小可行平台到DORA指标度量的一线实践指南，帮你把内部平台真正变成开发者离不开的基础设施。",
+      "images": [
+        "https://images.unsplash.com/photo-1555949963-aa79dcee981c?w=800&q=80",
+        "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=800&q=80"
+      ],
+      "cover": "/workspace/bot/covers/云原生/cover5.jpg",
+      "status": "published",
+      "detail_url": null,
+      "article_id": 35544
+    },
+    {
+      "time": "2026-08-21 14:56:20",
+      "title": "2D漏检三成，3D视觉检测如何补位",
+      "category": "机器视觉",
+      "file": "/workspace/bot-articles/scheduled-20260820154450-673.md",
+      "summary": "2D视觉在反光、低对比度、高度差等缺陷面前漏检率常年居高不下，3D视觉用深度信息补上了这块短板，但部署中同样有环境光、标定、算力等坑等着踩。本文拆解3D检测的技术逻辑、三种主流传感器方案和落地工程要点，结合产线算账方法，帮你判断什么场景值得上3D设备，以及如何绕开常见陷阱。",
+      "images": [
+        "https://images.unsplash.com/photo-1565793298595-6a879b1d9492?w=800&q=80",
+        "https://images.unsplash.com/photo-1563770660941-20978e870e26?w=800&q=80"
+      ],
+      "cover": "/workspace/bot/covers/机器视觉/cover4.jpg",
+      "status": "published",
+      "detail_url": null,
+      "article_id": 35546
+    },
+    {
+      "time": "2026-08-21 17:59:40",
+      "title": "连接数年增三成，工业物联网先过安全关",
       "category": "物联网",
-      "file": "/workspace/bot-articles/scheduled-20260813175011-381.md",
-      "summary": "工业物联网连接数高速增长，但数据利用率低、平台孤岛问题突出。本文分析连接数暴增背后的结构性矛盾，指出“连接”本身不是目的，提出从数据治理、边缘计算和互操作性切入的落地路径，帮助企业把连接数增长转化为实际收益。",
+      "file": "/workspace/bot-articles/scheduled-20260820154616-903.md",
+      "summary": "工业物联网连接数正以每年30%的速度增长，但多数企业陷入'连接越多、漏洞越多'的困境。设备联网只是起点，安全防护和数据治理才是决定ROI的关键。本文拆解连接数暴增背后的三大挑战，并给出从'多连接'走向'好连接'的实操路径，帮助管理者在扩张中守住底线。",
       "images": [
-        "https://images.unsplash.com/photo-1587049352846-4a222e784d38?w=800&q=80",
-        "https://images.unsplash.com/photo-1467232004584-a241de8bcf5d?w=800&q=80"
+        "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=800&q=80",
+        "https://images.unsplash.com/photo-1537462715879-360eeb61a0ad?w=800&q=80"
       ],
-      "cover": "/workspace/bot/covers/物联网/cover1.jpg",
-      "status": "pending",
-      "detail_url": null
+      "cover": "/workspace/bot/covers/物联网/cover3.jpg",
+      "status": "published",
+      "detail_url": null,
+      "article_id": 35548
     },
     {
-      "time": "2026-08-15 11:39:49",
-      "title": "AI Agent 让流程快三倍，但数据孤岛先得解决",
-      "category": "人工智能",
-      "file": "/workspace/bot-articles/scheduled-20260813175455-897.md",
-      "summary": "企业流程冗长、响应迟缓，AI Agent 正把审批时间从48小时压缩到4小时。但很多企业导入后卡在数据孤岛与流程碎片化上，收益远低于预期。本文用真实场景拆解 AI Agent 的决策机制，剖析落地陷阱，并给出从试点到规模化应用的具体路径，帮助你在下一轮效率竞赛中不掉队。",
+      "time": "2026-08-21 19:09:44",
+      "title": "服务网格实施别蛮干，先避开这三个坑",
+      "category": "云原生",
+      "file": "/workspace/bot-articles/scheduled-20260820154734-106.md",
+      "summary": "服务网格在生产环境推不动是行业共识，但真正卡住团队的往往不是技术本身，而是复杂度的转移和错误的采纳节奏。很多团队在POC后便放弃，原因不外乎Sidecar副作用、配置陷阱和可观测性爆炸。本文逐一拆解这三个致命问题，并给出从“旁路只观测”到“灰度下发”的渐进路径，帮助读者避开最贵的坑，缩短试错周期。",
       "images": [
-        "https://images.unsplash.com/photo-1537432376769-00f5c2f4c8d2?w=800&q=80",
-        "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&q=80"
+        "https://images.unsplash.com/photo-1527430253228-e93688616381?w=800&q=80",
+        "https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=800&q=80"
       ],
-      "cover": "/workspace/bot/covers/人工智能/cover6.jpg",
-      "status": "pending",
-      "detail_url": null
+      "cover": "/workspace/bot/covers/云原生/cover6.jpg",
+      "status": "published",
+      "detail_url": null,
+      "article_id": 35550
     },
     {
-      "time": "2026-08-15 12:55:35",
-      "title": "云上HPC成本账 算力单价跌了总账涨三倍",
-      "category": "云计算",
-      "file": "/workspace/bot-articles/scheduled-20260813175756-204.md",
-      "summary": "云上高性能计算看似按需付费，但算力成本仅占整体账单的六成。存储访问、数据出站、资源空转才是真正的隐性开支。本文从实例选型、数据流转、竞价实例和调度管理四个维度拆解云上HPC的真实成本构成，梳理可落地的优化手段，帮助你在享受弹性算力的同时，不让月底账单失控。",
+      "time": "2026-08-22 11:13:02",
+      "title": "低代码是银弹还是毒药 关键看你怎么用",
+      "category": "编程与开发",
+      "file": "/workspace/bot-articles/scheduled-20260820154900-819.md",
+      "summary": "低代码平台用“拖拽生成应用”的承诺吸引了大批企业，但交付提速的背后，平台锁定、代码腐化与安全漏洞正悄然累积。本文通过三个真实场景拆解低代码的能力边界，厘清“适合做什么”与“千万别做什么”，并给出选型与治理的决策框架，帮助你在效率与可控之间做出理性选择。",
       "images": [
-        "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=800&q=80",
-        "https://images.unsplash.com/photo-1518770660439-4636190af475?w=800&q=80"
+        "https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?w=800&q=80",
+        "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=800&q=80"
       ],
-      "cover": "/workspace/bot/covers/云计算/cover2.jpg",
-      "status": "pending",
-      "detail_url": null
+      "cover": "/workspace/bot/covers/编程与开发/cover5.jpg",
+      "status": "published",
+      "detail_url": null,
+      "article_id": 35656
     },
     {
-      "time": "2026-08-15 18:50:51",
-      "title": "七成数据在沉睡 万亿市场卡在确权难",
-      "category": "数据要素",
-      "file": "/workspace/bot-articles/scheduled-20260813175914-117.md",
-      "summary": "政策热炒数年，数据交易却雷声大雨点小。七成数据资产沉睡在服务器里，确权模糊、定价无标、流通受阻成为三大症结。本文基于多地交易所实操案例，拆解数据要素从资源到资产的四道关卡，指出隐私计算与数据空间带来的破局可能，并给出企业参与市场化的现实路径。",
-      "images": [
-        "https://images.unsplash.com/photo-1593642532744-d377ab507dc8?w=800&q=80",
-        "https://images.unsplash.com/photo-1590959651373-a3db0f38a961?w=800&q=80"
-      ],
-      "cover": "/workspace/bot/covers/数据要素/cover2.jpg",
-      "status": "pending",
-      "detail_url": null
-    },
-    {
-      "time": "2026-08-16 08:15:01",
-      "title": "中间件治理失控，就用3个维度自救",
+      "time": "2026-08-22 13:16:38",
+      "title": "微服务成功了，中间件却拖垮了系统",
       "category": "中间件",
-      "file": "/workspace/bot-articles/scheduled-20260813180224-986.md",
-      "summary": "微服务规模越滚越大，中间件却成了事故重灾区：配置散落、版本不一、故障连环爆炸。本文结合一线实践，提出从架构标准、平台能力、流程闭环三大维度构建治理体系，帮助团队把中间件从“定时炸弹”变成稳定底座，降低故障率，提升交付节奏。",
+      "file": "/workspace/bot-articles/scheduled-20260820155017-251.md",
+      "summary": "微服务拆分后，中间件数量动辄翻倍，配置混乱、版本冲突、故障定位难成为共性痛点。本文复盘真实案例，提炼出中间件治理的三大原则：收敛技术栈、构建可观测性、配置统一纳管，并给出从盘点到自动化的落地路径。团队照着做，能在4周内将中间件相关故障率降低50%。",
+      "images": [
+        "https://images.unsplash.com/photo-1542831371-29b0f74f9713?w=800&q=80",
+        "https://images.unsplash.com/photo-1555617981-dac3880eac6e?w=800&q=80"
+      ],
+      "cover": "/workspace/bot/covers/中间件/cover2.jpg",
+      "status": "published",
+      "detail_url": "https://openlab.cosmoplat.com/article-detils?id=35658&articleType=0",
+      "article_id": 35658
+    },
+    {
+      "time": "2026-08-22 14:51:20",
+      "title": "云边协同 让工业响应从秒级跨入毫秒级",
+      "category": "边缘计算",
+      "file": "/workspace/bot-articles/scheduled-20260820155622-576.md",
+      "summary": "工业数据全量上云导致带宽成本暴涨、响应延迟高达秒级，云边协同通过边缘就近计算与云端全局调度，将工业控制响应压缩到毫秒级。本文梳理云边协同的分层逻辑与三层架构，拆解资源受限、弱网同步、安全防护等落地难点，并给出卡奥斯平台在设备预测性维护中的实战效果，助你避开云边改造中的常见陷阱。",
+      "images": [
+        "https://images.unsplash.com/photo-1565043666747-69f6646db940?w=800&q=80",
+        "https://images.unsplash.com/photo-1555255707-c07966088b7b?w=800&q=80"
+      ],
+      "cover": "/workspace/bot/covers/边缘计算/cover5.jpg",
+      "status": "published",
+      "detail_url": "https://openlab.cosmoplat.com/article-detils?id=35660&articleType=0",
+      "article_id": 35660
+    },
+    {
+      "time": "2026-08-22 19:48:42",
+      "title": "选相机别只看分辨率 帧率才是高速产线的命门",
+      "category": "机器视觉",
+      "file": "/workspace/bot-articles/scheduled-20260820155931-496.md",
+      "summary": "选相机时，很多人把分辨率当成唯一指标，结果产线高速运动场景下图像拖影严重，缺陷漏检率飙升。本文从帧率、曝光时间、像元尺寸、接口带宽等核心参数出发，结合典型场景，拆解选型决策逻辑，帮你避开常见误区，找到真正适合产线需求的相机。无论你是自动化工程师还是项目采购，这套方法都能直接套用，也适合原有产线升级改造。",
+      "images": [
+        "https://images.unsplash.com/photo-1581094794329-c8112a89af12?w=800&q=80",
+        "https://images.unsplash.com/photo-1587049352846-4a222e784d38?w=800&q=80"
+      ],
+      "cover": "/workspace/bot/covers/机器视觉/cover5.jpg",
+      "status": "published",
+      "detail_url": "https://openlab.cosmoplat.com/article-detils?id=35684&articleType=0",
+      "article_id": 35684
+    },
+    {
+      "time": "2026-08-23 10:43:10",
+      "title": "中间件失控？三招让微服务P99延迟降42%",
+      "category": "微服务",
+      "file": "/workspace/bot-articles/scheduled-20260820160017-143.md",
+      "summary": "微服务中间件控制面缺失，故障定位以小时计？数据显示92%的线上故障与中间件有关。文章用某电商大促案例，拆解治理三动作：统一可观测性、流量隔离、持续演练，把P99延迟从2.3秒降到约1秒内，并给出落地路径。",
       "images": [
         "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=800&q=80",
-        "https://images.unsplash.com/photo-1542831371-29b0f74f9713?w=800&q=80"
+        "https://images.unsplash.com/photo-1524749292158-7540c2494485?w=800&q=80"
       ],
-      "cover": "/workspace/bot/covers/中间件/cover1.jpg",
+      "cover": "/workspace/bot/covers/微服务/cover2.jpg",
       "status": "pending",
       "detail_url": null
     },
     {
-      "time": "2026-08-16 08:23:08",
-      "title": "大模型进厂七成POC烂尾",
-      "category": "智能制造",
-      "file": "/workspace/bot-articles/scheduled-20260813180340-260.md",
-      "summary": "大模型在办公室能写诗，一进工厂就失灵。数据脏乱差、算力实时性受限、老师傅不信任、ROI算不清，四道坎让七成项目止步于POC。本文基于一线实践案例，拆解大模型进厂的真实阻力，并从场景选择、大小模型协同与组织信任三个维度给出落地路径，帮助你在立项前避开深坑。",
-      "images": [
-        "https://images.unsplash.com/photo-1569012871812-f38ee64cd54c?w=800&q=80",
-        "https://images.unsplash.com/photo-1531297484001-80022131f5a1?w=800&q=80"
-      ],
-      "cover": "/workspace/bot/covers/智能制造/cover7.jpg",
-      "status": "pending",
-      "detail_url": null
-    },
-    {
-      "time": "2026-08-16 11:15:23",
-      "title": "70%边缘算力闲置 调度器破局实战",
-      "category": "边缘计算",
-      "file": "/workspace/bot-articles/scheduled-20260813180459-884.md",
-      "summary": "边缘节点的算力规模已超过数据中心，但实际利用率却常年徘徊在20%～30%。资源碎片化、可预测性差、调度迟滞，让传统算法在边缘失效。文章从边缘资源调度现状出发，剖析失败根源，结合KubeEdge、Volcano等开源机制，提出一套分层的动态调度策略，并给出可直接落地的优化清单，帮你在不换硬件的情况下榨干边缘算力。",
-      "images": [
-        "https://images.unsplash.com/photo-1551650975-87deedd944c3?w=800&q=80",
-        "https://images.unsplash.com/photo-1555949963-aa79dcee981c?w=800&q=80"
-      ],
-      "cover": "/workspace/bot/covers/边缘计算/cover2.jpg",
-      "status": "pending",
-      "detail_url": null
-    },
-    {
-      "time": "2026-08-16 14:07:16",
-      "title": "工业OS 七成平台化项目死于POC之后",
-      "category": "工业操作系统",
-      "file": "/workspace/bot-articles/scheduled-20260813180726-774.md",
-      "summary": "很多制造企业把工业操作系统的平台化当成软件选型，结果陷入POC成功、推广失败的怪圈。文章从控制权重构、技术碎片化、数据治理和生态边界四个维度拆解平台化失败的深层原因，并给出分阶段落地的路线图，帮助企业避开“大平台、空转、死平台”的陷阱。",
+      "time": "2026-08-23 14:05:44",
+      "title": "超七成供应链数据失真 可信体系怎么建",
+      "category": "区块链",
+      "file": "/workspace/bot-articles/scheduled-20260820160207-498.md",
+      "summary": "一份行业调研显示，71%的制造企业供应链数据存在刻意延迟或粉饰，质量追溯平均要花费4.2天。数据失真不是管理问题，而是信任机制失效。本文从多主体博弈、系统孤岛和防篡改账本三个层面拆解病根，结合卡奥斯跨企业数据可信实践，给出在不动现有ERP系统的情况下，用工业互联网标识+区块链搭建可信底座的具体路径。",
       "images": [
         "https://images.unsplash.com/photo-1532073150508-0c1df022bdd1?w=800&q=80",
-        "https://images.unsplash.com/photo-1587620962725-abab7fe55159?w=800&q=80"
+        "https://images.unsplash.com/photo-1516937941344-00b4e0337589?w=800&q=80"
       ],
-      "cover": "/workspace/bot/covers/工业操作系统/cover1.jpg",
+      "cover": "/workspace/bot/covers/区块链/cover2.jpg",
       "status": "pending",
       "detail_url": null
     },
     {
-      "time": "2026-08-17 08:03:34",
-      "title": "API网关部署的五个反直觉真相",
-      "category": "微服务",
-      "file": "/workspace/bot-articles/scheduled-20260814060128-470.md",
-      "summary": "API网关是微服务架构的流量枢纽，但配置不当会引发性能下降、安全漏洞和成本失控。本文基于生产环境半年实战，总结五个反直觉真相：超时设置、限流算法、认证转发、日志采样和压测时机。通过实测数据揭示网关延迟占比和故障场景，给出可落地的调优策略，帮助你在网关选型和运维中避免踩坑。",
+      "time": "2026-08-23 15:58:02",
+      "title": "数据资产化虚火，入表容易变现难",
+      "category": "数据要素",
+      "file": "/workspace/bot-articles/scheduled-20260820160337-559.md",
+      "summary": "数据资产入表新规落地一年，A股披露入表企业不足百家，多数数据资产仍在\"纸上富贵\"。为什么政策热、市场冷？文章拆解估值失灵、确权模糊、交易空转三大症结，结合真实案例解释数据资产化的雷区，并给出从内部治理到外部变现的四步落地路径，帮助你在合规前提下，真正让数据变成可计价、可流通的资产。",
       "images": [
-        "https://images.unsplash.com/photo-1524749292158-7540c2494485?w=800&q=80",
+        "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=800&q=80",
+        "https://images.unsplash.com/photo-1524749292158-7540c2494485?w=800&q=80"
+      ],
+      "cover": "/workspace/bot/covers/数据要素/cover6.jpg",
+      "status": "pending",
+      "detail_url": null
+    },
+    {
+      "time": "2026-08-23 18:13:36",
+      "title": "九成联盟链项目倒在三道门槛",
+      "category": "区块链",
+      "file": "/workspace/bot-articles/scheduled-20260820160623-408.md",
+      "summary": "联盟链的POC成功率并不低，但真正能稳定运行三年以上的生产系统屈指可数。多数项目并非死在性能上，而是倒在身份体系混乱、治理规则缺失和跨机构数据合规这三道门槛上。本文结合多个制造业与政务场景的真实案例，拆解联盟链从试点到量产的关键决策，并提供一套可复用的技术选型与治理设计清单，助你避开最常见的坑。",
+      "images": [
+        "https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=800&q=80",
+        "https://images.unsplash.com/photo-1555664424-778a1e5e1b48?w=800&q=80"
+      ],
+      "cover": "/workspace/bot/covers/区块链/cover3.jpg",
+      "status": "pending",
+      "detail_url": null
+    },
+    {
+      "time": "2026-08-24 09:54:32",
+      "title": "降本60%？微调私有化部署的残酷真相",
+      "category": "人工智能",
+      "file": "/workspace/bot-articles/scheduled-20260821060147-116.md",
+      "summary": "很多团队以为私有化部署微调模型一定比云端API便宜，实际可能更贵。这篇文章从基座选型、数据准备、LoRA微调到推理优化，拆解了私有化部署全流程中容易被忽视的隐性成本，并给出了可复用的决策清单。如果你正在为大模型落地预算头疼，本文能帮你省下数十万元试错费。",
+      "images": [
+        "https://images.unsplash.com/photo-1569012871812-f38ee64cd54c?w=800&q=80",
+        "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&q=80"
+      ],
+      "cover": "/workspace/bot/covers/人工智能/cover9.jpg",
+      "status": "pending",
+      "detail_url": null
+    },
+    {
+      "time": "2026-08-24 11:26:01",
+      "title": "八成数据治理失败，问题出在体系",
+      "category": "大数据",
+      "file": "/workspace/bot-articles/scheduled-20260821060210-819.md",
+      "summary": "企业投入重金建设数据治理，但多数项目止步于报表和制度文档，业务部门不买账、数据质量持续恶化。本文拆解数据治理体系建设中的三大致命误区，给出从组织权责到运营闭环的落地路径，帮助你避开常见坑点，让治理真正支撑业务决策。",
+      "images": [
+        "https://images.unsplash.com/photo-1527430253228-e93688616381?w=800&q=80",
+        "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&q=80"
+      ],
+      "cover": "/workspace/bot/covers/大数据/cover3.jpg",
+      "status": "pending",
+      "detail_url": null
+    },
+    {
+      "time": "2026-08-24 17:05:37",
+      "title": "镜像漏洞占九成？云原生安全实战拆解",
+      "category": "云原生",
+      "file": "/workspace/bot-articles/scheduled-20260821060515-650.md",
+      "summary": "云原生环境里，镜像漏洞、运行时逃逸和服务信任是三大高危入口。很多团队的安全体系还停留在虚拟机时代，告警成堆却拦不住横向移动。本文拆解了三个经过验证的实践：CI镜像扫描、运行时权限收敛、零信任网络。不需要重构架构，只需三步就能把攻击面砍掉大半。",
+      "images": [
+        "https://images.unsplash.com/photo-1542831371-29b0f74f9713?w=800&q=80",
         "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&q=80"
       ],
-      "cover": "/workspace/bot/covers/微服务/cover1.jpg",
+      "cover": "/workspace/bot/covers/云原生/cover7.jpg",
       "status": "pending",
       "detail_url": null
     },
     {
-      "time": "2026-08-17 12:09:11",
-      "title": "从怀疑到真香 我用AI编程的180天",
-      "category": "编程与开发",
-      "file": "/workspace/bot-articles/scheduled-20260814060342-150.md",
-      "summary": "AI编程工具层出不穷，但盲目跟风只会让代码库雪上加霜。本文基于180天真实项目实践，剖析AI辅助开发的优与劣，揭露“看起来很美”背后的认知误区。从工具选型、代码审查到风险控制，给出可落地的建议，帮助你建立一套人机协作的流程，在提升效率的同时守住质量底线。",
+      "time": "2026-08-24 18:02:11",
+      "title": "智能体接管工作流前 先解决三个要命问题",
+      "category": "人工智能",
+      "file": "/workspace/bot-articles/scheduled-20260821060641-945.md",
+      "summary": "智能体（AI Agent）落地工作流，不缺技术，缺决策。很多企业上了Agent却只收获一堆Demo和混乱。本文从场景选择、责任边界、评估闭环三个关键问题入手，结合一线实践给出可操作框架，帮你避开智能体项目最常见的三大坑，让流程自动化真正产生业务回报。",
       "images": [
-        "https://images.unsplash.com/photo-1544197150-b99a580bb7a8?w=800&q=80",
-        "https://images.unsplash.com/photo-1565043666747-69f6646db940?w=800&q=80"
+        "https://images.unsplash.com/photo-1523287562758-66c7fc58967f?w=800&q=80",
+        "https://images.unsplash.com/photo-1564865878688-9a244444042a?w=800&q=80"
       ],
-      "cover": "/workspace/bot/covers/编程与开发/cover2.jpg",
+      "cover": "/workspace/bot/covers/人工智能/cover10.jpg",
       "status": "pending",
       "detail_url": null
     },
     {
-      "time": "2026-08-17 12:10:09",
-      "title": "服务网格很成熟，普及卡在三个隐性门槛",
+      "time": "2026-08-25 08:14:57",
+      "title": "服务网格 70%团队倒在升级这一步",
       "category": "云原生",
-      "file": "/workspace/bot-articles/scheduled-20260814060633-818.md",
-      "summary": "服务网格技术早已成熟，但真正让企业停步的往往不是性能，而是团队协作与运维模型。本文通过真实场景拆解服务网格生产化过程中最容易被忽略的四个隐性门槛，给出从选型到规模化推广的路径建议，帮助你少走大多数团队都踩过的坑。",
+      "file": "/workspace/bot-articles/scheduled-20260822060130-310.md",
+      "summary": "服务网格生产环境推进，七成团队始终在打转，根源并非选型或性能，而是升级迭代与流量治理的复杂性。本文通过真实故障场景拆解三大排雷点，并给出从非核心业务切入、自动验证配置等可操作路径。读完你将避开那些只有踩过坑才明白的细节。",
       "images": [
-        "https://images.unsplash.com/photo-1519452575417-564c1401ecc0?w=800&q=80",
-        "https://images.unsplash.com/photo-1555949963-aa79dcee981c?w=800&q=80"
+        "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=800&q=80",
+        "https://images.unsplash.com/photo-1518770660439-4636190af475?w=800&q=80"
       ],
-      "cover": "/workspace/bot/covers/云原生/cover1.jpg",
+      "cover": "/workspace/bot/covers/云原生/cover8.jpg",
       "status": "pending",
       "detail_url": null
     },
     {
-      "time": "2026-08-17 13:36:59",
-      "title": "万亿数据交易预期为何卡在三个死结",
+      "time": "2026-08-25 10:35:37",
+      "title": "确权不清交易难 溯源技术如何解死结",
       "category": "数据要素",
-      "file": "/workspace/bot-articles/scheduled-20260814060729-625.md",
-      "summary": "数据交易写进顶层文件，市场却陷入“场外火爆、场内冷清”的怪圈。企业不是不想买，而是怕确权不清、定价没谱、出问题没人担责。本文拆解数据交易与流通的三大核心症结，给出从确权、定价到安全落地的实操路径，帮助你判断数据资产可以如何进入市场。",
+      "file": "/workspace/bot-articles/scheduled-20260822060302-522.md",
+      "summary": "确权不清正让数据交易陷入“不敢买、不敢卖”的僵局，溯源技术被视为破局关键。本文从确权难的根源出发，分析区块链、数字水印等技术如何落地，并给出企业从场景切入的实施路径，帮助你在数据要素市场合规变现中少踩坑。",
       "images": [
-        "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=800&q=80",
-        "https://images.unsplash.com/photo-1526628953301-3e589a6a8b74?w=800&q=80"
+        "https://images.unsplash.com/photo-1568819317551-31051b8b7f8e?w=800&q=80",
+        "https://images.unsplash.com/photo-1558494949-4314304c7b42?w=800&q=80"
       ],
-      "cover": "/workspace/bot/covers/数据要素/cover3.jpg",
+      "cover": "/workspace/bot/covers/数据要素/cover7.jpg",
+      "status": "pending",
+      "detail_url": null
+    },
+    {
+      "time": "2026-08-25 11:07:39",
+      "title": "边缘算力分流七成 云端只做慢决策",
+      "category": "边缘计算",
+      "file": "/workspace/bot-articles/scheduled-20260822060434-635.md",
+      "summary": "很多团队把云边协同做成数据转发，延迟没降、成本反增。本文用智慧园区和工业质检的一线案例，拆解云边协同的架构分界、任务调度和断网自治，给出可复用落地方法与量化指标，教你在不推翻现有系统、不增加运维负担的前提下把边缘算力真正用起来，并避开常见误区。",
+      "images": [
+        "https://images.unsplash.com/photo-1573855619003-97b4799dcd8b?w=800&q=80",
+        "https://images.unsplash.com/photo-1580927752452-89d86da3fa0a?w=800&q=80"
+      ],
+      "cover": "/workspace/bot/covers/边缘计算/cover6.jpg",
+      "status": "pending",
+      "detail_url": null
+    },
+    {
+      "time": "2026-08-25 12:57:47",
+      "title": "算力不背锅，视觉算法七成成本在数据",
+      "category": "机器视觉",
+      "file": "/workspace/bot-articles/scheduled-20260822060854-276.md",
+      "summary": "大多数团队在立项时疯狂买入GPU，验收时才发现算法工程师天天跟脏数据搏斗，模型上线后仍在不断返工。本文拆解视觉算法落地中的隐性成本结构，指出数据治理和模型维护才是吞噬预算的元凶，并给出三个降低总成本的可行做法，帮助你在下一个项目里少花冤枉钱。",
+      "images": [
+        "https://images.unsplash.com/photo-1555255707-c07966088b7b?w=800&q=80",
+        "https://images.unsplash.com/photo-1563770660941-20978e870e26?w=800&q=80"
+      ],
+      "cover": "/workspace/bot/covers/机器视觉/cover6.jpg",
       "status": "pending",
       "detail_url": null
     }

@@ -124,5 +124,77 @@
     "cateName": "人工智能",
     "createTime": "2026-08-12 06:46:26",
     "source": "手动"
+  },
+  "35244": {
+    "title": "私有化部署让模型微调成本骤降七成",
+    "cateName": "人工智能",
+    "createTime": "",
+    "source": "定时发文"
+  },
+  "35252": {
+    "title": "从切片到确定性，工业网络要的是准时而非高速",
+    "cateName": "网络",
+    "createTime": "",
+    "source": "定时发文"
+  },
+  "35254": {
+    "title": "算力下沉产线，数据不必再绕道云端",
+    "cateName": "边缘计算",
+    "createTime": "",
+    "source": "定时发文"
+  },
+  "35256": {
+    "title": "柔性生产为何总在个性化定制上翻车？",
+    "cateName": "智能制造",
+    "createTime": "",
+    "source": "定时发文"
+  },
+  "35544": {
+    "title": "过半平台工程烂尾，问题不在技术",
+    "cateName": "云原生",
+    "createTime": "",
+    "source": "定时发文"
+  },
+  "35546": {
+    "title": "2D漏检三成，3D视觉检测如何补位",
+    "cateName": "机器视觉",
+    "createTime": "",
+    "source": "定时发文"
+  },
+  "35548": {
+    "title": "连接数年增三成，工业物联网先过安全关",
+    "cateName": "物联网",
+    "createTime": "",
+    "source": "定时发文"
+  },
+  "35550": {
+    "title": "服务网格实施别蛮干，先避开这三个坑",
+    "cateName": "云原生",
+    "createTime": "",
+    "source": "定时发文"
+  },
+  "35656": {
+    "title": "低代码是银弹还是毒药 关键看你怎么用",
+    "cateName": "编程与开发",
+    "createTime": "",
+    "source": "定时发文"
+  },
+  "35658": {
+    "title": "微服务成功了，中间件却拖垮了系统",
+    "cateName": "中间件",
+    "createTime": "",
+    "source": "定时发文"
+  },
+  "35660": {
+    "title": "云边协同 让工业响应从秒级跨入毫秒级",
+    "cateName": "边缘计算",
+    "createTime": "",
+    "source": "定时发文"
+  },
+  "35684": {
+    "title": "选相机别只看分辨率 帧率才是高速产线的命门",
+    "cateName": "机器视觉",
+    "createTime": "",
+    "source": "定时发文"
   }
 }
