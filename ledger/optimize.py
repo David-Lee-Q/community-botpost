@@ -164,7 +164,8 @@ def _load_content_scores():
 
 
 def _save_content_score(aid, title, summary, body):
-    from auto_review import content_score
+    from auto_review import content_score, save_body
+    save_body(aid, {"title": title, "summary": summary, "content": body})
     cs = _load_content_scores()
     total, detail, dims = content_score(title, summary, body)
     cs[str(aid)] = {"content_total": total, "detail": detail, "dims": dims,
@@ -176,7 +177,7 @@ def _save_content_score(aid, title, summary, body):
 
 def _score_article(aid, arts, live=None):
     published = [a for a in arts if a.get("status") == 1]
-    from auto_review import percentile, grade_of, score_entry
+    from auto_review import percentile, grade_of, score_entry, load_bodies, fetch_body, save_body
     view_pct = percentile(published, "viewCount")
     engage_pct = percentile(published, "commentCount")
     a = next((x for x in arts if str(x.get("id")) == str(aid)), None)
@@ -185,16 +186,27 @@ def _score_article(aid, arts, live=None):
     v = (live or a).get("viewCount", 0)
     e = (live or a).get("commentCount", 0) + (live or a).get("favor", 0) + (live or a).get("collect", 0)
     view_score = round(0.7 * view_pct.get(v, 0) + 0.3 * engage_pct.get(e, 0))
-    cached = _load_content_scores().get(str(aid))
-    score, content_total, breakdown = score_entry(str(aid), a.get("title", ""), view_score, cached)
-    grade = grade_of(score)
+    body = load_bodies().get(str(aid))
+    if not body:
+        try:
+            body = fetch_body(aid)
+            save_body(aid, body)
+        except Exception:
+            body = None
+    total, dims = score_entry(
+        str(aid), a.get("title", ""), view_score,
+        body=body.get("content") if body else None,
+        summary=body.get("summary") if body else None,
+    )
+    grade = grade_of(total)
+    dim_txt = "，".join(f"{d}{dims[d]}" for d in dims)
     return {
         "title": a.get("title", ""),
-        "score": score, "grade": grade, "auto": True,
-        "comment": (f"自动化评价：传播表现百分位 {view_score} 分（浏览 {v}、互动 {e}），"
-                    f"内容质量分 {content_total if content_total is not None else '—'}，"
-                    f"综合 {score} 分，档位{grade}，详见《社区文章质量评价标准》"),
-        "breakdown": breakdown,
+        "score": total, "grade": grade, "auto": True,
+        "viewScore": view_score,
+        "comment": (f"自动化评价：按维度计分（{dim_txt}），总分 {total}，"
+                    f"档位{grade}，详见《社区文章质量评价标准》"),
+        "breakdown": {d: dims.get(d) for d in dims},
     }
 
 
