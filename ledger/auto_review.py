@@ -151,6 +151,15 @@ def content_score(title, summary, body):
     return score_dims(title, summary, body, view_score=None, has_body=bool(body))
 
 
+def _write_json(path, obj):
+    import os as _os
+    import tempfile
+    fd, tmp = tempfile.mkstemp(dir=_os.path.dirname(path), suffix=".tmp")
+    with _os.fdopen(fd, "w", encoding="utf-8") as f:
+        json.dump(obj, f, ensure_ascii=False, indent=2)
+    _os.replace(tmp, path)
+
+
 def load_bodies():
     if not os.path.exists(BODIES_FILE):
         return {}
@@ -164,8 +173,7 @@ def save_body(aid, body):
         "content": body.get("content", ""),
         "updated": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
     }
-    with open(BODIES_FILE, "w", encoding="utf-8") as f:
-        json.dump(bodies, f, ensure_ascii=False, indent=2)
+    _write_json(BODIES_FILE, bodies)
 
 
 def fetch_body(aid):
@@ -268,10 +276,8 @@ def main(force=False):
         hist = hist[-30:]
         scores[aid] = hist
 
-    with open(REVIEWS_FILE, "w", encoding="utf-8") as f:
-        json.dump(reviews, f, ensure_ascii=False, indent=2)
-    with open(SCORES_FILE, "w", encoding="utf-8") as f:
-        json.dump(scores, f, ensure_ascii=False, indent=2)
+    _write_json(REVIEWS_FILE, reviews)
+    _write_json(SCORES_FILE, scores)
     print(f"自动化评价完成: 新增 {added} 篇, 更新 {updated} 篇, 已发布总数 {len(published)}")
     auto = sum(1 for r in reviews.values() if r.get("auto"))
     manual = len(reviews) - auto

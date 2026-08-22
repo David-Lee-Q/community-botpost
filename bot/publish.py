@@ -12,6 +12,14 @@ BOT_DIR = os.path.dirname(os.path.abspath(__file__))
 LEDGER = os.path.join(os.path.dirname(BOT_DIR), "ledger")
 TOKEN_FILE = os.path.join(BOT_DIR, "token.txt")
 
+
+def _write_json(path, obj):
+    import tempfile
+    fd, tmp = tempfile.mkstemp(dir=os.path.dirname(path), suffix=".tmp")
+    with os.fdopen(fd, "w", encoding="utf-8") as f:
+        json.dump(obj, f, ensure_ascii=False, indent=2)
+    os.replace(tmp, path)
+
 CATEGORY_IDS = {
     "机器视觉": 15, "智能制造": 1, "云计算": 2, "云原生": 3,
     "物联网": 4, "边缘计算": 5, "人工智能": 6, "大数据": 7,
@@ -218,8 +226,7 @@ def _register_post(aid, title, category):
     if str(aid) not in posts:
         posts[str(aid)] = {"title": title, "cateName": category, "createTime": "",
                            "source": "定时发文"}
-        with open(posts_file, "w", encoding="utf-8") as f:
-            json.dump(posts, f, ensure_ascii=False, indent=2)
+        _write_json(posts_file, posts)
 
 
 def publish_now(task_id):
@@ -233,8 +240,7 @@ def publish_now(task_id):
         return {"ok": False, "skip": True,
                 "reason": "当前状态 %s，不重复发布" % item.get("status")}
     item["status"] = "publishing"
-    with open(os.path.join(BOT_DIR, "plan.json"), "w", encoding="utf-8") as f:
-        json.dump(plan, f, ensure_ascii=False, indent=2)
+    _write_json(os.path.join(BOT_DIR, "plan.json"), plan)
     token = get_token()
     result = publish_one(token, item)
     if result["status"] in ("published", "exists"):
@@ -250,8 +256,7 @@ def publish_now(task_id):
         item["status"] = "pending"
         item["last_error"] = str(result.get("error"))[:300]
         out = {"ok": False, "error": item["last_error"], "title": item["title"]}
-    with open(os.path.join(BOT_DIR, "plan.json"), "w", encoding="utf-8") as f:
-        json.dump(plan, f, ensure_ascii=False, indent=2)
+    _write_json(os.path.join(BOT_DIR, "plan.json"), plan)
     return out
 
 
@@ -275,8 +280,7 @@ def main():
                 _register_post(result["article_id"], item["title"], item.get("category", ""))
         else:
             print(f"FAIL {item['title']}: {result.get('error')}")
-    with open(os.path.join(BOT_DIR, "plan.json"), "w", encoding="utf-8") as f:
-        json.dump(plan, f, ensure_ascii=False, indent=2)
+    _write_json(os.path.join(BOT_DIR, "plan.json"), plan)
 
 
 def _now_str():

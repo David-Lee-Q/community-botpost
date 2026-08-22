@@ -4,6 +4,14 @@ import os
 
 LEDGER = os.path.dirname(os.path.abspath(__file__))
 DATA = os.path.join(LEDGER, "data")
+
+
+def _write_json(path, obj):
+    import tempfile
+    fd, tmp = tempfile.mkstemp(dir=os.path.dirname(path), suffix=".tmp")
+    with os.fdopen(fd, "w", encoding="utf-8") as f:
+        json.dump(obj, f, ensure_ascii=False, indent=2)
+    os.replace(tmp, path)
 REVIEWS_FILE = os.path.join(DATA, "reviews.json")
 ARTICLES_FILE = os.path.join(DATA, "articles.json")
 OUT_FILE = os.path.join(DATA, "bot_score.json")
@@ -91,7 +99,7 @@ def update_history(payload):
         "suggestions": payload.get("suggestions"), "updatedAt": payload.get("updatedAt"),
     })
     hist["history"].sort(key=lambda h: h.get("week", ""))
-    json.dump(hist, open(HISTORY_FILE, "w", encoding="utf-8"), ensure_ascii=False, indent=2)
+    _write_json(HISTORY_FILE, hist)
     return hist
 
 
@@ -173,8 +181,7 @@ def main():
     arts = json.load(open(ARTICLES_FILE, encoding="utf-8")).get("articles", [])
     start, end = week_range()
     payload = compute_score(reviews, arts, start, end)
-    with open(OUT_FILE, "w", encoding="utf-8") as f:
-        json.dump(payload, f, ensure_ascii=False, indent=2)
+    _write_json(OUT_FILE, payload)
     hist = update_history(payload)
     update_tasks(hist)
     update_record(hist)

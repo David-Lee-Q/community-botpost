@@ -14,8 +14,12 @@ def load(name):
 
 
 def save(name, obj):
-    with open(os.path.join(DATA, name), "w", encoding="utf-8") as f:
+    import tempfile
+    path = os.path.join(DATA, name)
+    fd, tmp = tempfile.mkstemp(dir=DATA, suffix=".tmp")
+    with os.fdopen(fd, "w", encoding="utf-8") as f:
         json.dump(obj, f, ensure_ascii=False, indent=2)
+    os.replace(tmp, path)
 
 
 def main():

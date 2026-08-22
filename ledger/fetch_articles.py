@@ -57,6 +57,15 @@ def fetch_all(token):
     return articles, cate_map
 
 
+def _write_json(path, obj):
+    import os as _os
+    import tempfile
+    fd, tmp = tempfile.mkstemp(dir=_os.path.dirname(path), suffix=".tmp")
+    with _os.fdopen(fd, "w", encoding="utf-8") as f:
+        json.dump(obj, f, ensure_ascii=False)
+    _os.replace(tmp, path)
+
+
 def main():
     token = get_token()
     articles, cate_map = fetch_all(token)
@@ -77,8 +86,7 @@ def main():
         "articles": uniq,
     }
     os.makedirs(DATA_DIR, exist_ok=True)
-    with open(os.path.join(DATA_DIR, "articles.json"), "w", encoding="utf-8") as f:
-        json.dump(payload, f, ensure_ascii=False)
+    _write_json(os.path.join(DATA_DIR, "articles.json"), payload)
     print(f"已拉取 {len(articles)} 篇，保留已发布去重后 {len(uniq)} 篇 -> {DATA_DIR}/articles.json")
     subprocess.run([sys.executable, os.path.join(BOT_DIR, "auto_review.py")], check=False)
 

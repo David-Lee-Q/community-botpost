@@ -164,14 +164,13 @@ def _load_content_scores():
 
 
 def _save_content_score(aid, title, summary, body):
-    from auto_review import content_score, save_body
+    from auto_review import content_score, save_body, _write_json
     save_body(aid, {"title": title, "summary": summary, "content": body})
     cs = _load_content_scores()
     total, detail, dims = content_score(title, summary, body)
     cs[str(aid)] = {"content_total": total, "detail": detail, "dims": dims,
                     "updated": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")}
-    with open(CONTENT_SCORES_FILE, "w", encoding="utf-8") as f:
-        json.dump(cs, f, ensure_ascii=False, indent=2)
+    _write_json(CONTENT_SCORES_FILE, cs)
     return total, dims
 
 
@@ -230,10 +229,9 @@ def record_review(aid, entry, old=None, kind="重评"):
     hist = hist[-30:]
     scores[str(aid)] = hist
     reviews[str(aid)] = entry
-    with open(REVIEWS_FILE, "w", encoding="utf-8") as f:
-        json.dump(reviews, f, ensure_ascii=False, indent=2)
-    with open(SCORES_FILE, "w", encoding="utf-8") as f:
-        json.dump(scores, f, ensure_ascii=False, indent=2)
+    from auto_review import _write_json
+    _write_json(REVIEWS_FILE, reviews)
+    _write_json(SCORES_FILE, scores)
     try:
         subprocess.run([sys.executable, os.path.join(LEDGER, "review_engine.py")],
                        capture_output=True, timeout=60)

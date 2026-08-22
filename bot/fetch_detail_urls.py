@@ -1,4 +1,6 @@
 import json
+import os
+import tempfile
 from playwright.sync_api import sync_playwright
 
 PLAN_FILE = "/workspace/bot/plan.json"
@@ -60,5 +62,8 @@ with sync_playwright() as p:
         item["detail_url"] = url
         print(f"DETAIL aid={aid} -> {url}  {title[:28]}")
 
-    json.dump(plan, open(PLAN_FILE, "w", encoding="utf-8"), ensure_ascii=False, indent=2)
+    fd, tmp = tempfile.mkstemp(dir=os.path.dirname(PLAN_FILE), suffix=".tmp")
+    with os.fdopen(fd, "w", encoding="utf-8") as f:
+        json.dump(plan, f, ensure_ascii=False, indent=2)
+    os.replace(tmp, PLAN_FILE)
     b.close()

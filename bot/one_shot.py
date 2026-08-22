@@ -125,8 +125,11 @@ def _load_used():
 
 
 def _save_used(used):
-    with open(USED_FILE, "w", encoding="utf-8") as f:
+    import tempfile
+    fd, tmp = tempfile.mkstemp(dir=os.path.dirname(USED_FILE), suffix=".tmp")
+    with os.fdopen(fd, "w", encoding="utf-8") as f:
         json.dump(used, f, ensure_ascii=False, indent=2)
+    os.replace(tmp, USED_FILE)
 
 
 THEMES = {
@@ -337,14 +340,18 @@ def run(prompt):
 
 
 def _write_status(state, detail):
+    import tempfile
     data = {"state": state, "time": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")}
     data.update(detail)
     os.makedirs(os.path.dirname(STATUS_FILE), exist_ok=True)
-    with open(STATUS_FILE, "w", encoding="utf-8") as f:
+    fd, tmp = tempfile.mkstemp(dir=os.path.dirname(STATUS_FILE), suffix=".tmp")
+    with os.fdopen(fd, "w", encoding="utf-8") as f:
         json.dump(data, f, ensure_ascii=False, indent=2)
+    os.replace(tmp, STATUS_FILE)
 
 
 def _register_post(aid, title):
+    import tempfile
     posts_file = os.path.join(LEDGER, "data", "bot_posts.json")
     try:
         posts = json.load(open(posts_file, encoding="utf-8")) if os.path.exists(posts_file) else {}
@@ -352,8 +359,10 @@ def _register_post(aid, title):
         posts = {}
     if str(aid) not in posts:
         posts[str(aid)] = {"title": title, "cateName": "", "createTime": "", "source": "发一篇"}
-        with open(posts_file, "w", encoding="utf-8") as f:
+        fd, tmp = tempfile.mkstemp(dir=os.path.dirname(posts_file), suffix=".tmp")
+        with os.fdopen(fd, "w", encoding="utf-8") as f:
             json.dump(posts, f, ensure_ascii=False, indent=2)
+        os.replace(tmp, posts_file)
 
 
 def main():

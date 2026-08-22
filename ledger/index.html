@@ -488,6 +488,7 @@ let REVIEWS = {};
 let SCORE = null;
 let SCORES = {};
 let POSTS = {};
+let DATA_UPDATED = '';
 let filtered = [];
 let page = 1;
 let charts = {};
@@ -1095,15 +1096,25 @@ function renderAll() {
   calcStats();
   renderCharts();
   applyFilters();
-  document.getElementById('sub').textContent = `账号 ${ARTICLES.length} 篇 · 数据更新 ${document.getElementById('updatedAt') || ''}`;
+  document.getElementById('sub').textContent = `账号 ${ARTICLES.length} 篇 · 数据更新 ${DATA_UPDATED || ''}`;
+}
+
+function fetchJson(url, fallback, retries = 1) {
+  const withTimeout = (p, ms) => Promise.race([
+    p, new Promise((_, rej) => setTimeout(() => rej(new Error('加载超时')), ms))
+  ]);
+  const attempt = (n) => fetch(url)
+    .then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+    .catch(err => (n > 0 ? attempt(n - 1) : Promise.reject(err)));
+  return withTimeout(attempt(retries), 15000).catch(() => fallback);
 }
 
 Promise.all([
-  fetch('data/articles.json').then(r => r.json()),
-  fetch('data/reviews.json').then(r => r.json()).catch(() => ({})),
-  fetch('data/bot_score.json').then(r => r.json()).catch(() => null),
-  fetch('data/article_scores.json').then(r => r.json()).catch(() => ({})),
-  fetch('data/bot_posts.json').then(r => r.json()).catch(() => ({}))
+  fetchJson('data/articles.json', { total: 0, memberId: '—', updatedAt: '', articles: [] }),
+  fetchJson('data/reviews.json', {}),
+  fetchJson('data/bot_score.json', null),
+  fetchJson('data/article_scores.json', {}),
+  fetchJson('data/bot_posts.json', {})
 ])
   .then(([json, reviews, score, scores, posts]) => {
     REVIEWS = reviews || {};
@@ -1112,7 +1123,8 @@ Promise.all([
     POSTS = posts || {};
     parseData(json);
     renderScore();
-    document.getElementById('sub').textContent = `账号 ${json.memberId} · 共 ${json.total} 篇文章 · 数据更新 ${json.updatedAt}`;
+    DATA_UPDATED = json.updatedAt || '';
+    document.getElementById('sub').textContent = `账号 ${json.memberId || '—'} · 共 ${json.total || 0} 篇文章 · 数据更新 ${DATA_UPDATED}`;
     loadTodayPlan();
   })
   .catch(e => {
@@ -1129,7 +1141,7 @@ function todayStr() {
 function planStatus(s) {
   if (s === 'pending') return '<span class="tag pending">待发布</span>';
   if (s === 'published') return '<span class="tag ok">已发布</span>';
-  return '<span class="tag">' + (s || '未知') + '</span>';
+  return '<span class="tag">' + escapeHtml(s || '未知') + '</span>';
 }
 
 let planPollTimer = null;
@@ -1138,7 +1150,7 @@ function planBtn(it) {
   const st = it.status || 'pending';
   const txt = st === 'published' ? '已发布' : st === 'publishing' ? '发布中…' : '立即发布';
   const dis = st === 'pending' ? '' : 'disabled';
-  return `<button type="button" class="plan-btn" data-tid="${it.taskId || ''}" ${dis}>${txt}</button>`;
+  return `<button type="button" class="plan-btn" data-tid="${escapeHtml(it.taskId || '')}" ${dis}>${txt}</button>`;
 }
 
 function loadTodayPlan() {
@@ -1162,10 +1174,10 @@ function loadTodayPlan() {
         return `<tr class="plan-${cls}">
           <td class="num">${i + 1}</td>
           <td>${planStatus(it.status)}</td>
-          <td class="nowrap">${(it.time || '').slice(11, 19)}</td>
-          <td class="plan-title" title="${escapeHtml(it.title || '')}">${it.title || ''}</td>
-          <td class="nowrap">${it.category || ''}</td>
-          <td class="plan-sum" title="${escapeHtml(it.summary || '')}">${it.summary || ''}</td>
+          <td class="nowrap">${escapeHtml((it.time || '').slice(11, 19))}</td>
+          <td class="plan-title" title="${escapeHtml(it.title || '')}">${escapeHtml(it.title || '')}</td>
+          <td class="nowrap">${escapeHtml(it.category || '')}</td>
+          <td class="plan-sum" title="${escapeHtml(it.summary || '')}">${escapeHtml(it.summary || '')}</td>
           <td class="nowrap">${planBtn(it)}</td>
         </tr>`;
       });

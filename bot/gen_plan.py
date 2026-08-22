@@ -10,6 +10,14 @@ ROOT = os.path.dirname(BOT_DIR)
 PLAN_FILE = os.path.join(BOT_DIR, "plan.json")
 ARTICLES_DIR = os.path.join(ROOT, "bot-articles")
 
+
+def _write_json(path, obj):
+    import tempfile
+    fd, tmp = tempfile.mkstemp(dir=os.path.dirname(path), suffix=".tmp")
+    with os.fdopen(fd, "w", encoding="utf-8") as f:
+        json.dump(obj, f, ensure_ascii=False, indent=2)
+    os.replace(tmp, path)
+
 sys.path.insert(0, BOT_DIR)
 import one_shot as osx  # noqa: E402
 
@@ -104,8 +112,7 @@ def main():
             it["taskId"] = uuid.uuid4().hex
             migrated = True
     if migrated:
-        with open(PLAN_FILE, "w", encoding="utf-8") as f:
-            json.dump(plan, f, ensure_ascii=False, indent=2)
+        _write_json(PLAN_FILE, plan)
         print("gen_plan: 已为 %d 条计划补齐 taskId" % len(schedule))
     pending_times = {it.get("time") for it in schedule if it.get("status") == "pending"}
     existing_titles = {it.get("title") for it in schedule}
@@ -141,8 +148,7 @@ def main():
                 continue
             schedule.append(item)
             plan["schedule"] = schedule
-            with open(PLAN_FILE, "w", encoding="utf-8") as f:
-                json.dump(plan, f, ensure_ascii=False, indent=2)
+            _write_json(PLAN_FILE, plan)
             pending_times.add(time_str)
             existing_titles.add(item["title"])
             added += 1
@@ -150,8 +156,7 @@ def main():
 
     if added:
         plan["schedule"] = schedule
-        with open(PLAN_FILE, "w", encoding="utf-8") as f:
-            json.dump(plan, f, ensure_ascii=False, indent=2)
+        _write_json(PLAN_FILE, plan)
         print("gen_plan: 新增 %d 篇计划，当前待发布 %d 篇" % (added, len(pending_times)), flush=True)
     else:
         print("gen_plan: 计划已充足，无新增", flush=True)
