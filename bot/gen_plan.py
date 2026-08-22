@@ -117,14 +117,21 @@ def main():
             direction = random.choice(TOPICS[category])
             item = None
             for _ in range(3):
-                candidate = gen_one(direction, time_str, existing_titles)
-                if candidate["title"] not in existing_titles:
+                try:
+                    candidate = gen_one(direction, time_str, existing_titles)
+                except Exception as e:
+                    print("生成失败(%s)：%s" % (direction, str(e)[:120]), flush=True)
+                    candidate = None
+                if candidate and candidate["title"] not in existing_titles:
                     item = candidate
                     break
             if item is None:
-                print("跳过时段 %s：多次生成标题重复" % time_str, flush=True)
+                print("跳过时段 %s：多次生成失败" % time_str, flush=True)
                 continue
             schedule.append(item)
+            plan["schedule"] = schedule
+            with open(PLAN_FILE, "w", encoding="utf-8") as f:
+                json.dump(plan, f, ensure_ascii=False, indent=2)
             pending_times.add(time_str)
             existing_titles.add(item["title"])
             added += 1

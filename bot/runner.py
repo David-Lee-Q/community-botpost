@@ -131,7 +131,7 @@ def main():
         if due:
             log(f"{len(due)} 篇文章到点，开始发布")
             r = subprocess.run([sys.executable, os.path.join(BOT_DIR, "publish.py")],
-                               capture_output=True, text=True, timeout=300)
+                               capture_output=True, text=True, timeout=900)
             print(r.stdout, flush=True)
             if r.returncode != 0:
                 log("publish.py 失败: " + r.stderr[-500:])
@@ -158,4 +158,12 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    while True:
+        try:
+            main()
+        except KeyboardInterrupt:
+            raise
+        except Exception:
+            import traceback
+            log("runner 循环异常，30 秒后自动重启: " + traceback.format_exc().splitlines()[-1])
+            time.sleep(30)

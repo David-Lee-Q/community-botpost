@@ -90,9 +90,22 @@ with sync_playwright() as p:
     raise RuntimeError("登录获取token失败: " + r.stdout[-300:] + r.stderr[-200:])
 
 
+def _token_valid(tok):
+    try:
+        r = requests.post(
+            f"{BASE}/article/list",
+            headers={"s-user-token": tok, "Content-Type": "application/json"},
+            json={"pageNum": 1, "pageSize": 1},
+            timeout=30,
+        )
+        return r.json().get("code") == 0
+    except Exception:
+        return False
+
+
 def get_token():
     tok = load_token()
-    if tok:
+    if tok and _token_valid(tok):
         return tok
     return refresh_token()
 
