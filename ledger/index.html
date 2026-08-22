@@ -109,6 +109,8 @@
   .plan-next td { background: #f8faff; }
   .num { text-align: right; color: var(--muted); }
   .pager { display: flex; justify-content: center; gap: 8px; margin-top: 14px; align-items: center; }
+  .skel { height: 16px; background: linear-gradient(90deg, #ececec 25%, #f7f7f7 50%, #ececec 75%); background-size: 200% 100%; animation: skelpulse 1.2s infinite; border-radius: 4px; }
+  @keyframes skelpulse { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
   .commit-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
   .commit-toggle { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: var(--muted); cursor: pointer; }
   .pager button { padding: 6px 14px; border: 1px solid var(--border); border-radius: 6px; background: #fff; cursor: pointer; font-size: 13px; }
@@ -535,6 +537,7 @@ function parseData(json) {
     lab.appendChild(document.createTextNode(' ' + c));
     cateList.appendChild(lab);
   });
+  restoreState();
   renderAll();
 }
 
@@ -835,6 +838,43 @@ function applyFilters() {
   document.getElementById('countInfo').textContent = `共 ${filtered.length} 篇`;
   page = 1;
   renderTable();
+  saveState();
+}
+
+function syncCateChecks() {
+  document.querySelectorAll('#cateList label').forEach(lab => {
+    const cb = lab.querySelector('.cate-cb');
+    if (cb) cb.checked = selectedCates.includes(lab.textContent.trim());
+  });
+}
+
+function saveState() {
+  const s = {
+    kw: document.getElementById('searchInput').value.trim(),
+    cates: selectedCates,
+    period: document.getElementById('periodFilter').value,
+    from: calFrom, to: calTo,
+    src: document.getElementById('srcFilter').value
+  };
+  const empty = !s.kw && !s.cates.length && !s.period && !s.from && !s.to && !s.src;
+  if (empty && !location.hash) return;
+  history.replaceState(null, '', '#' + encodeURIComponent(JSON.stringify(s)));
+}
+
+function restoreState() {
+  let s = {};
+  try { s = JSON.parse(decodeURIComponent(location.hash.slice(1)) || '{}'); } catch (e) { s = {}; }
+  if (s.kw) document.getElementById('searchInput').value = s.kw;
+  if (s.period) document.getElementById('periodFilter').value = s.period;
+  if (s.src) document.getElementById('srcFilter').value = s.src;
+  if (Array.isArray(s.cates) && s.cates.length) {
+    const opts = [...new Set(ARTICLES.map(a => a.cateName || '未分类'))];
+    selectedCates = s.cates.filter(c => opts.includes(c));
+    syncCateChecks();
+  }
+  if (s.from) calFrom = s.from;
+  if (s.to) calTo = s.to;
+  if (calFrom || calTo) updateCalBtn();
 }
 
 function renderTable() {
@@ -1175,6 +1215,8 @@ function fetchJson(url, fallback, retries = 1) {
 }
 
 function loadAll() {
+  const tb = document.getElementById('tbody');
+  tb.innerHTML = Array(6).fill('<tr>' + Array(11).fill('<td class="skel"></td>').join('') + '</tr>').join('');
   return fetchJson('api/summary', null)
     .then(summary => {
       if (!summary) throw new Error('聚合数据为空');
