@@ -126,6 +126,9 @@
   .std-panel .red { color: #f56c6c; }
   .std-link { color: var(--primary); cursor: pointer; }
   .std-link:hover { text-decoration: underline; }
+  .panel h2 .std-btn { margin-left: auto; font-size: 13px; color: var(--primary); cursor: pointer; user-select: none; font-weight: 500; }
+  .panel h2 .std-btn:hover { text-decoration: underline; }
+  #stdMask .modal { width: min(860px, 94vw); }
   .empty { text-align: center; color: var(--muted); padding: 40px 0; }
   footer.watermark { text-align: center; font-size: 13px; letter-spacing: 1px; color: #c0c4cc; opacity: .75; padding: 18px 16px 28px; user-select: none; }
   .version-link { display: inline-block; margin-top: 8px; font-size: 12px; color: #b0b4bd; cursor: pointer; user-select: none; }
@@ -221,7 +224,7 @@
   </div>
 
   <div class="panel">
-    <h2>发布台账明细</h2>
+    <h2><span>发布台账明细</span><span class="std-btn" id="stdBtn" title="查看评分规则明细">《社区文章质量评价标准》</span></h2>
     <div class="filters">
       <input id="searchInput" placeholder="搜索标题关键词...">
       <div class="multisel" id="cateWrap">
@@ -386,6 +389,81 @@
       <th>时间</th><th>分数</th><th>档位</th><th>类型</th><th>说明</th>
     </tr></thead><tbody id="histBody"></tbody></table>
     <div class="empty" id="histEmpty" style="display:none">暂无评分历史记录</div>
+  </div>
+</div>
+
+<div class="modal-mask" id="stdMask">
+  <div class="modal">
+    <span class="close" id="stdClose">&times;</span>
+    <h3>社区文章质量评价标准</h3>
+    <div class="meta">评分方式：100 分制，按 6 维度加权计分，另有 8 项一票否决红线</div>
+    <div class="std-panel" style="display:block">
+      <h4>一、评价维度与权重</h4>
+      <table>
+        <thead><tr><th>维度</th><th>权重</th><th>考察要点</th></tr></thead>
+        <tbody>
+          <tr><td>内容原创性</td><td>20%</td><td>原创度、同质化、增量价值、AI 痕迹控制</td></tr>
+          <tr><td>技术准确性</td><td>20%</td><td>事实、数据、术语、技术观点的正确性与时效</td></tr>
+          <tr><td>完整性结构</td><td>15%</td><td>主题聚焦、结构清晰、逻辑递进、深度充分</td></tr>
+          <tr><td>可读表达</td><td>15%</td><td>语言流畅、段落节奏、图文配合、术语通俗化</td></tr>
+          <tr><td>规范合规</td><td>15%</td><td>平台规则、格式规范、敏感内容、版权风险</td></tr>
+          <tr><td>传播表现</td><td>15%</td><td>标题吸引力、摘要价值、SEO 友好、互动引导</td></tr>
+        </tbody>
+      </table>
+      <h4>二、分档标准</h4>
+      <table>
+        <thead><tr><th>档位</th><th>分数</th><th>说明</th></tr></thead>
+        <tbody>
+          <tr><td>优秀</td><td>90-100</td><td>深度原创，数据扎实，结构典范，具备传播潜力</td></tr>
+          <tr><td>良好</td><td>75-89</td><td>内容充实准确，结构完整，小瑕疵不影响阅读</td></tr>
+          <tr><td>合格</td><td>60-74</td><td>满足发布底线，存在明显可改进项</td></tr>
+          <tr><td>不合格</td><td>&lt;60</td><td>低于发布门槛，需返工</td></tr>
+        </tbody>
+      </table>
+      <h4>三、各维度评分细则</h4>
+      <table>
+        <thead><tr><th>维度</th><th>分数段</th><th>标准</th></tr></thead>
+        <tbody>
+          <tr><td rowspan="4">内容原创性<br>(20分)</td><td>18-20</td><td>观点或素材有独到增量，非搬运改写，有明确实践支撑</td></tr>
+          <tr><td>14-17</td><td>主题常见但组织有特色，数据与案例为原创整理</td></tr>
+          <tr><td>10-13</td><td>综合多方资料成稿，原创成分中等，同质化程度高</td></tr>
+          <tr><td>0-9</td><td>明显拼接搬运，仅词序改写，无增量价值</td></tr>
+          <tr><td rowspan="4">技术准确性<br>(20分)</td><td>18-20</td><td>术语规范、数据可溯源、观点与主流技术共识一致</td></tr>
+          <tr><td>14-17</td><td>技术表述准确，个别数据陈旧但未失真</td></tr>
+          <tr><td>10-13</td><td>存在 1-2 处表述不准或过时说法</td></tr>
+          <tr><td>0-9</td><td>出现事实错误、概念混淆、过期产品信息</td></tr>
+          <tr><td rowspan="4">完整性结构<br>(15分)</td><td>13-15</td><td>引言-分论点-案例-结论层层递进，每部分逻辑自洽</td></tr>
+          <tr><td>10-12</td><td>结构完整但部分章节跳跃或深度不足</td></tr>
+          <tr><td>6-9</td><td>结构松散，论点堆砌，结论缺失</td></tr>
+          <tr><td>0-5</td><td>无结构，流水账式罗列</td></tr>
+          <tr><td rowspan="4">可读表达<br>(15分)</td><td>13-15</td><td>语言流畅，每段聚焦一个点，图文呼应，术语有解释</td></tr>
+          <tr><td>10-12</td><td>表达清楚，个别段落冗长或配图无关</td></tr>
+          <tr><td>6-9</td><td>段落过长、口水话多、配图缺失或排版混乱</td></tr>
+          <tr><td>0-5</td><td>语言晦涩、病句多、影响理解</td></tr>
+          <tr><td rowspan="4">规范合规<br>(15分)</td><td>13-15</td><td>标题/摘要/分类/封面/正文全部符合平台规范</td></tr>
+          <tr><td>10-12</td><td>有 1 处轻微不符（如摘要略短、封面比例略偏）</td></tr>
+          <tr><td>6-9</td><td>2 处以上格式问题或分类归属不当</td></tr>
+          <tr><td>0-5</td><td>违规内容或多次触碰平台红线</td></tr>
+          <tr><td rowspan="4">传播表现<br>(15分)</td><td>13-15</td><td>标题有信息量有钩子，摘要直击痛点，首段 3 句内抓住读者</td></tr>
+          <tr><td>10-12</td><td>标题准确但平淡，摘要完整但缺少吸引力</td></tr>
+          <tr><td>6-9</td><td>标题含糊或过泛，摘要冗长无重点</td></tr>
+          <tr><td>0-5</td><td>标题党或文不对题，摘要与正文不符</td></tr>
+        </tbody>
+      </table>
+      <h4>四、一票否决红线（任一命中即拒绝发布）</h4>
+      <div class="red">
+        <div>1. 全文抄袭或拼接搬运超 30%，无来源说明</div>
+        <div>2. 存在事实性硬伤或传播虚假信息</div>
+        <div>3. 含违法、敏感、涉政或不良引导内容</div>
+        <div>4. 涉及侵权素材（未授权图片、商用字体、受版权保护内容）</div>
+        <div>5. 文不对题或标题严重误导</div>
+        <div>6. 含广告、外链引流、营销导流信息</div>
+        <div>7. 正文未达 1000 字（科普短文类除外，须单列审批）</div>
+        <div>8. 封面缺失或格式不符无法展示</div>
+      </div>
+      <h4>五、发布前自检要点</h4>
+      <div>标题 ≤30 字无冒号无夸大；摘要约 120 字；封面 800×400、≤1MB；正文 ≥1000 字、每段 ≥200 字、配图 ≥2 张；分类归属正确；关键数据标注来源；结尾有明确观点或行动建议。</div>
+    </div>
   </div>
 </div>
 
@@ -858,6 +936,11 @@ function toggleStd() {
   if (!open) p.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 }
 document.getElementById('stdToggle').addEventListener('click', toggleStd);
+document.getElementById('stdBtn').addEventListener('click', () => document.getElementById('stdMask').classList.add('show'));
+document.getElementById('stdClose').addEventListener('click', () => document.getElementById('stdMask').classList.remove('show'));
+document.getElementById('stdMask').addEventListener('click', e => {
+  if (e.target === e.currentTarget) document.getElementById('stdMask').classList.remove('show');
+});
 
 let calFrom = '', calTo = '', calTab = 'from', calYear = 0, calMonth = 0;
 const CAL_WEEK = ['日', '一', '二', '三', '四', '五', '六'];
