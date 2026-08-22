@@ -10,7 +10,8 @@
       "cover": "/workspace/bot/covers/ai/cover1.jpg",
       "status": "published",
       "article_id": 35156,
-      "detail_url": "https://openlab.cosmoplat.com/article-detils?id=35156&articleType=0"
+      "detail_url": "https://openlab.cosmoplat.com/article-detils?id=35156&articleType=0",
+      "taskId": "cf1034c674c64f238090e796868c1d56"
     },
     {
       "time": "2026-08-07 20:33",
@@ -22,7 +23,8 @@
       "cover": "/workspace/bot/covers/smart-manufacturing/cover2.jpg",
       "status": "published",
       "article_id": 35170,
-      "detail_url": "https://openlab.cosmoplat.com/article-detils?id=35170&articleType=0"
+      "detail_url": "https://openlab.cosmoplat.com/article-detils?id=35170&articleType=0",
+      "taskId": "8cb15e1a4d3f48448d755293afbe3413"
     },
     {
       "time": "2026-08-08 06:45",
@@ -34,7 +36,8 @@
       "cover": "/workspace/bot/covers/cloud-native/cover3.jpg",
       "status": "published",
       "article_id": 35174,
-      "detail_url": "https://openlab.cosmoplat.com/article-detils?id=35174&articleType=0"
+      "detail_url": "https://openlab.cosmoplat.com/article-detils?id=35174&articleType=0",
+      "taskId": "9eb6b63f638d46059420bdd673ed0583"
     },
     {
       "time": "2026-08-08 09:39",
@@ -46,7 +49,8 @@
       "cover": "/workspace/bot/covers/industrial-internet/cover4.jpg",
       "status": "published",
       "article_id": 35180,
-      "detail_url": "https://openlab.cosmoplat.com/article-detils?id=35180&articleType=0"
+      "detail_url": "https://openlab.cosmoplat.com/article-detils?id=35180&articleType=0",
+      "taskId": "fd86f95e78b54ea194fcf3c015f683e5"
     },
     {
       "time": "2026-08-14 09:00",
@@ -61,7 +65,8 @@
       "cover": "/workspace/bot/covers/人工智能/cover5.jpg",
       "status": "published",
       "article_id": 35244,
-      "detail_url": null
+      "detail_url": null,
+      "taskId": "0562fadbe8a147009590a18bb95d9f63"
     },
     {
       "time": "2026-08-14 12:27:20",
@@ -76,7 +81,8 @@
       "cover": "/workspace/bot/covers/网络/cover1.jpg",
       "status": "published",
       "detail_url": "https://openlab.cosmoplat.com/article-detils?id=35252&articleType=0",
-      "article_id": 35252
+      "article_id": 35252,
+      "taskId": "be99fe0ef3b04ec69107af6e1f64a9b2"
     },
     {
       "time": "2026-08-14 15:13:19",
@@ -91,7 +97,8 @@
       "cover": "/workspace/bot/covers/边缘计算/cover1.jpg",
       "status": "published",
       "detail_url": "https://openlab.cosmoplat.com/article-detils?id=35254&articleType=0",
-      "article_id": 35254
+      "article_id": 35254,
+      "taskId": "98dd568c1cad4dfe96bf30577f2be9f1"
     },
     {
       "time": "2026-08-14 15:39:35",
@@ -106,7 +113,8 @@
       "cover": "/workspace/bot/covers/智能制造/cover6.jpg",
       "status": "published",
       "detail_url": "https://openlab.cosmoplat.com/article-detils?id=35256&articleType=0",
-      "article_id": 35256
+      "article_id": 35256,
+      "taskId": "58cd3a44552b44978eef9a93568e8343"
     },
     {
       "time": "2026-08-21 14:01:20",
@@ -121,7 +129,8 @@
       "cover": "/workspace/bot/covers/云原生/cover5.jpg",
       "status": "published",
       "detail_url": null,
-      "article_id": 35544
+      "article_id": 35544,
+      "taskId": "43152b09404448879c83d7eefad373ee"
     },
     {
       "time": "2026-08-21 14:56:20",
@@ -136,7 +145,8 @@
       "cover": "/workspace/bot/covers/机器视觉/cover4.jpg",
       "status": "published",
       "detail_url": null,
-      "article_id": 35546
+      "article_id": 35546,
+      "taskId": "af4d292a61a44eb4be94e9734e4ed56f"
     },
     {
       "time": "2026-08-21 17:59:40",
@@ -151,7 +161,8 @@
       "cover": "/workspace/bot/covers/物联网/cover3.jpg",
       "status": "published",
       "detail_url": null,
-      "article_id": 35548
+      "article_id": 35548,
+      "taskId": "997b3186b2b140f1a5b82572d5a1e26c"
     },
     {
       "time": "2026-08-21 19:09:44",
@@ -166,7 +177,8 @@
       "cover": "/workspace/bot/covers/云原生/cover6.jpg",
       "status": "published",
       "detail_url": null,
-      "article_id": 35550
+      "article_id": 35550,
+      "taskId": "19da085f14e9495f87c7eaed887578ab"
     },
     {
       "time": "2026-08-22 11:13:02",
@@ -181,7 +193,8 @@
       "cover": "/workspace/bot/covers/编程与开发/cover5.jpg",
       "status": "published",
       "detail_url": null,
-      "article_id": 35656
+      "article_id": 35656,
+      "taskId": "0d6247c4f51a42adb7aa3381d2f6d03b"
     },
     {
       "time": "2026-08-22 13:16:38",
@@ -196,7 +209,8 @@
       "cover": "/workspace/bot/covers/中间件/cover2.jpg",
       "status": "published",
       "detail_url": "https://openlab.cosmoplat.com/article-detils?id=35658&articleType=0",
-      "article_id": 35658
+      "article_id": 35658,
+      "taskId": "b0dea720a3b84052b691e68e353ae570"
     },
     {
       "time": "2026-08-22 14:51:20",
@@ -211,7 +225,8 @@
       "cover": "/workspace/bot/covers/边缘计算/cover5.jpg",
       "status": "published",
       "detail_url": "https://openlab.cosmoplat.com/article-detils?id=35660&articleType=0",
-      "article_id": 35660
+      "article_id": 35660,
+      "taskId": "688e5da5ce2641a99226dea707b7b742"
     },
     {
       "time": "2026-08-22 19:48:42",
@@ -226,7 +241,8 @@
       "cover": "/workspace/bot/covers/机器视觉/cover5.jpg",
       "status": "published",
       "detail_url": "https://openlab.cosmoplat.com/article-detils?id=35684&articleType=0",
-      "article_id": 35684
+      "article_id": 35684,
+      "taskId": "a3d0d4a16a0845c99a6305f947f1b95e"
     },
     {
       "time": "2026-08-23 10:43:10",
@@ -239,8 +255,10 @@
         "https://images.unsplash.com/photo-1524749292158-7540c2494485?w=800&q=80"
       ],
       "cover": "/workspace/bot/covers/微服务/cover2.jpg",
-      "status": "pending",
-      "detail_url": null
+      "status": "published",
+      "detail_url": "https://openlab.cosmoplat.com/article-detils?id=35686&articleType=0",
+      "taskId": "e170d5480fd4402ea9edb7eeb1be5d85",
+      "article_id": 35686
     },
     {
       "time": "2026-08-23 14:05:44",
@@ -254,7 +272,8 @@
       ],
       "cover": "/workspace/bot/covers/区块链/cover2.jpg",
       "status": "pending",
-      "detail_url": null
+      "detail_url": null,
+      "taskId": "bb75047bc497471dad40ba7dcdc89683"
     },
     {
       "time": "2026-08-23 15:58:02",
@@ -268,7 +287,8 @@
       ],
       "cover": "/workspace/bot/covers/数据要素/cover6.jpg",
       "status": "pending",
-      "detail_url": null
+      "detail_url": null,
+      "taskId": "e33442ba685d4b118b821e916e65f90c"
     },
     {
       "time": "2026-08-23 18:13:36",
@@ -282,7 +302,8 @@
       ],
       "cover": "/workspace/bot/covers/区块链/cover3.jpg",
       "status": "pending",
-      "detail_url": null
+      "detail_url": null,
+      "taskId": "7ee4740dec944b8098b3e7a8d1e0695f"
     },
     {
       "time": "2026-08-24 09:54:32",
@@ -296,7 +317,8 @@
       ],
       "cover": "/workspace/bot/covers/人工智能/cover9.jpg",
       "status": "pending",
-      "detail_url": null
+      "detail_url": null,
+      "taskId": "50c527a79a7b4484b9da652e7e049f71"
     },
     {
       "time": "2026-08-24 11:26:01",
@@ -310,7 +332,8 @@
       ],
       "cover": "/workspace/bot/covers/大数据/cover3.jpg",
       "status": "pending",
-      "detail_url": null
+      "detail_url": null,
+      "taskId": "9018d9f6b32245bbb1c2d501ba7eee57"
     },
     {
       "time": "2026-08-24 17:05:37",
@@ -324,7 +347,8 @@
       ],
       "cover": "/workspace/bot/covers/云原生/cover7.jpg",
       "status": "pending",
-      "detail_url": null
+      "detail_url": null,
+      "taskId": "33603778c577499eb707ec0f0622645f"
     },
     {
       "time": "2026-08-24 18:02:11",
@@ -338,7 +362,8 @@
       ],
       "cover": "/workspace/bot/covers/人工智能/cover10.jpg",
       "status": "pending",
-      "detail_url": null
+      "detail_url": null,
+      "taskId": "0a9d2925422d4a80b07d405c1ebb0a95"
     },
     {
       "time": "2026-08-25 08:14:57",
@@ -352,7 +377,8 @@
       ],
       "cover": "/workspace/bot/covers/云原生/cover8.jpg",
       "status": "pending",
-      "detail_url": null
+      "detail_url": null,
+      "taskId": "b61d0feb86534fad85b3663a38174d83"
     },
     {
       "time": "2026-08-25 10:35:37",
@@ -366,7 +392,8 @@
       ],
       "cover": "/workspace/bot/covers/数据要素/cover7.jpg",
       "status": "pending",
-      "detail_url": null
+      "detail_url": null,
+      "taskId": "015689ac3a22497e851463de111361a7"
     },
     {
       "time": "2026-08-25 11:07:39",
@@ -380,7 +407,8 @@
       ],
       "cover": "/workspace/bot/covers/边缘计算/cover6.jpg",
       "status": "pending",
-      "detail_url": null
+      "detail_url": null,
+      "taskId": "960d29e7c8994250ac5710131876f6de"
     },
     {
       "time": "2026-08-25 12:57:47",
@@ -394,7 +422,8 @@
       ],
       "cover": "/workspace/bot/covers/机器视觉/cover6.jpg",
       "status": "pending",
-      "detail_url": null
+      "detail_url": null,
+      "taskId": "87f29163d2ff427486c313e75ea56cb1"
     }
   ]
 }

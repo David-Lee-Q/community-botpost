@@ -51,6 +51,9 @@ class Handler(http.server.SimpleHTTPRequestHandler):
         if self.path == "/api/update":
             self._handle_update()
             return
+        if self.path == "/api/publish-now":
+            self._handle_publish_now()
+            return
         if self.path != "/api/publish":
             self._json(404, {"error": "not found"})
             return
@@ -126,6 +129,33 @@ class Handler(http.server.SimpleHTTPRequestHandler):
         finally:
             _lock.release()
 
+    def _handle_publish_now(self):
+        data = self._body()
+        if not data or not data.get("taskId"):
+            self._json(400, {"error": "参数缺失"})
+            return
+        tid = str(data["taskId"])
+        try:
+            with open(PLAN_FILE, encoding="utf-8") as f:
+                plan = json.load(f)
+        except (OSError, ValueError):
+            self._json(500, {"error": "计划文件读取失败"})
+            return
+        item = next((it for it in plan.get("schedule", []) if it.get("taskId") == tid), None)
+        if item is None:
+            self._json(404, {"error": "计划不存在"})
+            return
+        if item.get("status") != "pending":
+            self._json(200, {"ok": False, "skip": True,
+                             "reason": "当前状态 " + str(item.get("status")) + "，不重复发布"})
+            return
+        if _lock.locked():
+            self._json(429, {"error": "已有任务执行中，请稍候"})
+            return
+        _lock.acquire()
+        threading.Thread(target=_run_publish_now, args=(tid,), daemon=True).start()
+        self._json(200, {"ok": True, "state": "publishing"})
+
     def do_GET(self):
         if self.path.startswith("/api/commits"):
             commits = []
@@ -180,6 +210,15 @@ def _run(prompt):
     try:
         subprocess.run([sys.executable, ONE_SHOT, prompt],
                        capture_output=True, timeout=600)
+    finally:
+        _lock.release()
+
+
+def _run_publish_now(task_id):
+    try:
+        subprocess.run([sys.executable, os.path.join(ROOT, "bot", "publish.py"),
+                        "--now", task_id],
+                       capture_output=True, timeout=900)
     finally:
         _lock.release()
 

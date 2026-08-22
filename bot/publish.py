@@ -222,13 +222,46 @@ def _register_post(aid, title, category):
             json.dump(posts, f, ensure_ascii=False, indent=2)
 
 
+def publish_now(task_id):
+    """强制立即发布指定计划项（忽略计划时间）。状态非 pending 时直接跳过，避免重复发布。"""
+    with open(os.path.join(BOT_DIR, "plan.json"), encoding="utf-8") as f:
+        plan = json.load(f)
+    item = next((it for it in plan["schedule"] if it.get("taskId") == task_id), None)
+    if item is None:
+        return {"ok": False, "error": "计划不存在"}
+    if item.get("status") != "pending":
+        return {"ok": False, "skip": True,
+                "reason": "当前状态 %s，不重复发布" % item.get("status")}
+    item["status"] = "publishing"
+    with open(os.path.join(BOT_DIR, "plan.json"), "w", encoding="utf-8") as f:
+        json.dump(plan, f, ensure_ascii=False, indent=2)
+    token = get_token()
+    result = publish_one(token, item)
+    if result["status"] in ("published", "exists"):
+        item["status"] = "published"
+        item["article_id"] = result.get("article_id")
+        item.pop("last_error", None)
+        if result["status"] == "published":
+            _register_post(result["article_id"], item["title"], item.get("category", ""))
+        out = {"ok": True, "status": result["status"],
+               "article_id": result.get("article_id"),
+               "title": item["title"], "time": item.get("time")}
+    else:
+        item["status"] = "pending"
+        item["last_error"] = str(result.get("error"))[:300]
+        out = {"ok": False, "error": item["last_error"], "title": item["title"]}
+    with open(os.path.join(BOT_DIR, "plan.json"), "w", encoding="utf-8") as f:
+        json.dump(plan, f, ensure_ascii=False, indent=2)
+    return out
+
+
 def main():
     show_improvements()
     token = get_token()
     with open(os.path.join(BOT_DIR, "plan.json"), encoding="utf-8") as f:
         plan = json.load(f)
     for item in plan["schedule"]:
-        if item.get("status") == "published":
+        if item.get("status") in ("published", "publishing"):
             continue
         if item.get("time") and item.get("time") > _now_str():
             print(f"NOT_YET {item['title']} at {item['time']}")
@@ -252,4 +285,11 @@ def _now_str():
 
 
 if __name__ == "__main__":
+    if len(sys.argv) > 1 and sys.argv[1] == "--now":
+        task_id = sys.argv[2] if len(sys.argv) > 2 else ""
+        if not task_id:
+            print(json.dumps({"ok": False, "error": "缺少 taskId"}, ensure_ascii=False))
+            sys.exit(1)
+        print(json.dumps(publish_now(task_id), ensure_ascii=False))
+        sys.exit(0)
     sys.exit(main())

@@ -3,6 +3,7 @@ import json
 import os
 import random
 import sys
+import uuid
 
 BOT_DIR = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(BOT_DIR)
@@ -89,6 +90,7 @@ def gen_one(direction, time_str, existing_titles):
         "file": article_file, "summary": gen["summary"],
         "images": [imgs["body"][0], imgs["body"][1]],
         "cover": cover_path, "status": "pending",
+        "taskId": uuid.uuid4().hex,
     }
 
 
@@ -96,6 +98,15 @@ def main():
     days = int(sys.argv[1]) if len(sys.argv) > 1 else LOOKAHEAD_DAYS
     plan = json.load(open(PLAN_FILE, encoding="utf-8"))
     schedule = plan["schedule"]
+    migrated = False
+    for it in schedule:
+        if not it.get("taskId"):
+            it["taskId"] = uuid.uuid4().hex
+            migrated = True
+    if migrated:
+        with open(PLAN_FILE, "w", encoding="utf-8") as f:
+            json.dump(plan, f, ensure_ascii=False, indent=2)
+        print("gen_plan: 已为 %d 条计划补齐 taskId" % len(schedule))
     pending_times = {it.get("time") for it in schedule if it.get("status") == "pending"}
     existing_titles = {it.get("title") for it in schedule}
 
