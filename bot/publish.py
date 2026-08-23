@@ -154,6 +154,12 @@ def title_exists(token, title):
 
 def publish_one(token, item):
     title = item["title"]
+    summary = item["summary"]
+
+    brand_head = sensitive.check_brand(title) + sensitive.check_brand(summary)
+    if brand_head:
+        return {"status": "blocked", "error": "含禁止发布的竞品平台关键词：" + "、".join(sorted(set(brand_head))), "title": title}
+
     exists, aid = title_exists(token, title)
     if exists:
         return {"status": "exists", "article_id": aid, "title": title}
@@ -164,7 +170,10 @@ def publish_one(token, item):
     while lines and lines[0].startswith("#"):
         lines.pop(0)
     body = "\n".join(lines).strip()
-    summary = item["summary"]
+
+    brand_body = sensitive.check_brand(body)
+    if brand_body:
+        return {"status": "blocked", "error": "含禁止发布的竞品平台关键词：" + "、".join(brand_body), "title": title}
 
     hits_title = sensitive.check(title)
     hits_sum = sensitive.check(summary)

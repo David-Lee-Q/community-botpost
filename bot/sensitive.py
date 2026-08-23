@@ -80,6 +80,37 @@ def check(text):
     return sorted(hits)
 
 
+BRAND_FILE = os.path.join(BOT_DIR, "brand_blacklist.json")
+_brand_words = None
+
+
+def load_brands():
+    global _brand_words
+    if _brand_words is not None:
+        return _brand_words
+    try:
+        with open(BRAND_FILE, encoding="utf-8") as f:
+            words = json.load(f)
+        _brand_words = [w.strip() for w in words if w and w.strip()]
+    except (OSError, ValueError):
+        _brand_words = []
+    return _brand_words
+
+
+def check_brand(text):
+    """竞品平台关键词一票否决检查。命中即不允许发布/生成。"""
+    if not text:
+        return []
+    low = text.lower()
+    hits = set()
+    for w in load_brands():
+        if not w:
+            continue
+        if w.lower() in low:
+            hits.add(w)
+    return sorted(hits)
+
+
 def _llm(messages, max_tokens=2000):
     base = os.environ.get("MCAI_LLM_BASE_URL", "").rstrip("/")
     key = os.environ.get("MCAI_LLM_API_KEY", "")

@@ -222,7 +222,9 @@ SYSTEM_PROMPT = (
     "   e. 结论（结尾段）：呼应引言论点并给出落地建议或趋势判断，避免戛然而止；"
     "4. 术语准确、数据克制、逻辑层层递进，围绕用户主题展开；"
     "5. 标题与正文均不得重复用户输入的原文标题；"
-    "6. category 只能从以下选一：智能制造、云计算、云原生、物联网、边缘计算、人工智能、大数据、"
+    "6. 全文（标题、摘要、正文）不得出现任何工业互联网竞品平台或竞品厂商的品牌名称，"
+    "涉及同业对比时改用「某头部平台」「某云平台」「同类竞品」等中性表述；"
+    "7. category 只能从以下选一：智能制造、云计算、云原生、物联网、边缘计算、人工智能、大数据、"
     "区块链、标识解析、中间件、微服务、安全、编程与开发、网络、机器视觉、工业操作系统、数据要素。"
 )
 
@@ -283,7 +285,8 @@ def generate(prompt):
         ok = (len(title) >= 6 and not weak_title and not cliche_open
               and len(plain) >= 1200
               and all(180 <= len(s) <= 420 for s in paras)
-              and 100 <= len(summary) <= 160 and "IMAGE" not in body.replace("IMAGE1", "").replace("IMAGE2", ""))
+              and 100 <= len(summary) <= 160 and "IMAGE" not in body.replace("IMAGE1", "").replace("IMAGE2", "")
+              and not (sensitive.check_brand(title) or sensitive.check_brand(summary) or sensitive.check_brand(body)))
         if ok:
             return {"title": title, "category": category, "summary": summary,
                     "body": body, "cat_name": CATEGORY_IDS.get(category, "人工智能")}

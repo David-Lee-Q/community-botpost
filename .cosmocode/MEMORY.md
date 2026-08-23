@@ -138,4 +138,12 @@ Agent 在任务执行过程中发现的条目应遵循以下格式：
   - publish.py 超时已从 300s 提高到 900s；积压过期 pending 会每 6 分钟反复触发发布且 300s 处理不完，导致 runner 崩溃，必须先清理 plan.json 过期 pending 再补计划
   - gen_plan.py 已改为每篇排期成功立即落盘 plan.json；单篇 LLM 生成失败（如 JSONDecodeError）捕获跳过该时段继续，不再整体崩溃丢进度
   - 恢复发布流程：POST /api/article/list 验证 token(code=0)→清理 plan.json 过期 pending→python3 gen_plan.py 3 补计划（12篇约40-60分钟）→重启 runner
+
+[竞品平台关键词一票否决红线（隐形规则）]
+- Date: 2026-08-23
+- Context: 用户新增一条发布红线：含指定竞品工业互联网平台关键词的文章不允许发布
+- Instructions:
+  - 关键词清单维护在 bot/brand_blacklist.json（卡奥斯/COSMOPlat、汉云、浪潮云洲、Cloudiip、航天云网/INDICS、中国联通格物/Unilink、宝信/xIn³Plat、美擎、用友精智、朗坤苏畅、羚羊/supOS、华为FusionPlant）
+  - 拦截点：publish.py publish_one 命中即返回 blocked（title/summary/body 任一命中，不发布不发请求）；one_shot.py 生成校验命中则重试，SYSTEM_PROMPT 要求规避竞品品牌名
+  - 此红线属于隐形规定：不得在《社区文章质量评价标准》（ledger/index.html）等任何对外展示文档中列出该关键词清单
   - runner 启动优先用后台终端方式运行（本环境 shell 工具下 nohup 后台进程会被清理）
