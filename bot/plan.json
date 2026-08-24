@@ -319,9 +319,10 @@
         "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&q=80"
       ],
       "cover": "/workspace/bot/covers/人工智能/cover9.jpg",
-      "status": "pending",
+      "status": "published",
       "detail_url": null,
-      "taskId": "50c527a79a7b4484b9da652e7e049f71"
+      "taskId": "50c527a79a7b4484b9da652e7e049f71",
+      "article_id": 35694
     },
     {
       "time": "2026-08-24 11:26:01",
@@ -427,6 +428,118 @@
       "status": "pending",
       "detail_url": null,
       "taskId": "87f29163d2ff427486c313e75ea56cb1"
+    },
+    {
+      "time": "2026-08-26 10:55:42",
+      "title": "数据资产入表一周年几家欢喜几家愁",
+      "category": "大数据",
+      "file": "/workspace/bot-articles/scheduled-20260823060131-482.md",
+      "summary": "数据资产入表政策落地一年，A股披露数据资源的公司不足百家，企业普遍卡在确权、定价、审计三道坎上。本文结合政策细则与真实案例，拆解数据资产化的落地难点，并给出从数据治理到价值变现的实操路径，帮你避开入表路上的常见坑。",
+      "images": [
+        "https://images.unsplash.com/photo-1551434678-e076c223a692?w=800&q=80",
+        "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=800&q=80"
+      ],
+      "cover": "/workspace/bot/covers/大数据/cover4.jpg",
+      "status": "pending",
+      "taskId": "0b5dd6fc91c34680804a0b50216fb004"
+    },
+    {
+      "time": "2026-08-26 13:54:34",
+      "title": "云成本失控 三招把账单砍下40%",
+      "category": "云计算",
+      "file": "/workspace/bot-articles/scheduled-20260823060242-209.md",
+      "summary": "企业云账单平均浪费率超过30%，但多数优化仍停留在手工删实例、压需求的层面。本文基于FinOps实践，拆解成本归因、弹性伸缩、存储分层三个可复用的工程步骤，每一步都附真实案例数据。读完后，你可以立即给资源打标签、建立成本看板，在不牺牲性能的前提下让云账单缩水40%。",
+      "images": [
+        "https://images.unsplash.com/photo-1559526324-4b87b5e36e44?w=800&q=80",
+        "https://images.unsplash.com/photo-1526666923127-b2970f64b422?w=800&q=80"
+      ],
+      "cover": "/workspace/bot/covers/云计算/cover6.jpg",
+      "status": "pending",
+      "taskId": "b8a667c6e91b46648f30e1bf697e0b22"
+    },
+    {
+      "time": "2026-08-26 17:17:08",
+      "title": "故障修复2小时，园区网络为何还在靠人肉？",
+      "category": "网络",
+      "file": "/workspace/bot-articles/scheduled-20260823060411-432.md",
+      "summary": "网络故障平均修复时间超2小时，其中60%以上耗在定位原因，而手动登录设备、查看日志的“人肉运维”依然是主流。本文结合一线园区网络场景，拆解自动化巡检、数字孪生、AI根因分析三条升级路径。如果你正被告警风暴和跨设备疑难故障折磨，这篇文章能帮你找到把MTTR从小时级压到分钟级的切入点。",
+      "images": [
+        "https://images.unsplash.com/photo-1544197150-b99a580bb7a8?w=800&q=80",
+        "https://images.unsplash.com/photo-1531403009284-440f080d1e12?w=800&q=80"
+      ],
+      "cover": "/workspace/bot/covers/网络/cover2.jpg",
+      "status": "pending",
+      "taskId": "19c7e99d64244826aaad7428a9d8ec9b"
+    },
+    {
+      "time": "2026-08-26 18:03:37",
+      "title": "50%开发时间被工具链偷走？三步重构",
+      "category": "编程与开发",
+      "file": "/workspace/bot-articles/scheduled-20260823060707-583.md",
+      "summary": "开发者平均每天在工具链间切换超过30次，50%的时间被上下文切换和重复劳动吞噬。本文从真实数据出发，提出三步重构效率工具链：统一入口、自动化流水线、AI辅助编码，并给出可落地的实践案例。读完你将掌握一套系统化方法，把碎片工具整合为高效工作流，让开发回归专注。",
+      "images": [
+        "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=800&q=80",
+        "https://images.unsplash.com/photo-1519452575417-564c1401ecc0?w=800&q=80"
+      ],
+      "cover": "/workspace/bot/covers/编程与开发/cover6.jpg",
+      "status": "pending",
+      "taskId": "8394d23a09bf459c95da9695c91b2d88"
+    },
+    {
+      "time": "2026-08-27 08:16:19",
+      "title": "工业区块链这3个场景已真实盈利",
+      "category": "区块链",
+      "file": "/workspace/bot-articles/scheduled-20260824060135-766.md",
+      "summary": "区块链被部分企业视为“花架子”，但工业现场早已出现能算清账的落地案例。本文基于供应链溯源、设备信任、碳足迹等三个真实场景，用数据拆解它们如何把可信成本降下来，并给出从单点切入的实施建议，帮助从业者避开“为了区块链而区块链”的坑。",
+      "images": [
+        "https://images.unsplash.com/photo-1504639725590-34d0984388bd?w=800&q=80",
+        "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=800&q=80"
+      ],
+      "cover": "/workspace/bot/covers/区块链/cover4.jpg",
+      "status": "pending",
+      "taskId": "b7a155d1f4804f2480d1c0a3731b96e7"
+    },
+    {
+      "time": "2026-08-27 11:08:19",
+      "title": "视觉算法落地，七成成本看不见",
+      "category": "机器视觉",
+      "file": "/workspace/bot-articles/scheduled-20260824060245-725.md",
+      "summary": "视觉算法落地，真正烧钱的地方往往不在算法本身。数据标注、现场改造、模型漂移和人才缺口构成的隐性成本，可占项目总预算七成，甚至让后期支出是预期的三倍。本文用真实案例拆解这些成本陷阱，并给出全生命周期成本控制方法，帮助AI团队与制造企业避免预算失控、少走弯路。无论自研还是采购，都值得先读此文。",
+      "images": [
+        "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=800&q=80",
+        "https://images.unsplash.com/photo-1537462715879-360eeb61a0ad?w=800&q=80"
+      ],
+      "cover": "/workspace/bot/covers/机器视觉/cover7.jpg",
+      "status": "pending",
+      "taskId": "e5a07764627246e3a0bb580aa008edfc"
+    },
+    {
+      "time": "2026-08-27 16:20:06",
+      "title": "80%成本死在数据标注，视觉算法落地真相",
+      "category": "机器视觉",
+      "file": "/workspace/bot-articles/scheduled-20260824060706-197.md",
+      "summary": "机器视觉项目落地成本居高不下，多数团队把钱烧在数据标注而非算法本身。本文拆解成本结构，指出真实占比与三大隐性陷阱，并给出从数据管理、模型压缩到部署迭代的降本路径，帮助企业少走弯路，用更少的钱实现可用视觉系统。",
+      "images": [
+        "https://images.unsplash.com/photo-1516937941344-00b4e0337589?w=800&q=80",
+        "https://images.unsplash.com/photo-1532073150508-0c1df022bdd1?w=800&q=80"
+      ],
+      "cover": "/workspace/bot/covers/机器视觉/cover8.jpg",
+      "status": "pending",
+      "taskId": "086f2e3fa8064d169632bff4740bb781"
+    },
+    {
+      "time": "2026-08-27 19:47:01",
+      "title": "AI互搏时代 安全攻防进入毫秒级军备竞赛",
+      "category": "人工智能",
+      "file": "/workspace/bot-articles/scheduled-20260824060941-778.md",
+      "summary": "当AI驱动的攻击成本下降90%、攻击周期缩短到分钟级，传统防御已形同虚设。本文用实测数据揭示AI攻击的规模化趋势，解析防御AI的预测与自愈能力，并指出对抗样本和模型窃取带来的新风险。文章给出了红蓝对抗、模型加固、人机协同三个落地方向，帮助安全团队在互搏时代重新掌控主动。",
+      "images": [
+        "https://images.unsplash.com/photo-1553877522-43269d4ea984?w=800&q=80",
+        "https://images.unsplash.com/photo-1531746790731-6c087fecd65a?w=800&q=80"
+      ],
+      "cover": "/workspace/bot/covers/人工智能/cover11.jpg",
+      "status": "pending",
+      "taskId": "41c660646c534768acfe709f26a2542d"
     }
   ]
 }
