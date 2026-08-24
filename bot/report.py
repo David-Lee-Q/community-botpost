@@ -55,7 +55,7 @@ def daily_text(day=None):
         a.get("commentCount", 0) + a.get("favor", 0) + a.get("collect", 0) for a in published
     )
     sh = _load(SCORE_HISTORY).get("history") or []
-    last_score = sh[0] if sh else None
+    last_score = max(sh, key=lambda h: h.get("week", "")) if sh else None
     plan = _load(PLAN).get("schedule", [])
     pending = [it for it in plan if it.get("status") == "pending"
                and it.get("time") and it["time"].startswith(day.isoformat())]
@@ -84,7 +84,8 @@ def daily_text(day=None):
 
 
 def weekly_text(week_end=None):
-    week_end = week_end or datetime.date.today()
+    # 周一推送时总结上一完整周（上周一~上周日），默认周期截止到昨天
+    week_end = week_end or (datetime.date.today() - datetime.timedelta(days=1))
     mon = _monday(week_end)
     arts = _articles()
     week_arts = [a for a in arts if mon.isoformat() <= (a.get("createTime") or "")[:10] <= week_end.isoformat()]
@@ -94,7 +95,7 @@ def weekly_text(week_end=None):
         a.get("commentCount", 0) + a.get("favor", 0) + a.get("collect", 0) for a in published
     )
     sh = _load(SCORE_HISTORY).get("history") or []
-    last_score = sh[0] if sh else None
+    last_score = max(sh, key=lambda h: h.get("week", "")) if sh else None
     plan = _load(PLAN).get("schedule", [])
     pending = [it for it in plan if it.get("status") == "pending"]
 
@@ -149,7 +150,7 @@ def daily_card(day=None):
         a.get("commentCount", 0) + a.get("favor", 0) + a.get("collect", 0) for a in published
     )
     sh = _load(SCORE_HISTORY).get("history") or []
-    last_score = sh[0] if sh else None
+    last_score = max(sh, key=lambda h: h.get("week", "")) if sh else None
     plan = _load(PLAN).get("schedule", [])
     pending = [it for it in plan if it.get("status") == "pending"
                and it.get("time") and it["time"].startswith(day.isoformat())]
@@ -189,7 +190,8 @@ def daily_card(day=None):
 
 
 def weekly_card(week_end=None):
-    week_end = week_end or datetime.date.today()
+    # 周一推送时总结上一完整周（上周一~上周日），默认周期截止到昨天
+    week_end = week_end or (datetime.date.today() - datetime.timedelta(days=1))
     mon = _monday(week_end)
     arts = _articles()
     week_arts = [a for a in arts if mon.isoformat() <= (a.get("createTime") or "")[:10] <= week_end.isoformat()]
@@ -199,7 +201,7 @@ def weekly_card(week_end=None):
         a.get("commentCount", 0) + a.get("favor", 0) + a.get("collect", 0) for a in published
     )
     sh = _load(SCORE_HISTORY).get("history") or []
-    last_score = sh[0] if sh else None
+    last_score = max(sh, key=lambda h: h.get("week", "")) if sh else None
     plan = _load(PLAN).get("schedule", [])
     pending = [it for it in plan if it.get("status") == "pending"]
 

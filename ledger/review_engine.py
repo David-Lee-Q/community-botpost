@@ -14,6 +14,7 @@ def _write_json(path, obj):
     os.replace(tmp, path)
 REVIEWS_FILE = os.path.join(DATA, "reviews.json")
 ARTICLES_FILE = os.path.join(DATA, "articles.json")
+POSTS_FILE = os.path.join(DATA, "bot_posts.json")
 OUT_FILE = os.path.join(DATA, "bot_score.json")
 HISTORY_FILE = os.path.join(DATA, "score_history.json")
 
@@ -45,7 +46,7 @@ def week_range(today=None):
     return start, end
 
 
-def compute_score(reviews, arts, start, end):
+def compute_score(reviews, arts, start, end, bot_ids):
     in_week = []
     for a in arts:
         if a.get("status") != 1:
@@ -57,7 +58,7 @@ def compute_score(reviews, arts, start, end):
             d = datetime.date.fromisoformat(ct)
         except ValueError:
             continue
-        if start <= d <= end and str(a.get("id")) in reviews:
+        if start <= d <= end and str(a.get("id")) in reviews and str(a.get("id")) in bot_ids:
             in_week.append(a)
     now_str = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     if not in_week:
@@ -179,8 +180,13 @@ def update_memory(payload):
 def main():
     reviews = json.load(open(REVIEWS_FILE, encoding="utf-8"))
     arts = json.load(open(ARTICLES_FILE, encoding="utf-8")).get("articles", [])
+    try:
+        posts = json.load(open(POSTS_FILE, encoding="utf-8"))
+        bot_ids = {str(k) for k in posts.keys()}
+    except (OSError, ValueError):
+        bot_ids = set()
     start, end = week_range()
-    payload = compute_score(reviews, arts, start, end)
+    payload = compute_score(reviews, arts, start, end, bot_ids)
     _write_json(OUT_FILE, payload)
     hist = update_history(payload)
     update_tasks(hist)
