@@ -74,8 +74,8 @@ def main():
                 else:
                     log(ao.stdout.strip())
 
-        # 每日 18:00 推送飞书每日总结
-        if now.hour == 18 and last_daily != now.date().isoformat():
+        # 每日 20:05 推送飞书每日总结
+        if now.hour == 20 and now.minute >= 5 and last_daily != now.date().isoformat():
             last_daily = now.date().isoformat()
             report = os.path.join(BOT_DIR, "report.py")
             if os.path.exists(report):
