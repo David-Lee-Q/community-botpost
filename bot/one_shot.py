@@ -184,19 +184,7 @@ def pick_images(category="人工智能"):
 
 
 def _llm(messages, max_tokens=12000):
-    base = os.environ.get("MCAI_LLM_BASE_URL", "").rstrip("/")
-    key = os.environ.get("MCAI_LLM_API_KEY", "")
-    model = os.environ.get("MCAI_LLM_MODEL", "")
-    r = requests.post(
-        base + "/chat/completions",
-        headers={"Authorization": "Bearer " + key, "Content-Type": "application/json"},
-        json={"model": model, "messages": messages, "temperature": 0.6, "max_tokens": max_tokens},
-        timeout=180,
-    )
-    d = r.json()
-    if r.status_code != 200 or not d.get("choices"):
-        raise RuntimeError("LLM调用失败: " + str(d)[:300])
-    return d["choices"][0]["message"]["content"]
+    return sensitive.chat(messages, max_tokens=max_tokens, temperature=0.6)
 
 
 SYSTEM_PROMPT = (

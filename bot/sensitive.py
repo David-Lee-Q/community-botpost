@@ -111,20 +111,49 @@ def check_brand(text):
     return sorted(hits)
 
 
-def _llm(messages, max_tokens=2000):
+def _model_list():
+    models = []
+    primary = os.environ.get("MCAI_LLM_MODEL", "")
+    if primary:
+        models.append(primary)
+    for m in os.environ.get("MCAI_LLM_FALLBACK_MODELS", "").split(","):
+        m = m.strip()
+        if m and m not in models:
+            models.append(m)
+    return models
+
+
+def chat(messages, max_tokens=2000, temperature=0.5, timeout=600):
+    """调用 LLM chat/completions，主模型 403/404/410 时自动按 MCAI_LLM_FALLBACK_MODELS 回退。"""
     base = os.environ.get("MCAI_LLM_BASE_URL", "").rstrip("/")
     key = os.environ.get("MCAI_LLM_API_KEY", "")
-    model = os.environ.get("MCAI_LLM_MODEL", "")
-    r = requests.post(
-        base + "/chat/completions",
-        headers={"Authorization": "Bearer " + key, "Content-Type": "application/json"},
-        json={"model": model, "messages": messages, "temperature": 0.5, "max_tokens": max_tokens},
-        timeout=180,
-    )
-    d = r.json()
-    if r.status_code != 200 or not d.get("choices"):
-        raise RuntimeError("LLM调用失败: " + str(d)[:300])
-    return d["choices"][0]["message"]["content"]
+    last_err = None
+    for model in _model_list():
+        try:
+            r = requests.post(
+                base + "/chat/completions",
+                headers={"Authorization": "Bearer " + key, "Content-Type": "application/json"},
+                json={"model": model, "messages": messages,
+                      "temperature": temperature, "max_tokens": max_tokens},
+                timeout=timeout,
+            )
+        except requests.RequestException as e:
+            last_err = e
+            continue
+        if r.status_code in (403, 404, 410):
+            last_err = RuntimeError("模型 %s 不可用: HTTP %s" % (model, r.status_code))
+            continue
+        d = r.json()
+        if r.status_code == 200 and d.get("choices"):
+            return d["choices"][0]["message"]["content"]
+        last_err = RuntimeError("LLM调用失败: " + str(d)[:300])
+        if r.status_code not in (429, 500, 502, 503, 504):
+            break
+    raise last_err or RuntimeError("未配置LLM模型")
+
+
+def _llm(messages, max_tokens=2000):
+    return chat(messages, max_tokens=max_tokens)
 
 
 def optimize_text(text, hits, role="正文"):
