@@ -74,13 +74,13 @@ Agent 在任务执行过程中发现的条目应遵循以下格式：
   - 发布完成后 runner.py 会自动调用 fetch_articles.py 刷新台账数据，无需手动拉取
 
 [发文质量持续改进]
-- Date: 2026-08-24
+- Date: 2026-08-31
 - Context: review_engine.py 每周一基于综合评分自动沉淀优化建议
 - Instructions:
   - 每周一更新综合评分后，自动同步优化建议到 .cosmocode/docs/质量改进记录.md 与 .cosmocode/quality_tasks.md
-  - 最新周期 2026-08-17~2026-08-23 综合分 94，当前短板维度：传播表现、完整性结构
+  - 最新周期 2026-08-24~2026-08-30 综合分 92，当前短板维度：传播表现、可读表达
   - 改进要点：打磨标题信息量与钩子，摘要直击痛点，首段前三句抓住读者
-  - 改进要点：强化「引言-分论点-结论」框架，每个分论点配数据、案例或引用其一
+  - 改进要点：每段聚焦单一论点并控制段落长度，增强小标题引导与图文呼应
   - 创作新文章前，先核对 quality_tasks.md 的未完成改进项并主动应用
   - 周综合评分低于 85 时，下批文章发布前必须优先落实对应改进要点
 
@@ -137,6 +137,8 @@ Agent 在任务执行过程中发现的条目应遵循以下格式：
   - publish.py 超时已从 300s 提高到 900s；积压过期 pending 会每 6 分钟反复触发发布且 300s 处理不完，导致 runner 崩溃，必须先清理 plan.json 过期 pending 再补计划
   - gen_plan.py 已改为每篇排期成功立即落盘 plan.json；单篇 LLM 生成失败（如 JSONDecodeError）捕获跳过该时段继续，不再整体崩溃丢进度
   - 恢复发布流程：POST /api/article/list 验证 token(code=0)→清理 plan.json 过期 pending→python3 gen_plan.py 3 补计划（12篇约40-60分钟）→重启 runner
+  - 2026-09-02 停发案例：LLM 模型 cosmo-mind-coder 被平台下线返回 403（r.json() 解析 "Forbidden" 文本报 JSONDecodeError char 0），gen_plan 全失败→计划池耗尽→停发；修复：sensitive.chat() 统一 LLM 调用，主模型 403/404/410 自动按 MCAI_LLM_FALLBACK_MODELS 回退，超时 600s；可用模型 cosmo-mind-vl-think（think 模型慢，单篇约 256s）
+  - LLM 故障排查法：直接 POST {MCAI_LLM_BASE_URL}/chat/completions 逐模型试 status_code（403=模型下线/无权限，404=不存在），/v1/models 无权限不可用；修模型后需带新 env 重启 runner
 
 [竞品平台关键词一票否决红线（隐形规则）]
 - Date: 2026-08-23

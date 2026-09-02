@@ -124,31 +124,41 @@ def _model_list():
 
 
 def chat(messages, max_tokens=2000, temperature=0.5, timeout=600):
-    """调用 LLM chat/completions，主模型 403/404/410 时自动按 MCAI_LLM_FALLBACK_MODELS 回退。"""
+    """调用 LLM chat/completions。
+
+    模型 403/404/410（下线/无权限）时自动按 MCAI_LLM_FALLBACK_MODELS 回退；
+    空内容/网络异常/5xx/429 在同一模型上重试，最多 3 次再换模型。
+    """
     base = os.environ.get("MCAI_LLM_BASE_URL", "").rstrip("/")
     key = os.environ.get("MCAI_LLM_API_KEY", "")
     last_err = None
     for model in _model_list():
-        try:
-            r = requests.post(
-                base + "/chat/completions",
-                headers={"Authorization": "Bearer " + key, "Content-Type": "application/json"},
-                json={"model": model, "messages": messages,
-                      "temperature": temperature, "max_tokens": max_tokens},
-                timeout=timeout,
-            )
-        except requests.RequestException as e:
-            last_err = e
-            continue
-        if r.status_code in (403, 404, 410):
-            last_err = RuntimeError("模型 %s 不可用: HTTP %s" % (model, r.status_code))
-            continue
-        d = r.json()
-        if r.status_code == 200 and d.get("choices"):
-            return d["choices"][0]["message"]["content"]
-        last_err = RuntimeError("LLM调用失败: " + str(d)[:300])
-        if r.status_code not in (429, 500, 502, 503, 504):
-            break
+        for attempt in range(3):
+            try:
+                r = requests.post(
+                    base + "/chat/completions",
+                    headers={"Authorization": "Bearer " + key, "Content-Type": "application/json"},
+                    json={"model": model, "messages": messages,
+                          "temperature": temperature, "max_tokens": max_tokens},
+                    timeout=timeout,
+                )
+            except requests.RequestException as e:
+                last_err = e
+                continue
+            if r.status_code in (403, 404, 410):
+                last_err = RuntimeError("模型 %s 不可用: HTTP %s" % (model, r.status_code))
+                break
+            d = r.json()
+            if r.status_code == 200:
+                choices = d.get("choices") or []
+                content = (choices[0].get("message") or {}).get("content") if choices else None
+                if content and str(content).strip():
+                    return content
+                last_err = RuntimeError("LLM返回空内容 (model=%s)" % model)
+                continue
+            last_err = RuntimeError("LLM调用失败: " + str(d)[:300])
+            if r.status_code not in (429, 500, 502, 503, 504):
+                break
     raise last_err or RuntimeError("未配置LLM模型")
 
 
