@@ -131,6 +131,49 @@ def upload_cover(token, cover_path):
     return d["data"]["path"]
 
 
+def _rehost_body_images(token, body):
+    """将正文外链图片上传平台 OSS 并替换为平台路径。
+
+    平台 WAF 会拦截正文中 unsplash/pexels 等外部图片域名（返回 10002），
+    必须先转存到 hd-oss.cosmoplat.com。转存失败时删除该图，保证文章能发出。
+    """
+    import io
+    import re
+    import tempfile
+
+    def _swap(m):
+        url = m.group(1)
+        if "cosmoplat.com" in url:
+            return m.group(0)
+        try:
+            r = requests.get(url, headers={"User-Agent": "Mozilla/5.0"}, timeout=60)
+            r.raise_for_status()
+            data = r.content
+            if not data or len(data) > 900 * 1024:
+                return ""
+            is_png = ".png" in url.lower().split("?")[0]
+            ext = "png" if is_png else "jpg"
+            mime = "image/png" if is_png else "image/jpeg"
+            fd, tmp = tempfile.mkstemp(suffix="." + ext)
+            with os.fdopen(fd, "wb") as f:
+                f.write(data)
+            up = requests.post(
+                f"{BASE}/file/uploadFileStream?type=1",
+                headers={"s-user-token": token},
+                files={"file": (("body_img.%s" % ext), open(tmp, "rb"), mime)},
+                timeout=60,
+            )
+            os.unlink(tmp)
+            d = up.json()
+            if d.get("code") == 0:
+                return m.group(0).replace(url, d["data"]["path"])
+        except Exception:
+            pass
+        return ""
+
+    return re.sub(r"!\[[^\]]*\]\((https?://[^)\s]+)\)", _swap, body)
+
+
 def title_exists(token, title):
     page, size = 1, 50
     for _ in range(20):
@@ -190,6 +233,9 @@ def publish_one(token, item):
             summary = sensitive.optimize_text(summary, hits_sum, "摘要")
         if hits_body:
             body = sensitive.optimize_text(body, hits_body, "正文")
+
+    # 品牌检查通过后，再转存正文外链图片（平台 OSS 域名含 cosmoplat，不能参与品牌检查）
+    body = _rehost_body_images(token, body)
 
     payload = {
         "canReply": 0, "source": 1, "cateId": CATEGORY_IDS[item["category"]],

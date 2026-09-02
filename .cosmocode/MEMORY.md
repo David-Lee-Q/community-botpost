@@ -46,8 +46,9 @@ Agent 在任务执行过程中发现的条目应遵循以下格式：
 - Category: 运维部署
 - Instructions:
   - bot 组件位于 /workspace/bot：publish.py（发布+查重）、runner.py（定时守护，30秒轮询，调度发布/评分/数据刷新/飞书报告）、report.py（每日/每周总结飞书推送）、fetch_detail_urls.py（抓取详情URL）、plan.json（发布计划）、HEARTBEAT.md（发布记录）、SCHEDULE.md（定时任务说明）
-  - 发布直接调用 POST /api/article/save，认证用自定义 header `s-user-token`（JWT，有效期约7天），token 存于 /workspace/bot/token.txt，失效时 runner 通过 Playwright 重新登录获取
+  - 发布直接调用 POST /api/article/save，认证用自定义 header `s-user-token`（JWT，有效期约7天），token 存于 /workspace/bot/token.txt；save 严格校验 token（list/upload 宽松，uploadFileStream 不校验），失效时重登：/tmp/do_login2.py（Playwright，风控有时免 MFA 直接密码登录，有时需短信验证码写入 /tmp/mfa_code.txt），登录后必须同步刷新 /tmp/login_state.json（S-User-Token cookie，fetch_detail_urls.py 依赖）
   - 文章封面上传：POST /api/file/uploadFileStream?type=1（multipart），返回 data.path 作为 thumbnail
+  - 正文配图（unsplash/pexels 外链）save 前必须转存平台 OSS（publish._rehost_body_images）：平台 WAF 拦截正文中这两个域名并返回误导性的 10002「无效的token」；转存须放在品牌检查之后（平台 OSS 域名含 cosmoplat，会误触品牌词 COSMOPlat）
   - 发布必填字段：cateId（分类ID，见 publish.py CATEGORY_IDS）、thumbnail、title、description（摘要）、content（markdown正文，不含首行#标题）、viewRank=0
   - 封面要求 800×400、jpg/png、≤1MB；正文配图需至少2张，免费可商用图源见「配图来源规范」条目
 
@@ -94,7 +95,7 @@ Agent 在任务执行过程中发现的条目应遵循以下格式：
   - 2026-08-10 配图去重机制：IMAGE_POOL 为多源图池（101张=51 Unsplash+50 Pexels，均已批量验证直链可达），每次发文随机取3张（正文2+封面1），全局去重记录于 bot/used_images.json（site:ref 格式，池耗尽自动重置轮换）
   - 2026-08-10 配图主题化：因配图与内容不相关，改为主题化池——IMAGE_POOL 73 张全部为记忆确认主题的 Unsplash 图，按 theme 分组（ai 11/code 9/dc 12/ind 15/data 9/abs 17）；THEMES 映射文章分类→主题组，pick_images(category) 优先分类主题组取图、不足时扩展相邻组、全池耗尽重置（保留 recent 最近9张避免立即重复）；Pexels 随机扫描图（主题未知）已移除
   - 主题分组：ai=机器人/AI/对话，code=代码编程，dc=数据中心/服务器/芯片，ind=工业制造/自动化，data=数据图表/分析，abs=抽象科技/网络；LLM 无视觉能力、Pexels/Unsplash 检索与详情页均反爬，故主题标签靠记忆标注并逐一验证可达性
-  - 图源可达性结论：images.unsplash.com 与 images.pexels.com 直链均可用，平台会抓取正文图转存 hd-oss.cosmoplat.com（无需担心外链失效）；magnific.com 是 AI 放大工具无免费图库；pixabay 搜索需 API key 且部分 CDN 图 hotlink 403，故暂未纳入池
+  - 图源可达性结论：images.unsplash.com 与 images.pexels.com 直链可达（生成/下载用）；但发布 save 前必须转存平台 OSS（见「社区发文 bot 运行方式」），不能依赖平台抓取外链；magnific.com 是 AI 放大工具无免费图库；pixabay 搜索需 API key 且部分 CDN 图 hotlink 403，故暂未纳入池
   - 发一篇配图流程：generate() 正文保留 IMAGE1/IMAGE2 占位→run() 调 pick_images() 选图替换占位并下载封面→发布成功后将3张图 keys 记入 used_images.json 对应文章
 
 [飞书报告定时推送]
@@ -137,8 +138,15 @@ Agent 在任务执行过程中发现的条目应遵循以下格式：
   - publish.py 超时已从 300s 提高到 900s；积压过期 pending 会每 6 分钟反复触发发布且 300s 处理不完，导致 runner 崩溃，必须先清理 plan.json 过期 pending 再补计划
   - gen_plan.py 已改为每篇排期成功立即落盘 plan.json；单篇 LLM 生成失败（如 JSONDecodeError）捕获跳过该时段继续，不再整体崩溃丢进度
   - 恢复发布流程：POST /api/article/list 验证 token(code=0)→清理 plan.json 过期 pending→python3 gen_plan.py 3 补计划（12篇约40-60分钟）→重启 runner
+  - 当日补发：bot/backfill_today.py 把当天剩余时段（now+45min 起均匀分布到 19:30）补足 4 篇 pending，runner 到点自动发布；gen_plan.py 只补未来天数不含当天
+  - 每天固定 4 篇（DAILY_COUNT=4，8:00~20:00 窗口）；gen_plan 随机时段某选题连续生成失败会跳过该时段导致当天不足 4 篇，需次日 gen_plan 或 backfill_today 补齐
   - 2026-09-02 停发案例：LLM 模型 cosmo-mind-coder 被平台下线返回 403（r.json() 解析 "Forbidden" 文本报 JSONDecodeError char 0），gen_plan 全失败→计划池耗尽→停发；修复：sensitive.chat() 统一 LLM 调用，主模型 403/404/410 自动按 MCAI_LLM_FALLBACK_MODELS 回退，超时 600s；可用模型 cosmo-mind-vl-think（think 模型慢，单篇约 256s）
   - LLM 故障排查法：直接 POST {MCAI_LLM_BASE_URL}/chat/completions 逐模型试 status_code（403=模型下线/无权限，404=不存在），/v1/models 无权限不可用；修模型后需带新 env 重启 runner
+  - 2026-09-02 停发案例二：token 过期 + 平台 WAF 拦截正文 unsplash/pexels 图链，save 返回 10002「无效的token」；探测法：save 带空标题→500 标题为空 / 短正文→500 字符数不足 说明鉴权已过，鉴权过后仍 10002 = token 真失效或 WAF 内容拦截（正文含被拦域名）
+  - save 校验顺序：标题 → 正文长度 → token 严格校验；故过期 token 下短探测报 500、真实长文报 10002，两者并存时优先查 WAF 图链再查 token
+  - runner.py due 块的 publish/fetch_detail_urls/fetch_articles 子进程超时（TimeoutExpired）现统一块内捕获记日志，不再打崩主循环（9-02 曾 37 次崩溃重启）
+  - fetch_detail_urls.py 重构：列表页只加载一次；详情 URL 以 DETAIL_PATTERN(article_id) 兜底直出，列表点击仅增强（敏感词优化改过标题的文章标题校验必然 mismatch，旧逻辑会误清 detail_url）；依赖 /tmp/login_state.json，token 变更后必须刷新，否则挂起超时
+  - MFA 风控为动态：同账号有时弹 Mfa 框（需短信码），有时免 MFA 直接密码登录成功；do_login2.py 两条路径都覆盖，登录成功后立即校验 S-User-Token cookie 并刷新 /tmp/login_state.json
 
 [竞品平台关键词一票否决红线（隐形规则）]
 - Date: 2026-08-23

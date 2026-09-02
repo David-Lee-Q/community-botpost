@@ -129,31 +129,35 @@ def main():
         due = [it for it in plan["schedule"] if it.get("status") == "pending"
                and it.get("time") and it["time"] <= now.strftime("%Y-%m-%d %H:%M:%S")]
         if due:
-            log(f"{len(due)} 篇文章到点，开始发布")
-            r = subprocess.run([sys.executable, os.path.join(BOT_DIR, "publish.py")],
-                               capture_output=True, text=True, timeout=900)
-            print(r.stdout, flush=True)
-            if r.returncode != 0:
-                log("publish.py 失败: " + r.stderr[-500:])
-            # 发布完成后抓取详情 URL
-            log("抓取文章详情 URL")
-            r2 = subprocess.run([sys.executable, os.path.join(BOT_DIR, "fetch_detail_urls.py")],
-                                capture_output=True, text=True, timeout=300)
-            print(r2.stdout, flush=True)
-            if r2.returncode != 0:
-                log("fetch_detail_urls.py 失败: " + r2.stderr[-500:])
-            # 更新 HEARTBEAT 当日清单
-            gen_heartbeat()
-            # 刷新台账数据
-            ledger = os.path.join(os.path.dirname(BOT_DIR), "ledger", "fetch_articles.py")
-            if os.path.exists(ledger):
-                log("刷新台账数据")
-                r3 = subprocess.run([sys.executable, ledger],
+            try:
+                log(f"{len(due)} 篇文章到点，开始发布")
+                r = subprocess.run([sys.executable, os.path.join(BOT_DIR, "publish.py")],
+                                   capture_output=True, text=True, timeout=900)
+                print(r.stdout, flush=True)
+                if r.returncode != 0:
+                    log("publish.py 失败: " + r.stderr[-500:])
+                # 发布完成后抓取详情 URL
+                log("抓取文章详情 URL")
+                r2 = subprocess.run([sys.executable, os.path.join(BOT_DIR, "fetch_detail_urls.py")],
                                     capture_output=True, text=True, timeout=300)
-                if r3.returncode != 0:
-                    log("fetch_articles.py 失败: " + r3.stderr[-500:])
-                else:
-                    log(r3.stdout.strip())
+                print(r2.stdout, flush=True)
+                if r2.returncode != 0:
+                    log("fetch_detail_urls.py 失败: " + r2.stderr[-500:])
+                # 更新 HEARTBEAT 当日清单
+                gen_heartbeat()
+                # 刷新台账数据
+                ledger = os.path.join(os.path.dirname(BOT_DIR), "ledger", "fetch_articles.py")
+                if os.path.exists(ledger):
+                    log("刷新台账数据")
+                    r3 = subprocess.run([sys.executable, ledger],
+                                        capture_output=True, text=True, timeout=300)
+                    if r3.returncode != 0:
+                        log("fetch_articles.py 失败: " + r3.stderr[-500:])
+                    else:
+                        log(r3.stdout.strip())
+            except Exception as e:
+                # 子进程超时（TimeoutExpired）等异常只记录，不让主循环崩溃重启
+                log("发布流程异常（已捕获，下轮继续）: %r" % e)
         time.sleep(30)
 
 

@@ -65,7 +65,7 @@
       "cover": "/workspace/bot/covers/人工智能/cover5.jpg",
       "status": "published",
       "article_id": 35244,
-      "detail_url": null,
+      "detail_url": "https://openlab.cosmoplat.com/article-detils?id=35244&articleType=0",
       "taskId": "0562fadbe8a147009590a18bb95d9f63"
     },
     {
@@ -128,7 +128,7 @@
       ],
       "cover": "/workspace/bot/covers/云原生/cover5.jpg",
       "status": "published",
-      "detail_url": null,
+      "detail_url": "https://openlab.cosmoplat.com/article-detils?id=35544&articleType=0",
       "article_id": 35544,
       "taskId": "43152b09404448879c83d7eefad373ee"
     },
@@ -144,7 +144,7 @@
       ],
       "cover": "/workspace/bot/covers/机器视觉/cover4.jpg",
       "status": "published",
-      "detail_url": null,
+      "detail_url": "https://openlab.cosmoplat.com/article-detils?id=35546&articleType=0",
       "article_id": 35546,
       "taskId": "af4d292a61a44eb4be94e9734e4ed56f"
     },
@@ -160,7 +160,7 @@
       ],
       "cover": "/workspace/bot/covers/物联网/cover3.jpg",
       "status": "published",
-      "detail_url": null,
+      "detail_url": "https://openlab.cosmoplat.com/article-detils?id=35548&articleType=0",
       "article_id": 35548,
       "taskId": "997b3186b2b140f1a5b82572d5a1e26c"
     },
@@ -176,7 +176,7 @@
       ],
       "cover": "/workspace/bot/covers/云原生/cover6.jpg",
       "status": "published",
-      "detail_url": null,
+      "detail_url": "https://openlab.cosmoplat.com/article-detils?id=35550&articleType=0",
       "article_id": 35550,
       "taskId": "19da085f14e9495f87c7eaed887578ab"
     },
@@ -192,7 +192,7 @@
       ],
       "cover": "/workspace/bot/covers/编程与开发/cover5.jpg",
       "status": "published",
-      "detail_url": null,
+      "detail_url": "https://openlab.cosmoplat.com/article-detils?id=35656&articleType=0",
       "article_id": 35656,
       "taskId": "0d6247c4f51a42adb7aa3381d2f6d03b"
     },
@@ -320,7 +320,7 @@
       ],
       "cover": "/workspace/bot/covers/人工智能/cover9.jpg",
       "status": "published",
-      "detail_url": null,
+      "detail_url": "https://openlab.cosmoplat.com/article-detils?id=35694&articleType=0",
       "taskId": "50c527a79a7b4484b9da652e7e049f71",
       "article_id": 35694
     },
@@ -384,7 +384,7 @@
       ],
       "cover": "/workspace/bot/covers/云原生/cover8.jpg",
       "status": "published",
-      "detail_url": null,
+      "detail_url": "https://openlab.cosmoplat.com/article-detils?id=35772&articleType=0",
       "taskId": "b61d0feb86534fad85b3663a38174d83",
       "article_id": 35772
     },
@@ -400,7 +400,7 @@
       ],
       "cover": "/workspace/bot/covers/数据要素/cover7.jpg",
       "status": "published",
-      "detail_url": null,
+      "detail_url": "https://openlab.cosmoplat.com/article-detils?id=35776&articleType=0",
       "taskId": "015689ac3a22497e851463de111361a7",
       "article_id": 35776
     },
@@ -416,7 +416,7 @@
       ],
       "cover": "/workspace/bot/covers/边缘计算/cover6.jpg",
       "status": "published",
-      "detail_url": null,
+      "detail_url": "https://openlab.cosmoplat.com/article-detils?id=35778&articleType=0",
       "taskId": "960d29e7c8994250ac5710131876f6de",
       "article_id": 35778
     },
@@ -432,7 +432,7 @@
       ],
       "cover": "/workspace/bot/covers/机器视觉/cover6.jpg",
       "status": "published",
-      "detail_url": null,
+      "detail_url": "https://openlab.cosmoplat.com/article-detils?id=35780&articleType=0",
       "taskId": "87f29163d2ff427486c313e75ea56cb1",
       "article_id": 35780
     },
@@ -449,7 +449,7 @@
       "cover": "/workspace/bot/covers/大数据/cover4.jpg",
       "status": "published",
       "taskId": "0b5dd6fc91c34680804a0b50216fb004",
-      "detail_url": null,
+      "detail_url": "https://openlab.cosmoplat.com/article-detils?id=35806&articleType=0",
       "article_id": 35806
     },
     {
@@ -465,7 +465,7 @@
       "cover": "/workspace/bot/covers/云计算/cover6.jpg",
       "status": "published",
       "taskId": "b8a667c6e91b46648f30e1bf697e0b22",
-      "detail_url": null,
+      "detail_url": "https://openlab.cosmoplat.com/article-detils?id=35808&articleType=0",
       "article_id": 35808
     },
     {
@@ -481,7 +481,7 @@
       "cover": "/workspace/bot/covers/网络/cover2.jpg",
       "status": "published",
       "taskId": "19c7e99d64244826aaad7428a9d8ec9b",
-      "detail_url": null,
+      "detail_url": "https://openlab.cosmoplat.com/article-detils?id=35810&articleType=0",
       "article_id": 35810
     },
     {
@@ -497,7 +497,7 @@
       "cover": "/workspace/bot/covers/编程与开发/cover6.jpg",
       "status": "published",
       "taskId": "8394d23a09bf459c95da9695c91b2d88",
-      "detail_url": null,
+      "detail_url": "https://openlab.cosmoplat.com/article-detils?id=35812&articleType=0",
       "article_id": 35812
     },
     {
@@ -513,7 +513,7 @@
       "cover": "/workspace/bot/covers/区块链/cover4.jpg",
       "status": "published",
       "taskId": "b7a155d1f4804f2480d1c0a3731b96e7",
-      "detail_url": null,
+      "detail_url": "https://openlab.cosmoplat.com/article-detils?id=35836&articleType=0",
       "article_id": 35836
     },
     {
@@ -529,7 +529,7 @@
       "cover": "/workspace/bot/covers/机器视觉/cover7.jpg",
       "status": "published",
       "taskId": "e5a07764627246e3a0bb580aa008edfc",
-      "detail_url": null,
+      "detail_url": "https://openlab.cosmoplat.com/article-detils?id=35850&articleType=0",
       "article_id": 35850
     },
     {
@@ -545,7 +545,7 @@
       "cover": "/workspace/bot/covers/机器视觉/cover8.jpg",
       "status": "published",
       "taskId": "086f2e3fa8064d169632bff4740bb781",
-      "detail_url": null,
+      "detail_url": "https://openlab.cosmoplat.com/article-detils?id=35852&articleType=0",
       "article_id": 35852
     },
     {
@@ -561,7 +561,7 @@
       "cover": "/workspace/bot/covers/人工智能/cover11.jpg",
       "status": "published",
       "taskId": "41c660646c534768acfe709f26a2542d",
-      "detail_url": null,
+      "detail_url": "https://openlab.cosmoplat.com/article-detils?id=35854&articleType=0",
       "article_id": 35854
     },
     {
@@ -729,8 +729,11 @@
         "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&q=80"
       ],
       "cover": "/workspace/bot/covers/数据要素/cover8.jpg",
-      "status": "pending",
-      "taskId": "98f017757237438e89f228530c6d01ad"
+      "status": "published",
+      "taskId": "98f017757237438e89f228530c6d01ad",
+      "last_error": "{'code': 10002, 'message': '无效的token'}",
+      "article_id": 36020,
+      "detail_url": "https://openlab.cosmoplat.com/article-detils?id=36020&articleType=0"
     },
     {
       "time": "2026-09-02 16:04:40",
@@ -743,8 +746,10 @@
         "https://images.unsplash.com/photo-1526666923127-b2970f64b422?w=800&q=80"
       ],
       "cover": "/workspace/bot/covers/数据要素/cover9.jpg",
-      "status": "pending",
-      "taskId": "0c7c4c4d03744d5ca533613c26b69ffb"
+      "status": "published",
+      "taskId": "0c7c4c4d03744d5ca533613c26b69ffb",
+      "article_id": 36022,
+      "detail_url": "https://openlab.cosmoplat.com/article-detils?id=36022&articleType=0"
     },
     {
       "time": "2026-09-02 17:47:20",
@@ -757,8 +762,10 @@
         "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=800&q=80"
       ],
       "cover": "/workspace/bot/covers/云原生/cover11.jpg",
-      "status": "pending",
-      "taskId": "fc5f3e7d27324a389c6c42665346e762"
+      "status": "published",
+      "taskId": "fc5f3e7d27324a389c6c42665346e762",
+      "article_id": 36024,
+      "detail_url": "https://openlab.cosmoplat.com/article-detils?id=36024&articleType=0"
     },
     {
       "time": "2026-09-02 19:30:00",
@@ -771,8 +778,9 @@
         "https://images.unsplash.com/photo-1526628953301-3e589a6a8b74?w=800&q=80"
       ],
       "cover": "/workspace/bot/covers/云原生/cover12.jpg",
-      "status": "pending",
-      "taskId": "4ca8faad030e4797b102f05e295f0e37"
+      "status": "published",
+      "taskId": "4ca8faad030e4797b102f05e295f0e37",
+      "article_id": 36026
     },
     {
       "time": "2026-09-03 16:48:23",
