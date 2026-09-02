@@ -226,5 +226,95 @@
     "cateName": "人工智能",
     "createTime": "",
     "source": "定时发文"
+  },
+  "35698": {
+    "title": "八成数据治理失败，问题出在体系",
+    "cateName": "大数据",
+    "createTime": "",
+    "source": "定时发文"
+  },
+  "35746": {
+    "title": "镜像漏洞占九成？云原生安全实战拆解",
+    "cateName": "云原生",
+    "createTime": "",
+    "source": "定时发文"
+  },
+  "35748": {
+    "title": "智能体接管工作流前 先解决三个要命问题",
+    "cateName": "人工智能",
+    "createTime": "",
+    "source": "定时发文"
+  },
+  "35772": {
+    "title": "服务网格 70%团队倒在升级这一步",
+    "cateName": "云原生",
+    "createTime": "",
+    "source": "定时发文"
+  },
+  "35776": {
+    "title": "确权不清交易难 溯源技术如何解死结",
+    "cateName": "数据要素",
+    "createTime": "",
+    "source": "定时发文"
+  },
+  "35778": {
+    "title": "边缘算力分流七成 云端只做慢决策",
+    "cateName": "边缘计算",
+    "createTime": "",
+    "source": "定时发文"
+  },
+  "35780": {
+    "title": "算力不背锅，视觉算法七成成本在数据",
+    "cateName": "机器视觉",
+    "createTime": "",
+    "source": "定时发文"
+  },
+  "35806": {
+    "title": "数据资产入表一周年几家欢喜几家愁",
+    "cateName": "大数据",
+    "createTime": "",
+    "source": "定时发文"
+  },
+  "35808": {
+    "title": "云成本失控 三招把账单砍下40%",
+    "cateName": "云计算",
+    "createTime": "",
+    "source": "定时发文"
+  },
+  "35810": {
+    "title": "故障修复2小时，园区网络为何还在靠人肉？",
+    "cateName": "网络",
+    "createTime": "",
+    "source": "定时发文"
+  },
+  "35812": {
+    "title": "50%开发时间被工具链偷走？三步重构",
+    "cateName": "编程与开发",
+    "createTime": "",
+    "source": "定时发文"
+  },
+  "35836": {
+    "title": "工业区块链这3个场景已真实盈利",
+    "cateName": "区块链",
+    "createTime": "",
+    "source": "定时发文"
+  },
+  "35850": {
+    "title": "视觉算法落地，七成成本看不见",
+    "cateName": "机器视觉",
+    "createTime": "",
+    "source": "定时发文"
+  },
+  "35852": {
+    "title": "80%成本死在数据标注，视觉算法落地真相",
+    "cateName": "机器视觉",
+    "createTime": "",
+    "source": "定时发文"
+  },
+  "35854": {
+    "title": "AI互搏时代 安全攻防进入毫秒级军备竞赛",
+    "cateName": "人工智能",
+    "createTime": "",
+    "source": "定时发文"
   }
 }

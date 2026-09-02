@@ -335,9 +335,10 @@
         "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&q=80"
       ],
       "cover": "/workspace/bot/covers/大数据/cover3.jpg",
-      "status": "pending",
-      "detail_url": null,
-      "taskId": "9018d9f6b32245bbb1c2d501ba7eee57"
+      "status": "published",
+      "detail_url": "https://openlab.cosmoplat.com/article-detils?id=35698&articleType=0",
+      "taskId": "9018d9f6b32245bbb1c2d501ba7eee57",
+      "article_id": 35698
     },
     {
       "time": "2026-08-24 17:05:37",
@@ -350,9 +351,10 @@
         "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&q=80"
       ],
       "cover": "/workspace/bot/covers/云原生/cover7.jpg",
-      "status": "pending",
-      "detail_url": null,
-      "taskId": "33603778c577499eb707ec0f0622645f"
+      "status": "published",
+      "detail_url": "https://openlab.cosmoplat.com/article-detils?id=35746&articleType=0",
+      "taskId": "33603778c577499eb707ec0f0622645f",
+      "article_id": 35746
     },
     {
       "time": "2026-08-24 18:02:11",
@@ -365,9 +367,10 @@
         "https://images.unsplash.com/photo-1564865878688-9a244444042a?w=800&q=80"
       ],
       "cover": "/workspace/bot/covers/人工智能/cover10.jpg",
-      "status": "pending",
-      "detail_url": null,
-      "taskId": "0a9d2925422d4a80b07d405c1ebb0a95"
+      "status": "published",
+      "detail_url": "https://openlab.cosmoplat.com/article-detils?id=35748&articleType=0",
+      "taskId": "0a9d2925422d4a80b07d405c1ebb0a95",
+      "article_id": 35748
     },
     {
       "time": "2026-08-25 08:14:57",
@@ -380,9 +383,10 @@
         "https://images.unsplash.com/photo-1518770660439-4636190af475?w=800&q=80"
       ],
       "cover": "/workspace/bot/covers/云原生/cover8.jpg",
-      "status": "pending",
+      "status": "published",
       "detail_url": null,
-      "taskId": "b61d0feb86534fad85b3663a38174d83"
+      "taskId": "b61d0feb86534fad85b3663a38174d83",
+      "article_id": 35772
     },
     {
       "time": "2026-08-25 10:35:37",
@@ -395,9 +399,10 @@
         "https://images.unsplash.com/photo-1558494949-4314304c7b42?w=800&q=80"
       ],
       "cover": "/workspace/bot/covers/数据要素/cover7.jpg",
-      "status": "pending",
+      "status": "published",
       "detail_url": null,
-      "taskId": "015689ac3a22497e851463de111361a7"
+      "taskId": "015689ac3a22497e851463de111361a7",
+      "article_id": 35776
     },
     {
       "time": "2026-08-25 11:07:39",
@@ -410,9 +415,10 @@
         "https://images.unsplash.com/photo-1580927752452-89d86da3fa0a?w=800&q=80"
       ],
       "cover": "/workspace/bot/covers/边缘计算/cover6.jpg",
-      "status": "pending",
+      "status": "published",
       "detail_url": null,
-      "taskId": "960d29e7c8994250ac5710131876f6de"
+      "taskId": "960d29e7c8994250ac5710131876f6de",
+      "article_id": 35778
     },
     {
       "time": "2026-08-25 12:57:47",
@@ -425,9 +431,10 @@
         "https://images.unsplash.com/photo-1563770660941-20978e870e26?w=800&q=80"
       ],
       "cover": "/workspace/bot/covers/机器视觉/cover6.jpg",
-      "status": "pending",
+      "status": "published",
       "detail_url": null,
-      "taskId": "87f29163d2ff427486c313e75ea56cb1"
+      "taskId": "87f29163d2ff427486c313e75ea56cb1",
+      "article_id": 35780
     },
     {
       "time": "2026-08-26 10:55:42",
@@ -440,8 +447,10 @@
         "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=800&q=80"
       ],
       "cover": "/workspace/bot/covers/大数据/cover4.jpg",
-      "status": "pending",
-      "taskId": "0b5dd6fc91c34680804a0b50216fb004"
+      "status": "published",
+      "taskId": "0b5dd6fc91c34680804a0b50216fb004",
+      "detail_url": null,
+      "article_id": 35806
     },
     {
       "time": "2026-08-26 13:54:34",
@@ -454,8 +463,10 @@
         "https://images.unsplash.com/photo-1526666923127-b2970f64b422?w=800&q=80"
       ],
       "cover": "/workspace/bot/covers/云计算/cover6.jpg",
-      "status": "pending",
-      "taskId": "b8a667c6e91b46648f30e1bf697e0b22"
+      "status": "published",
+      "taskId": "b8a667c6e91b46648f30e1bf697e0b22",
+      "detail_url": null,
+      "article_id": 35808
     },
     {
       "time": "2026-08-26 17:17:08",
@@ -468,8 +479,10 @@
         "https://images.unsplash.com/photo-1531403009284-440f080d1e12?w=800&q=80"
       ],
       "cover": "/workspace/bot/covers/网络/cover2.jpg",
-      "status": "pending",
-      "taskId": "19c7e99d64244826aaad7428a9d8ec9b"
+      "status": "published",
+      "taskId": "19c7e99d64244826aaad7428a9d8ec9b",
+      "detail_url": null,
+      "article_id": 35810
     },
     {
       "time": "2026-08-26 18:03:37",
@@ -482,8 +495,10 @@
         "https://images.unsplash.com/photo-1519452575417-564c1401ecc0?w=800&q=80"
       ],
       "cover": "/workspace/bot/covers/编程与开发/cover6.jpg",
-      "status": "pending",
-      "taskId": "8394d23a09bf459c95da9695c91b2d88"
+      "status": "published",
+      "taskId": "8394d23a09bf459c95da9695c91b2d88",
+      "detail_url": null,
+      "article_id": 35812
     },
     {
       "time": "2026-08-27 08:16:19",
@@ -496,8 +511,10 @@
         "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=800&q=80"
       ],
       "cover": "/workspace/bot/covers/区块链/cover4.jpg",
-      "status": "pending",
-      "taskId": "b7a155d1f4804f2480d1c0a3731b96e7"
+      "status": "published",
+      "taskId": "b7a155d1f4804f2480d1c0a3731b96e7",
+      "detail_url": null,
+      "article_id": 35836
     },
     {
       "time": "2026-08-27 11:08:19",
@@ -510,8 +527,10 @@
         "https://images.unsplash.com/photo-1537462715879-360eeb61a0ad?w=800&q=80"
       ],
       "cover": "/workspace/bot/covers/机器视觉/cover7.jpg",
-      "status": "pending",
-      "taskId": "e5a07764627246e3a0bb580aa008edfc"
+      "status": "published",
+      "taskId": "e5a07764627246e3a0bb580aa008edfc",
+      "detail_url": null,
+      "article_id": 35850
     },
     {
       "time": "2026-08-27 16:20:06",
@@ -524,8 +543,10 @@
         "https://images.unsplash.com/photo-1532073150508-0c1df022bdd1?w=800&q=80"
       ],
       "cover": "/workspace/bot/covers/机器视觉/cover8.jpg",
-      "status": "pending",
-      "taskId": "086f2e3fa8064d169632bff4740bb781"
+      "status": "published",
+      "taskId": "086f2e3fa8064d169632bff4740bb781",
+      "detail_url": null,
+      "article_id": 35852
     },
     {
       "time": "2026-08-27 19:47:01",
@@ -538,8 +559,234 @@
         "https://images.unsplash.com/photo-1531746790731-6c087fecd65a?w=800&q=80"
       ],
       "cover": "/workspace/bot/covers/人工智能/cover11.jpg",
+      "status": "published",
+      "taskId": "41c660646c534768acfe709f26a2542d",
+      "detail_url": null,
+      "article_id": 35854
+    },
+    {
+      "time": "2026-09-03 16:46:37",
+      "title": "AI写代码提速3倍，交付为何没变快？",
+      "category": "编程与开发",
+      "file": "/workspace/bot-articles/scheduled-20260902095717-688.md",
+      "summary": "很多团队引入AI编程助手后，代码生成变快，但缺陷率、返工率和评审压力并未同步下降。问题不在模型会不会写代码，而在上下文、测试闭环和治理规则是否补齐。本文从提示、上下文、测试到治理，给出可落地的AI编程路径，帮助把生成效率转化为可靠交付能力。",
+      "images": [
+        "https://images.unsplash.com/photo-1587620962725-abab7fe55159?w=800&q=80",
+        "https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=800&q=80"
+      ],
+      "cover": "/workspace/bot/covers/编程与开发/cover7.jpg",
       "status": "pending",
-      "taskId": "41c660646c534768acfe709f26a2542d"
+      "taskId": "c065eb0f4ba64118a28b027ab0c9c2c2"
+    },
+    {
+      "time": "2026-09-03 17:59:09",
+      "title": "低代码不是偷懒，是重构交付速度",
+      "category": "编程与开发",
+      "file": "/workspace/bot-articles/scheduled-20260902100106-873.md",
+      "summary": "企业应用交付慢，不是缺人，而是重复需求把工程师拖进表单、流程、权限的泥潭。低代码平台真正价值不是让业务人员写代码，而是把80%通用能力沉淀为可编排资产。本文从模型驱动、流程引擎、集成边界讲清选型与落地，帮助团队判断何时该用、何时该退。",
+      "images": [
+        "https://images.unsplash.com/photo-1531297484001-80022131f5a1?w=800&q=80",
+        "https://images.unsplash.com/photo-1587049352846-4a222e784d38?w=800&q=80"
+      ],
+      "cover": "/workspace/bot/covers/编程与开发/cover8.jpg",
+      "status": "pending",
+      "taskId": "325f685623ee4de3a963ef35d7f2ccc5"
+    },
+    {
+      "time": "2026-09-03 19:38:42",
+      "title": "3个工具链断点，吃掉研发团队70%交付时间",
+      "category": "编程与开发",
+      "file": "/workspace/bot-articles/scheduled-20260902100825-437.md",
+      "summary": "多数团队不是缺工具，而是工具之间断链：代码、测试、部署、监控各自为战，导致重复劳动和故障定位慢。本文从自动化闭环、可观测交付、低摩擦协作三个维度，给出可落地的工具链选型与改造路径，帮助研发团队把交付周期从周级压到天级。",
+      "images": [
+        "https://images.unsplash.com/photo-1565043666747-69f6646db940?w=800&q=80",
+        "https://images.unsplash.com/photo-1565793298595-6a879b1d9492?w=800&q=80"
+      ],
+      "cover": "/workspace/bot/covers/编程与开发/cover9.jpg",
+      "status": "pending",
+      "taskId": "a430d0727a7b4045bd744c2b6f266c2c"
+    },
+    {
+      "time": "2026-09-04 10:28:35",
+      "title": "网格落地先修三条边，别急着全量",
+      "category": "云原生",
+      "file": "/workspace/bot-articles/scheduled-20260902101133-158.md",
+      "summary": "很多团队上服务网格后，延迟上涨、故障变多，不是网格不行，而是把控制面当万能药。本文从流量治理、安全边界、可观测性三条边拆解落地路径，给出可执行判断标准，帮助团队判断何时该上、何时该停、如何避免把微服务复杂度再放大一层，并给出试点、灰度与回滚的落地清单。",
+      "images": [
+        "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=800&q=80",
+        "https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=800&q=80"
+      ],
+      "cover": "/workspace/bot/covers/云原生/cover9.jpg",
+      "status": "pending",
+      "taskId": "c4029ee177d34edfbbc8f3c73f455cea"
+    },
+    {
+      "time": "2026-09-04 11:36:38",
+      "title": "分布式事务别全上TCC，先算清一致性成本",
+      "category": "微服务",
+      "file": "/workspace/bot-articles/scheduled-20260902101303-721.md",
+      "summary": "微服务拆得越细，跨服务写操作越多，分布式事务越容易从技术选型题变成线上事故题。本文用订单、库存、支付三类典型场景，拆解2PC、TCC、本地消息表与事务消息的适用边界，给出按一致性等级、延迟预算和补偿能力做选择的工程清单，帮助团队少踩重复回滚、消息丢失和长事务锁坑。",
+      "images": [
+        "https://images.unsplash.com/photo-1573855619003-97b4799dcd8b?w=800&q=80",
+        "https://images.unsplash.com/photo-1535378620166-273708d44e4c?w=800&q=80"
+      ],
+      "cover": "/workspace/bot/covers/微服务/cover3.jpg",
+      "status": "pending",
+      "taskId": "914e7a92479d461fb5974ef21b2a832e"
+    },
+    {
+      "time": "2026-09-04 16:11:59",
+      "title": "推理成本腰斩，大模型开始重估产业利润表",
+      "category": "人工智能",
+      "file": "/workspace/bot-articles/scheduled-20260902101637-649.md",
+      "summary": "过去两年，企业最纠结的不是模型够不够聪明，而是每次调用要烧多少钱。当推理成本快速下降，大模型正从演示项目变成可核算的生产能力。本文从工业场景、云资源、开发者生态三条线，拆解成本下降如何改变选型、定价、组织分工，并给出未来12个月的落地判断。",
+      "images": [
+        "https://images.unsplash.com/photo-1535223289827-42f1e9919769?w=800&q=80",
+        "https://images.unsplash.com/photo-1553877522-43269d4ea984?w=800&q=80"
+      ],
+      "cover": "/workspace/bot/covers/人工智能/cover12.jpg",
+      "status": "pending",
+      "taskId": "90af8ad9cf484804865a58d0d52bcc03"
+    },
+    {
+      "time": "2026-09-04 16:49:15",
+      "title": "服务网格落地，先算清三笔账",
+      "category": "云原生",
+      "file": "/workspace/bot-articles/scheduled-20260902102749-344.md",
+      "summary": "服务网格常被当成流量开关，结果上线后日志变多、故障更难查。本文从治理收益、代理成本、组织协同三笔账出发，结合制造、零售、金融案例，说明何时试点、如何控制 Sidecar 开销，并给出从核心链路到全量落地的判断标准。帮助团队避免把网格做成新的复杂度来源，让云原生治理真正落到业务指标上。",
+      "images": [
+        "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=800&q=80",
+        "https://images.unsplash.com/photo-1558494949-4314304c7b42?w=800&q=80"
+      ],
+      "cover": "/workspace/bot/covers/云原生/cover10.jpg",
+      "status": "pending",
+      "taskId": "a18c1298abac4f35a8bb3d8a30bc01d1"
+    },
+    {
+      "time": "2026-09-05 12:42:56",
+      "title": "工业数据合规从告警走向可审计",
+      "category": "安全",
+      "file": "/workspace/bot-articles/scheduled-20260902103112-372.md",
+      "summary": "工业数据合规最难的不是加密，而是证明数据在采集、传输、存储、共享每一步都可控、可追溯、可追责。本文沿一条产线数据链路拆解分类分级、最小权限、动态脱敏与审计证据，给出可落地的工程清单，帮助研发、IT、审计和业务团队把合规要求变成可验证的系统能力，减少重复建设与过度授权。",
+      "images": [
+        "https://images.unsplash.com/photo-1518770660439-4636190af475?w=800&q=80",
+        "https://images.unsplash.com/photo-1555617981-dac3880eac6e?w=800&q=80"
+      ],
+      "cover": "/workspace/bot/covers/安全/cover3.jpg",
+      "status": "pending",
+      "taskId": "1755a1569a9540a59c083b44d1c63567"
+    },
+    {
+      "time": "2026-09-05 13:36:42",
+      "title": "断供48小时，供应链暗债才暴露",
+      "category": "安全",
+      "file": "/workspace/bot-articles/scheduled-20260902103255-751.md",
+      "summary": "一次芯片断供或开源组件投毒，就可能让产线停摆、订单违约。供应链安全不是采购清单，而是把可见性、韧性、合规嵌入研发、采购、生产、交付全链路。本文拆解从物料主数据到风险闭环的治理路径，给出可落地的指标、流程与架构建议，帮助企业把不确定性变成可管理成本。",
+      "images": [
+        "https://images.unsplash.com/photo-1580927752452-89d86da3fa0a?w=800&q=80",
+        "https://images.unsplash.com/photo-1544197150-b99a580bb7a8?w=800&q=80"
+      ],
+      "cover": "/workspace/bot/covers/安全/cover4.jpg",
+      "status": "pending",
+      "taskId": "cde31e8e1f134609a5d3702d73d842f3"
+    },
+    {
+      "time": "2026-09-05 19:11:46",
+      "title": "AI攻防自动化 红蓝对抗要重写规则",
+      "category": "人工智能",
+      "file": "/workspace/bot-articles/scheduled-20260902103423-808.md",
+      "summary": "AI安全正从人工红队走向自动对抗，提示注入、越狱、模型逃逸让传统规则防御频频失效。本文拆解AI对AI攻防的三条主线：攻击自动化、防御自适应、评估闭环化，并结合工业场景给出落地建议，帮助技术团队把安全嵌入模型生命周期，降低上线后风险与成本约束，提升发布效率。",
+      "images": [
+        "https://images.unsplash.com/photo-1558591710-4b4a1ae0f04d?w=800&q=80",
+        "https://images.unsplash.com/photo-1519452575417-564c1401ecc0?w=800&q=80"
+      ],
+      "cover": "/workspace/bot/covers/人工智能/cover13.jpg",
+      "status": "pending",
+      "taskId": "6aa50bc9ccd8479e9148eff5f96b1140"
+    },
+    {
+      "time": "2026-09-05 19:59:04",
+      "title": "中间件治理先补链路再谈弹性",
+      "category": "微服务",
+      "file": "/workspace/bot-articles/scheduled-20260902103949-843.md",
+      "summary": "微服务规模扩大后，中间件调用链、配置中心、消息队列、缓存与数据库连接成为故障黑洞，团队常在压测前才发现超时、堆积、连接泄漏。本文提出以统一观测、契约化接口、灰度治理、容量预算为核心的治理路径，把中间件从黑盒依赖变成可验证、可回滚、可度量的系统能力，降低线上事故与排查成本。",
+      "images": [
+        "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=800&q=80",
+        "https://images.unsplash.com/photo-1555664424-778a1e5e1b48?w=800&q=80"
+      ],
+      "cover": "/workspace/bot/covers/微服务/cover4.jpg",
+      "status": "pending",
+      "taskId": "a6f11980a8444de0ae161611bfcff8eb"
+    },
+    {
+      "time": "2026-09-02 14:22:00",
+      "title": "工厂数据为何突然能入账",
+      "category": "数据要素",
+      "file": "/workspace/bot-articles/scheduled-20260902134040-115.md",
+      "summary": "很多制造企业把数据当副产品，直到财务要求确认数据资产，才暴露底数不清、权属不清、质量不稳、价值难估四大痛点。本文从确权、计量、入表三个环节拆解数据要素如何从成本项变成可经营资产，并给出治理路径、技术栈与风险控制建议，帮助读者判断落地优先级。",
+      "images": [
+        "https://images.unsplash.com/photo-1467232004584-a241de8bcf5d?w=800&q=80",
+        "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&q=80"
+      ],
+      "cover": "/workspace/bot/covers/数据要素/cover8.jpg",
+      "status": "pending",
+      "taskId": "98f017757237438e89f228530c6d01ad"
+    },
+    {
+      "time": "2026-09-02 16:04:40",
+      "title": "数据没有身份证，工厂不敢共享",
+      "category": "数据要素",
+      "file": "/workspace/bot-articles/scheduled-20260902134215-722.md",
+      "summary": "很多工业数据共享卡在“说不清谁拥有、谁负责、谁改过”。数据确权不是给数据发一张证书，而是建立可验证的权利边界和完整溯源链。本文从工业场景出发，拆解确权边界、溯源字段和最小闭环设计，帮助团队把数据从台账变成可交易、可审计、可追责的资产。",
+      "images": [
+        "https://images.unsplash.com/photo-1504868584819-f8e8b4b6d7e3?w=800&q=80",
+        "https://images.unsplash.com/photo-1526666923127-b2970f64b422?w=800&q=80"
+      ],
+      "cover": "/workspace/bot/covers/数据要素/cover9.jpg",
+      "status": "pending",
+      "taskId": "0c7c4c4d03744d5ca533613c26b69ffb"
+    },
+    {
+      "time": "2026-09-02 17:47:20",
+      "title": "服务网格别全量上，先啃三块硬骨头",
+      "category": "云原生",
+      "file": "/workspace/bot-articles/scheduled-20260902134426-441.md",
+      "summary": "很多团队把服务网格当成微服务万能药，结果全量接入后延迟上升、故障变多、运维更复杂。本文从流量治理、安全策略、可观测性三个切口，给出可验证的落地路径：先选高价值链路灰度，再小步开放安全能力，最后沉淀平台工具。读完能避开常见坑，减少返工，拿到可执行清单。",
+      "images": [
+        "https://images.unsplash.com/photo-1590959651373-a3db0f38a961?w=800&q=80",
+        "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=800&q=80"
+      ],
+      "cover": "/workspace/bot/covers/云原生/cover11.jpg",
+      "status": "pending",
+      "taskId": "fc5f3e7d27324a389c6c42665346e762"
+    },
+    {
+      "time": "2026-09-02 19:30:00",
+      "title": "算力像电网一样调度，成本能降三成",
+      "category": "云原生",
+      "file": "/workspace/bot-articles/scheduled-20260902134725-289.md",
+      "summary": "很多工厂把算力当服务器堆，结果GPU空转、边缘节点闲置，账单却照涨。本文以“算力即服务”为切口，拆解从静态分配到动态编排、从单集群到跨域协同的调度路径，并用真实案例说明如何通过统一资源语义、动态抢占和成本度量，把利用率、时延与费用变成可运营指标。",
+      "images": [
+        "https://images.unsplash.com/photo-1568819317551-31051b8b7f8e?w=800&q=80",
+        "https://images.unsplash.com/photo-1526628953301-3e589a6a8b74?w=800&q=80"
+      ],
+      "cover": "/workspace/bot/covers/云原生/cover12.jpg",
+      "status": "pending",
+      "taskId": "4ca8faad030e4797b102f05e295f0e37"
+    },
+    {
+      "time": "2026-09-03 16:48:23",
+      "title": "数据资源进报表，先过三道治理关",
+      "category": "数据要素",
+      "file": "/workspace/bot-articles/scheduled-20260902135255-208.md",
+      "summary": "很多企业的账外数据看着庞大，真正能进报表的却很少。数据资源能否确认，取决于权属、成本、收益与治理是否可验证。本文从确认门槛、成本归集、估值路径和经营落地四个角度，给出可执行的判断框架，帮助团队把数据从合规动作变成可审计的经营变量。",
+      "images": [
+        "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&q=80",
+        "https://images.unsplash.com/photo-1559526324-4b87b5e36e44?w=800&q=80"
+      ],
+      "cover": "/workspace/bot/covers/数据要素/cover10.jpg",
+      "status": "pending",
+      "taskId": "59e6cfc8ea61424e9fa6e01c0524c3d2"
     }
   ]
 }
