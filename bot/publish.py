@@ -286,6 +286,7 @@ def _register_post(aid, title, category):
 
 def publish_now(task_id):
     """强制立即发布指定计划项（忽略计划时间）。状态非 pending 时直接跳过，避免重复发布。"""
+    _lock = _acquire_lock()
     with open(os.path.join(BOT_DIR, "plan.json"), encoding="utf-8") as f:
         plan = json.load(f)
     item = next((it for it in plan["schedule"] if it.get("taskId") == task_id), None)
@@ -315,8 +316,23 @@ def publish_now(task_id):
     return out
 
 
+def _acquire_lock():
+    """防止多个 publish 进程并发发布（runner 与手动执行并发会导致平台生成重复稿）。"""
+    import fcntl
+    lf = open(os.path.join(BOT_DIR, ".publish.lock"), "w")
+    try:
+        fcntl.flock(lf, fcntl.LOCK_EX | fcntl.LOCK_NB)
+    except BlockingIOError:
+        print("ANOTHER_PUBLISH_RUNNING 跳过本轮")
+        sys.exit(0)
+    lf.write(str(os.getpid()))
+    lf.flush()
+    return lf
+
+
 def main():
     show_improvements()
+    _lock = _acquire_lock()
     token = get_token()
     with open(os.path.join(BOT_DIR, "plan.json"), encoding="utf-8") as f:
         plan = json.load(f)

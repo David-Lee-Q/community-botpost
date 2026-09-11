@@ -340,5 +340,239 @@
     "cateName": "云原生",
     "createTime": "",
     "source": "定时发文"
+  },
+  "36062": {
+    "title": "AI写代码提速3倍，交付为何没变快？",
+    "cateName": "编程与开发",
+    "createTime": "",
+    "source": "定时发文"
+  },
+  "36064": {
+    "title": "数据资源进报表，先过三道治理关",
+    "cateName": "数据要素",
+    "createTime": "",
+    "source": "定时发文"
+  },
+  "36068": {
+    "title": "低代码不是偷懒，是重构交付速度",
+    "cateName": "编程与开发",
+    "createTime": "",
+    "source": "定时发文"
+  },
+  "36070": {
+    "title": "3个工具链断点，吃掉研发团队70%交付时间",
+    "cateName": "编程与开发",
+    "createTime": "",
+    "source": "定时发文"
+  },
+  "36096": {
+    "title": "网格落地先修三条边，别急着全量",
+    "cateName": "云原生",
+    "createTime": "",
+    "source": "定时发文"
+  },
+  "36098": {
+    "title": "分布式事务别全上TCC，先算清一致性成本",
+    "cateName": "微服务",
+    "createTime": "",
+    "source": "定时发文"
+  },
+  "36100": {
+    "title": "推理成本腰斩，大模型开始重估产业利润表",
+    "cateName": "人工智能",
+    "createTime": "",
+    "source": "定时发文"
+  },
+  "36102": {
+    "title": "服务网格落地，先算清三笔账",
+    "cateName": "云原生",
+    "createTime": "",
+    "source": "定时发文"
+  },
+  "36132": {
+    "title": "工业数据合规从告警走向可审计",
+    "cateName": "安全",
+    "createTime": "",
+    "source": "定时发文"
+  },
+  "36134": {
+    "title": "断供48小时，供应链暗债才暴露",
+    "cateName": "安全",
+    "createTime": "",
+    "source": "定时发文"
+  },
+  "36138": {
+    "title": "AI攻防自动化 红蓝对抗要重写规则",
+    "cateName": "人工智能",
+    "createTime": "",
+    "source": "定时发文"
+  },
+  "36142": {
+    "title": "中间件治理先补链路再谈弹性",
+    "cateName": "微服务",
+    "createTime": "",
+    "source": "定时发文"
+  },
+  "36170": {
+    "title": "AI补全越快，交付瓶颈越明显",
+    "cateName": "编程与开发",
+    "createTime": "",
+    "source": "定时发文"
+  },
+  "36174": {
+    "title": "订单系统少用2PC，本地消息表更稳",
+    "cateName": "微服务",
+    "createTime": "",
+    "source": "定时发文"
+  },
+  "36176": {
+    "title": "服务拆分边界别从表开始拆",
+    "cateName": "微服务",
+    "createTime": "",
+    "source": "定时发文"
+  },
+  "36178": {
+    "title": "K8s安全别只扫镜像的4个硬指标",
+    "cateName": "云原生",
+    "createTime": "",
+    "source": "定时发文"
+  },
+  "36206": {
+    "title": "K8s运维从救火到经营，三个闭环降低故障率",
+    "cateName": "云原生",
+    "createTime": "",
+    "source": "定时发文"
+  },
+  "36212": {
+    "title": "订单扣库存别硬上2PC最终一致更稳",
+    "cateName": "微服务",
+    "createTime": "",
+    "source": "定时发文"
+  },
+  "36214": {
+    "title": "多模态大模型进车间，先跑通小闭环",
+    "cateName": "人工智能",
+    "createTime": "",
+    "source": "定时发文"
+  },
+  "36216": {
+    "title": "数据交易难在定价，流通卡在信任",
+    "cateName": "数据要素",
+    "createTime": "",
+    "source": "定时发文"
+  },
+  "36242": {
+    "title": "私有化大模型落地，微调成本常被低估",
+    "cateName": "人工智能",
+    "createTime": "",
+    "source": "定时发文"
+  },
+  "36244": {
+    "title": "消息积压300万条 高可用中间件怎么救",
+    "cateName": "中间件",
+    "createTime": "",
+    "source": "定时发文"
+  },
+  "36246": {
+    "title": "边缘推理上线，先算三笔账",
+    "cateName": "边缘计算",
+    "createTime": "",
+    "source": "定时发文"
+  },
+  "36248": {
+    "title": "工业数据卖出三笔钱的底层逻辑",
+    "cateName": "数据要素",
+    "createTime": "",
+    "source": "定时发文"
+  },
+  "36274": {
+    "title": "给设备发身份证，工业标识体系如何打通数据孤岛",
+    "cateName": "标识解析",
+    "createTime": "",
+    "source": "定时发文"
+  },
+  "36280": {
+    "title": "工业流量不再挤地铁 切片网络如何准点",
+    "cateName": "网络",
+    "createTime": "",
+    "source": "定时发文"
+  },
+  "36282": {
+    "title": "混合云选型先算账再画拓扑",
+    "cateName": "云计算",
+    "createTime": "",
+    "source": "定时发文"
+  },
+  "36284": {
+    "title": "5秒熔断拖垮订单？分布式事务选型指南",
+    "cateName": "微服务",
+    "createTime": "",
+    "source": "定时发文"
+  },
+  "36334": {
+    "title": "服务网格先降30%流量损耗再谈治理",
+    "cateName": "微服务",
+    "createTime": "",
+    "source": "定时发文"
+  },
+  "36336": {
+    "title": "拆错边界，微服务成本翻3倍",
+    "cateName": "微服务",
+    "createTime": "",
+    "source": "定时发文"
+  },
+  "36338": {
+    "title": "拆错边界，微服务成本翻3倍",
+    "cateName": "微服务",
+    "createTime": "",
+    "source": "定时发文"
+  },
+  "36340": {
+    "title": "没有二级节点 标识解析容易停在目录层",
+    "cateName": "标识解析",
+    "createTime": "",
+    "source": "定时发文"
+  },
+  "36342": {
+    "title": "秒级数据链路如何压住实时分析成本",
+    "cateName": "智能制造",
+    "createTime": "",
+    "source": "定时发文"
+  },
+  "36344": {
+    "title": "数据要素资产化——报表如何变成可计价资产",
+    "cateName": "数据要素",
+    "createTime": "",
+    "source": "定时发文"
+  },
+  "36346": {
+    "title": "秒级数据链路如何压住实时分析成本",
+    "cateName": "智能制造",
+    "createTime": "",
+    "source": "定时发文"
+  },
+  "36348": {
+    "title": "100件小单如何重塑工厂利润表",
+    "cateName": "智能制造",
+    "createTime": "",
+    "source": "定时发文"
+  },
+  "36350": {
+    "title": "车间网络差1毫秒，产线成本差多少",
+    "cateName": "网络",
+    "createTime": "",
+    "source": "定时发文"
+  },
+  "36352": {
+    "title": "边缘接入先管身份，再谈协议",
+    "cateName": "边缘计算",
+    "createTime": "",
+    "source": "定时发文"
+  },
+  "36354": {
+    "title": "边缘接入先管身份，再谈协议",
+    "cateName": "边缘计算",
+    "createTime": "",
+    "source": "定时发文"
   }
 }
