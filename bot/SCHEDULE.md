@@ -7,6 +7,7 @@
 | 触发时间 | 任务 | 执行脚本 | 说明 |
 |----------|------|----------|------|
 | 每 30 秒 | 发布计划轮询 | `publish.py` → `fetch_detail_urls.py` → `gen_heartbeat` → `fetch_articles.py` | 到点发布 pending 文章；发布后抓详情 URL、更新 HEARTBEAT、刷新台账 |
+| 每 30 秒（条件触发） | token 看门狗 | `login.py` | JWT 剩余有效期不足 1 天（或无法解析）时自动重登，刷新 token.txt 与 login_state.json；失败 6 小时后再试，状态记录于 .token_state.json |
 | 每日 06:00 | 生成新一批计划 | 扩展点 | `runner.py` 预留，可接入计划生成逻辑补充新文章 |
 | 每周一 06:00 | 综合评分 | `ledger/review_engine.py` | 计算上一完整周综合分，同步 score_history.json / quality_tasks.md / 质量改进记录.md / MEMORY.md |
 | 每日 0/6/12/18 点 | 刷新台账数据 | `ledger/fetch_articles.py` | 每 6 小时一次，含自动评价，保证浏览/互动趋势数据最新 |

@@ -1856,8 +1856,10 @@
         "https://images.unsplash.com/photo-1551434678-e076c223a692?w=800&q=80"
       ],
       "cover": "/workspace/bot/covers/编程与开发/cover12.jpg",
-      "status": "pending",
-      "taskId": "b8d03c8e72bd468495133044f388a868"
+      "status": "published",
+      "taskId": "b8d03c8e72bd468495133044f388a868",
+      "article_id": 36700,
+      "detail_url": "https://openlab.cosmoplat.com/article-detils?id=36700&articleType=0"
     },
     {
       "time": "2026-09-22 14:19:03",
@@ -1870,8 +1872,10 @@
         "https://images.unsplash.com/photo-1581094794329-c8112a89af12?w=800&q=80"
       ],
       "cover": "/workspace/bot/covers/云原生/cover17.jpg",
-      "status": "pending",
-      "taskId": "24fac43b4ed14860a73c301d93bdc447"
+      "status": "published",
+      "taskId": "24fac43b4ed14860a73c301d93bdc447",
+      "article_id": 36702,
+      "detail_url": "https://openlab.cosmoplat.com/article-detils?id=36702&articleType=0"
     },
     {
       "time": "2026-09-22 16:58:54",
@@ -1884,8 +1888,10 @@
         "https://images.unsplash.com/photo-1565793298595-6a879b1d9492?w=800&q=80"
       ],
       "cover": "/workspace/bot/covers/智能制造/cover14.jpg",
-      "status": "pending",
-      "taskId": "fd7ce14705ea40ddb18b2f2607b7cb80"
+      "status": "published",
+      "taskId": "fd7ce14705ea40ddb18b2f2607b7cb80",
+      "article_id": 36706,
+      "detail_url": "https://openlab.cosmoplat.com/article-detils?id=36706&articleType=0"
     },
     {
       "time": "2026-09-22 17:54:08",

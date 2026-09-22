@@ -51,3 +51,4 @@ logs/
 # Dependencies
 vendor/
 bot/.publish.lock
+bot/.token_state.json

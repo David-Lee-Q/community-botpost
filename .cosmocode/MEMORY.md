@@ -44,7 +44,7 @@ Agent 在任务执行过程中发现的条目应遵循以下格式：
 - Category: 运维部署
 - Instructions:
   - bot 组件位于 /workspace/bot：publish.py（发布+查重）、runner.py（定时守护，30秒轮询，调度发布/评分/数据刷新/飞书报告）、report.py（每日/每周总结飞书推送）、fetch_detail_urls.py（抓取详情URL）、plan.json（发布计划）、HEARTBEAT.md（发布记录）、SCHEDULE.md（定时任务说明）
-  - 发布直接调用 POST /api/article/save，认证用自定义 header `s-user-token`（JWT，有效期约7天），token 存于 /workspace/bot/token.txt；save 严格校验 token（list/upload 宽松，uploadFileStream 不校验），失效时重登：/tmp/do_login2.py（Playwright，风控有时免 MFA 直接密码登录，有时需短信验证码写入 /tmp/mfa_code.txt），登录后必须同步刷新 /tmp/login_state.json（S-User-Token cookie，fetch_detail_urls.py 依赖）
+  - 发布直接调用 POST /api/article/save，认证用自定义 header `s-user-token`（JWT，有效期约7天），token 存于 /workspace/bot/token.txt；save 严格校验 token（list/upload 宽松，uploadFileStream 不校验）；重登脚本为仓库内 bot/login.py（Playwright，风控有时免 MFA 直接密码登录，有时需短信验证码写入 /tmp/mfa_code.txt，成功后自动刷新 token.txt 和 /tmp/login_state.json）；runner 内置 token 看门狗：剩余不足 1 天自动调 login.py 重登（失败 6 小时后再试），一般无需人工干预
   - 封面上传：POST /api/file/uploadFileStream?type=1（multipart）返回 data.path 作 thumbnail；封面 800×400、jpg/png、≤1MB
   - 发布必填字段：cateId（分类ID，见 publish.py CATEGORY_IDS）、thumbnail、title、description（摘要）、content（markdown正文，不含首行#标题）、viewRank=0；正文配图至少2张，图源见「配图来源规范」
   - 正文配图（unsplash/pexels 外链）save 前必须转存平台 OSS（publish._rehost_body_images）：平台 WAF 拦截正文中这两个域名并返回误导性的 10002「无效的token」；转存须放在品牌检查之后（平台 OSS 域名含 cosmoplat，会误触品牌词 COSMOPlat）
@@ -137,8 +137,7 @@ Agent 在任务执行过程中发现的条目应遵循以下格式：
   - save 校验顺序：标题 → 正文长度 → token 严格校验；故过期 token 下短探测报 500、真实长文报 10002，两者并存时优先查 WAF 图链再查 token
   - runner.py due 块的 publish/fetch_detail_urls/fetch_articles 子进程超时（TimeoutExpired）现统一块内捕获记日志，不再打崩主循环（9-02 曾 37 次崩溃重启）
   - fetch_detail_urls.py 重构：列表页只加载一次；详情 URL 以 DETAIL_PATTERN(article_id) 兜底直出，列表点击仅增强（敏感词优化改过标题的文章标题校验必然 mismatch，旧逻辑会误清 detail_url）；依赖 /tmp/login_state.json，token 变更后必须刷新，否则挂起超时
-  - MFA 风控为动态：同账号有时弹 Mfa 框（需短信码），有时免 MFA 直接密码登录成功；do_login2.py 两条路径都覆盖，登录成功后立即校验 S-User-Token cookie 并刷新 /tmp/login_state.json
-  - 2026-09-11 停发案例三：token 约 7 天到期（9-09 失效）→ 9-10/9-11 共 8 篇积压 10002；排查先看 runner.log 是否 10002，是则 do_login2.py 重登→刷新 login_state.json→手动 publish.py 补发；token 到期是周期性事件，可每 6 天主动重登一次避免积压
+  - 2026-09-11 停发案例三：token 约 7 天到期（9-09 失效）→ 9-10/9-11 共 8 篇积压 10002；2026-09-22 起 runner 内置 token 看门狗（剩余不足 1 天自动调 bot/login.py 重登，失败 6 小时后再试），手动兜底：python3 bot/login.py → publish.py 补发；token 到期是周期性事件
   - 并发重复稿：runner 与手动 publish.py 同时发布会双双通过 title_exists 查重→平台生成两篇同题稿（重复篇被平台置 status=-1 隐藏，列表不可见但 /article/detail/{id} 可查到）；publish.py 已加 flock 并发锁（.publish.lock，第二进程打印 ANOTHER_PUBLISH_RUNNING 退出）；手动补发前先看 runner 是否正忙或等其循环结束；plan.json 的 article_id 若指向 status=-1 的隐藏稿，须用 /article/detail 对比后改回 status=1 的 ID
 
 [竞品平台关键词一票否决红线（隐形规则）]

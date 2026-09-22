@@ -15,6 +15,18 @@ def log(msg):
     print(line, flush=True)
 
 
+def _token_exp():
+    """解析 token.txt 中 JWT 的 exp（秒），无法解析返回 0。"""
+    try:
+        import base64
+        tok = open(os.path.join(BOT_DIR, "token.txt")).read().strip()
+        p = tok.split(".")[1]
+        p += "=" * (-len(p) % 4)
+        return json.loads(base64.urlsafe_b64decode(p)).get("exp") or 0
+    except Exception:
+        return 0
+
+
 def gen_heartbeat():
     with open(PLAN_FILE, encoding="utf-8") as f:
         plan = json.load(f)
@@ -50,6 +62,25 @@ def main():
         now = datetime.datetime.now()
         with open(PLAN_FILE, encoding="utf-8") as f:
             plan = json.load(f)
+
+        # token 看门狗：JWT 有效期 7 天，剩余不足 1 天（或无法解析/已过期）时主动重登，失败 6 小时后再试
+        exp = _token_exp()
+        statef = os.path.join(BOT_DIR, ".token_state.json")
+        last_try = 0
+        try:
+            last_try = json.load(open(statef)).get("last_try", 0)
+        except (OSError, ValueError):
+            pass
+        if exp - time.time() < 86400 and time.time() - last_try > 6 * 3600:
+            json.dump({"last_try": time.time()}, open(statef, "w"))
+            exp_desc = time.strftime("%m-%d %H:%M", time.localtime(exp)) if exp else "unknown"
+            log("token 临期/失效(exp=%s)，重新登录" % exp_desc)
+            try:
+                lr = subprocess.run([sys.executable, os.path.join(BOT_DIR, "login.py")],
+                                    capture_output=True, text=True, timeout=700)
+                log((lr.stdout.strip() or lr.stderr.strip()).replace("\n", " | ")[-200:])
+            except subprocess.TimeoutExpired:
+                log("login.py 超时(>700s)")
 
         # 每 6 小时定时刷新台账数据（浏览/互动实时增长，保证趋势图数据最新）
         if now.hour % 6 == 0 and last_fetch_hour != now.date().isoformat() + str(now.hour):
