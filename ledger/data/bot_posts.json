@@ -574,5 +574,245 @@
     "cateName": "边缘计算",
     "createTime": "",
     "source": "定时发文"
+  },
+  "36378": {
+    "title": "数据要素市场化的第一道门槛不是价格",
+    "cateName": "数据要素",
+    "createTime": "",
+    "source": "定时发文"
+  },
+  "36380": {
+    "title": "设备数字身份让资产不再只活在台账里",
+    "cateName": "标识解析",
+    "createTime": "",
+    "source": "定时发文"
+  },
+  "36384": {
+    "title": "实时分析平台毫秒级瓶颈的三个断点",
+    "cateName": "大数据",
+    "createTime": "",
+    "source": "定时发文"
+  },
+  "36386": {
+    "title": "视觉算法落地4类成本吃掉预算",
+    "cateName": "机器视觉",
+    "createTime": "",
+    "source": "定时发文"
+  },
+  "36412": {
+    "title": "300台设备凌晨失联，暴露边缘接入短板",
+    "cateName": "边缘计算",
+    "createTime": "",
+    "source": "定时发文"
+  },
+  "36414": {
+    "title": "把算力调度从抢资源变成算任务",
+    "cateName": "云原生",
+    "createTime": "",
+    "source": "定时发文"
+  },
+  "36416": {
+    "title": "AI红队72小时打穿大模型防线",
+    "cateName": "安全",
+    "createTime": "",
+    "source": "定时发文"
+  },
+  "36418": {
+    "title": "私有化部署别只算显卡 微调数据决定模型下限",
+    "cateName": "人工智能",
+    "createTime": "",
+    "source": "定时发文"
+  },
+  "36448": {
+    "title": "多模态大模型进厂，少停8小时",
+    "cateName": "人工智能",
+    "createTime": "",
+    "source": "定时发文"
+  },
+  "36450": {
+    "title": "云账单降22%的四步治理法",
+    "cateName": "云计算",
+    "createTime": "",
+    "source": "定时发文"
+  },
+  "36452": {
+    "title": "联盟链别只谈共识，业务闭环才是胜负手",
+    "cateName": "区块链",
+    "createTime": "",
+    "source": "定时发文"
+  },
+  "36454": {
+    "title": "3张表1个看板 中小工厂少花冤枉钱",
+    "cateName": "智能制造",
+    "createTime": "",
+    "source": "定时发文"
+  },
+  "36480": {
+    "title": "工业连接数翻5倍，瓶颈从网络变成数据",
+    "cateName": "物联网",
+    "createTime": "",
+    "source": "定时发文"
+  },
+  "36482": {
+    "title": "中间件99.99%背后不是堆机器",
+    "cateName": "中间件",
+    "createTime": "",
+    "source": "定时发文"
+  },
+  "36484": {
+    "title": "工业相机怎么挑？5个参数定成败",
+    "cateName": "机器视觉",
+    "createTime": "",
+    "source": "定时发文"
+  },
+  "36490": {
+    "title": "一物一码如何打通工厂数据孤岛",
+    "cateName": "标识解析",
+    "createTime": "",
+    "source": "定时发文"
+  },
+  "36516": {
+    "title": "HPC上云省钱，关键不在GPU单价",
+    "cateName": "云计算",
+    "createTime": "",
+    "source": "定时发文"
+  },
+  "36518": {
+    "title": "AI打AI 攻防窗口从小时压到分钟",
+    "cateName": "安全",
+    "createTime": "",
+    "source": "定时发文"
+  },
+  "36520": {
+    "title": "100TB数据为何不能入账",
+    "cateName": "数据要素",
+    "createTime": "",
+    "source": "定时发文"
+  },
+  "36522": {
+    "title": "设备数据脏三成，治理要从边缘开始",
+    "cateName": "物联网",
+    "createTime": "",
+    "source": "定时发文"
+  },
+  "36546": {
+    "title": "工业连接数破亿，瓶颈不是带宽",
+    "cateName": "物联网",
+    "createTime": "",
+    "source": "定时发文"
+  },
+  "36550": {
+    "title": "视觉算法落地，成本大头藏在模型外",
+    "cateName": "机器视觉",
+    "createTime": "",
+    "source": "定时发文"
+  },
+  "36552": {
+    "title": "边缘设备接入从能连到管好只差身份与状态",
+    "cateName": "边缘计算",
+    "createTime": "",
+    "source": "定时发文"
+  },
+  "36554": {
+    "title": "3800万条数据卖不出价，企业差在三步",
+    "cateName": "数据要素",
+    "createTime": "",
+    "source": "定时发文"
+  },
+  "36580": {
+    "title": "把30%推理压到边缘的云边协同方案",
+    "cateName": "边缘计算",
+    "createTime": "",
+    "source": "定时发文"
+  },
+  "36582": {
+    "title": "K8s运维别再背锅 3条主线救回集群",
+    "cateName": "云原生",
+    "createTime": "",
+    "source": "定时发文"
+  },
+  "36586": {
+    "title": "零信任落地先补身份账再拆边界",
+    "cateName": "安全",
+    "createTime": "",
+    "source": "定时发文"
+  },
+  "36588": {
+    "title": "数据变资产，先确权再定价",
+    "cateName": "数据要素",
+    "createTime": "",
+    "source": "定时发文"
+  },
+  "36674": {
+    "title": "云边协同把毫秒级响应写进产线",
+    "cateName": "边缘计算",
+    "createTime": "",
+    "source": "定时发文"
+  },
+  "36676": {
+    "title": "0.02毫米划痕，三维视觉如何抓住？",
+    "cateName": "机器视觉",
+    "createTime": "",
+    "source": "定时发文"
+  },
+  "36678": {
+    "title": "把工厂搬进操作系统，工业平台如何赚钱",
+    "cateName": "工业操作系统",
+    "createTime": "",
+    "source": "定时发文"
+  },
+  "36680": {
+    "title": "混合云落地先算清四笔账",
+    "cateName": "云计算",
+    "createTime": "",
+    "source": "定时发文"
+  },
+  "36682": {
+    "title": "少装十款工具，研发交付快三成",
+    "cateName": "编程与开发",
+    "createTime": "",
+    "source": "定时发文"
+  },
+  "36684": {
+    "title": "别再只贴二维码，给设备一张可验证身份证",
+    "cateName": "标识解析",
+    "createTime": "",
+    "source": "定时发文"
+  },
+  "36686": {
+    "title": "API网关别只做转发 3个指标守住生产",
+    "cateName": "微服务",
+    "createTime": "",
+    "source": "定时发文"
+  },
+  "36688": {
+    "title": "入表后，数据资产变现卡在确权与估值",
+    "cateName": "数据要素",
+    "createTime": "",
+    "source": "定时发文"
+  },
+  "36690": {
+    "title": "联盟链不是万能账本，先解决三件事",
+    "cateName": "区块链",
+    "createTime": "",
+    "source": "定时发文"
+  },
+  "36692": {
+    "title": "工业数据合规分级比平台更急",
+    "cateName": "安全",
+    "createTime": "",
+    "source": "定时发文"
+  },
+  "36694": {
+    "title": "企业数据要素如何变成真现金流",
+    "cateName": "数据要素",
+    "createTime": "",
+    "source": "定时发文"
+  },
+  "36696": {
+    "title": "零信任不是加门禁，而是重排权限账本",
+    "cateName": "安全",
+    "createTime": "",
+    "source": "定时发文"
   }
 }

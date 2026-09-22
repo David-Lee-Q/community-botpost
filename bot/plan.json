@@ -1216,8 +1216,10 @@
         "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&q=80"
       ],
       "cover": "/workspace/bot/covers/数据要素/cover14.jpg",
-      "status": "pending",
-      "taskId": "32dd4b43a6f747eea7acfd2b5c7eb287"
+      "status": "published",
+      "taskId": "32dd4b43a6f747eea7acfd2b5c7eb287",
+      "article_id": 36378,
+      "detail_url": "https://openlab.cosmoplat.com/article-detils?id=36378&articleType=0"
     },
     {
       "time": "2026-09-12 11:41:51",
@@ -1230,8 +1232,10 @@
         "https://images.unsplash.com/photo-1516937941344-00b4e0337589?w=800&q=80"
       ],
       "cover": "/workspace/bot/covers/标识解析/cover4.jpg",
-      "status": "pending",
-      "taskId": "baac34ffd5704a31a7dbd21413890af9"
+      "status": "published",
+      "taskId": "baac34ffd5704a31a7dbd21413890af9",
+      "article_id": 36380,
+      "detail_url": "https://openlab.cosmoplat.com/article-detils?id=36380&articleType=0"
     },
     {
       "time": "2026-09-12 18:34:55",
@@ -1244,8 +1248,10 @@
         "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=800&q=80"
       ],
       "cover": "/workspace/bot/covers/大数据/cover5.jpg",
-      "status": "pending",
-      "taskId": "966087e294f74cb6aecf62999cbde976"
+      "status": "published",
+      "taskId": "966087e294f74cb6aecf62999cbde976",
+      "article_id": 36384,
+      "detail_url": "https://openlab.cosmoplat.com/article-detils?id=36384&articleType=0"
     },
     {
       "time": "2026-09-12 19:46:36",
@@ -1258,8 +1264,10 @@
         "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=800&q=80"
       ],
       "cover": "/workspace/bot/covers/机器视觉/cover9.jpg",
-      "status": "pending",
-      "taskId": "79b4026992814a6ab84d8f6d90b95772"
+      "status": "published",
+      "taskId": "79b4026992814a6ab84d8f6d90b95772",
+      "article_id": 36386,
+      "detail_url": "https://openlab.cosmoplat.com/article-detils?id=36386&articleType=0"
     },
     {
       "time": "2026-09-13 11:53:19",
@@ -1272,8 +1280,10 @@
         "https://images.unsplash.com/photo-1524749292158-7540c2494485?w=800&q=80"
       ],
       "cover": "/workspace/bot/covers/边缘计算/cover9.jpg",
-      "status": "pending",
-      "taskId": "338cfa0836e147978160ca90c78ddaff"
+      "status": "published",
+      "taskId": "338cfa0836e147978160ca90c78ddaff",
+      "article_id": 36412,
+      "detail_url": "https://openlab.cosmoplat.com/article-detils?id=36412&articleType=0"
     },
     {
       "time": "2026-09-13 12:16:00",
@@ -1286,8 +1296,10 @@
         "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=800&q=80"
       ],
       "cover": "/workspace/bot/covers/云原生/cover15.jpg",
-      "status": "pending",
-      "taskId": "9860bf71e29a4bf9a30d07ac62107b83"
+      "status": "published",
+      "taskId": "9860bf71e29a4bf9a30d07ac62107b83",
+      "article_id": 36414,
+      "detail_url": "https://openlab.cosmoplat.com/article-detils?id=36414&articleType=0"
     },
     {
       "time": "2026-09-13 13:28:21",
@@ -1300,8 +1312,10 @@
         "https://images.unsplash.com/photo-1555949963-aa79dcee981c?w=800&q=80"
       ],
       "cover": "/workspace/bot/covers/安全/cover5.jpg",
-      "status": "pending",
-      "taskId": "933ebb423fea4137b75dc5aba3983b29"
+      "status": "published",
+      "taskId": "933ebb423fea4137b75dc5aba3983b29",
+      "article_id": 36416,
+      "detail_url": "https://openlab.cosmoplat.com/article-detils?id=36416&articleType=0"
     },
     {
       "time": "2026-09-13 14:23:30",
@@ -1314,8 +1328,10 @@
         "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=800&q=80"
       ],
       "cover": "/workspace/bot/covers/人工智能/cover16.jpg",
-      "status": "pending",
-      "taskId": "711030b51d2a473fab95b9601de11014"
+      "status": "published",
+      "taskId": "711030b51d2a473fab95b9601de11014",
+      "article_id": 36418,
+      "detail_url": "https://openlab.cosmoplat.com/article-detils?id=36418&articleType=0"
     },
     {
       "time": "2026-09-14 11:34:15",
@@ -1328,8 +1344,10 @@
         "https://images.unsplash.com/photo-1519452575417-564c1401ecc0?w=800&q=80"
       ],
       "cover": "/workspace/bot/covers/人工智能/cover17.jpg",
-      "status": "pending",
-      "taskId": "9b986956b94b42cca8ae9f35bb74c5f8"
+      "status": "published",
+      "taskId": "9b986956b94b42cca8ae9f35bb74c5f8",
+      "article_id": 36448,
+      "detail_url": "https://openlab.cosmoplat.com/article-detils?id=36448&articleType=0"
     },
     {
       "time": "2026-09-14 12:07:06",
@@ -1342,8 +1360,10 @@
         "https://images.unsplash.com/photo-1450101499163-c8848c66ca85?w=800&q=80"
       ],
       "cover": "/workspace/bot/covers/云计算/cover8.jpg",
-      "status": "pending",
-      "taskId": "0aa127fe0da242f58451d96eae4555a4"
+      "status": "published",
+      "taskId": "0aa127fe0da242f58451d96eae4555a4",
+      "article_id": 36450,
+      "detail_url": "https://openlab.cosmoplat.com/article-detils?id=36450&articleType=0"
     },
     {
       "time": "2026-09-14 12:55:21",
@@ -1356,8 +1376,10 @@
         "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=800&q=80"
       ],
       "cover": "/workspace/bot/covers/区块链/cover5.jpg",
-      "status": "pending",
-      "taskId": "d6afc5f57aac42f58792c3030595bb35"
+      "status": "published",
+      "taskId": "d6afc5f57aac42f58792c3030595bb35",
+      "article_id": 36452,
+      "detail_url": "https://openlab.cosmoplat.com/article-detils?id=36452&articleType=0"
     },
     {
       "time": "2026-09-14 16:39:14",
@@ -1370,8 +1392,682 @@
         "https://images.unsplash.com/photo-1527430253228-e93688616381?w=800&q=80"
       ],
       "cover": "/workspace/bot/covers/智能制造/cover13.jpg",
+      "status": "published",
+      "taskId": "3dc705a137b74a86a4cba1bd3bb2de0d",
+      "article_id": 36454,
+      "detail_url": "https://openlab.cosmoplat.com/article-detils?id=36454&articleType=0"
+    },
+    {
+      "time": "2026-09-15 12:30:49",
+      "title": "工业连接数翻5倍，瓶颈从网络变成数据",
+      "category": "物联网",
+      "file": "/workspace/bot-articles/scheduled-20260912060731-324.md",
+      "summary": "工业连接数从百万级冲到千万级，很多工厂只看到设备上线，却没看到数据可用、模型可跑、成本可控。本文从协议适配、边缘计算、身份安全和数据治理四个环节，拆解连接数增长背后的真实瓶颈，并给出从接入到价值释放的落地路径，适合产线负责人、平台架构师和运维团队参考。",
+      "images": [
+        "https://images.unsplash.com/photo-1526666923127-b2970f64b422?w=800&q=80",
+        "https://images.unsplash.com/photo-1555664424-778a1e5e1b48?w=800&q=80"
+      ],
+      "cover": "/workspace/bot/covers/物联网/cover4.jpg",
+      "status": "published",
+      "taskId": "53fe3a05938245b6ba8444be948f63d6",
+      "article_id": 36480,
+      "detail_url": "https://openlab.cosmoplat.com/article-detils?id=36480&articleType=0"
+    },
+    {
+      "time": "2026-09-15 14:09:27",
+      "title": "中间件99.99%背后不是堆机器",
+      "category": "中间件",
+      "file": "/workspace/bot-articles/scheduled-20260912061043-972.md",
+      "summary": "很多团队把中间件宕机归咎于流量，真正原因往往是状态、依赖和恢复路径没设计好。本文从故障恢复时间、数据一致性和容量水位三个维度，拆解消息、注册、网关等中间件的高可用设计，给出可落地的验收指标、演练方法，以及常见误区和排查顺序。",
+      "images": [
+        "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&q=80",
+        "https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?w=800&q=80"
+      ],
+      "cover": "/workspace/bot/covers/中间件/cover4.jpg",
+      "status": "published",
+      "taskId": "776fd15122624ec29a28b85b28bc3788",
+      "article_id": 36482,
+      "detail_url": "https://openlab.cosmoplat.com/article-detils?id=36482&articleType=0"
+    },
+    {
+      "time": "2026-09-15 14:12:15",
+      "title": "工业相机怎么挑？5个参数定成败",
+      "category": "机器视觉",
+      "file": "/workspace/bot-articles/scheduled-20260912061153-791.md",
+      "summary": "产线漏检、拍不清、预算超支，往往不是算法不够强，而是相机参数没配平。本文从分辨率、帧率、镜头、光源、接口五个维度拆解工业相机选择逻辑，给出3类典型场景的预算区间与替换信号，帮你在采购前避开“高配低用”和“低配硬撑”，形成可复用的评审清单。",
+      "images": [
+        "https://images.unsplash.com/photo-1563770660941-20978e870e26?w=800&q=80",
+        "https://images.unsplash.com/photo-1587620962725-abab7fe55159?w=800&q=80"
+      ],
+      "cover": "/workspace/bot/covers/机器视觉/cover10.jpg",
+      "status": "published",
+      "taskId": "9da37cdb507a409db2badd7f3fd80401",
+      "article_id": 36484,
+      "detail_url": "https://openlab.cosmoplat.com/article-detils?id=36484&articleType=0"
+    },
+    {
+      "time": "2026-09-15 19:05:03",
+      "title": "一物一码如何打通工厂数据孤岛",
+      "category": "标识解析",
+      "file": "/workspace/bot-articles/scheduled-20260912061323-538.md",
+      "summary": "很多工厂贴了二维码，却仍靠表格对账。工业标识的真正价值，不是给设备贴码，而是把设备、物料、工艺、质检数据挂到统一身份上。本文从命名、解析、治理三个层面，拆解如何避免重复编码和系统割裂，把标识从扫码入口升级成生产数据底座，并给出可落地的实施路径，帮助企业少走弯路。",
+      "images": [
+        "https://images.unsplash.com/photo-1558494949-4314304c7b42?w=800&q=80",
+        "https://images.unsplash.com/photo-1555617981-dac3880eac6e?w=800&q=80"
+      ],
+      "cover": "/workspace/bot/covers/标识解析/cover5.jpg",
+      "status": "published",
+      "taskId": "ac8f7b5a83a74a4385de63db8f957b07",
+      "article_id": 36490,
+      "detail_url": "https://openlab.cosmoplat.com/article-detils?id=36490&articleType=0"
+    },
+    {
+      "time": "2026-09-16 10:28:27",
+      "title": "HPC上云省钱，关键不在GPU单价",
+      "category": "云计算",
+      "file": "/workspace/bot-articles/scheduled-20260913060153-275.md",
+      "summary": "很多团队以为HPC上云只要比较GPU小时价，结果首月账单仍比本地机房高出三成。真实成本来自利用率、并行文件系统、网络带宽、调度运维与软件许可。本文用一套可落地的TCO拆解方法，帮助技术负责人判断何时上云、如何选型、怎样把弹性变成可预测成本。",
+      "images": [
+        "https://images.unsplash.com/photo-1504868584819-f8e8b4b6d7e3?w=800&q=80",
+        "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&q=80"
+      ],
+      "cover": "/workspace/bot/covers/云计算/cover9.jpg",
+      "status": "published",
+      "taskId": "a02df17e64c448d5b6b4cf0a4b94c6cd",
+      "article_id": 36516,
+      "detail_url": "https://openlab.cosmoplat.com/article-detils?id=36516&articleType=0"
+    },
+    {
+      "time": "2026-09-16 10:29:08",
+      "title": "AI打AI 攻防窗口从小时压到分钟",
+      "category": "安全",
+      "file": "/workspace/bot-articles/scheduled-20260913060838-809.md",
+      "summary": "当AI红队开始自动挖掘漏洞、生成钓鱼话术并绕过检测，传统人工蓝队很难跟上。本文从提示注入、模型投毒和智能体权限滥用切入，分析AI对AI攻防为何把响应窗口从小时压到分钟，并给出数据治理、权限隔离和对抗评测三条落地路径，帮助团队把AI安全从口号变成可度量指标。",
+      "images": [
+        "https://images.unsplash.com/photo-1467232004584-a241de8bcf5d?w=800&q=80",
+        "https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=800&q=80"
+      ],
+      "cover": "/workspace/bot/covers/安全/cover6.jpg",
+      "status": "published",
+      "taskId": "4d61b46c031246cdbd0b9e9269c39706",
+      "article_id": 36518,
+      "detail_url": "https://openlab.cosmoplat.com/article-detils?id=36518&articleType=0"
+    },
+    {
+      "time": "2026-09-16 12:53:10",
+      "title": "100TB数据为何不能入账",
+      "category": "数据要素",
+      "file": "/workspace/bot-articles/scheduled-20260913061536-172.md",
+      "summary": "很多工厂每天产生海量数据，却难以上资产负债表，核心卡点不在采集，而在确权、计量与收益证明。数据要素资产化的关键不是采购平台，而是把原始数据变成可确权、可计量、可流通的数据产品。本文从可信治理、质量计量、收益闭环三条路径，给出工业场景落地判断与做法。",
+      "images": [
+        "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&q=80",
+        "https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=800&q=80"
+      ],
+      "cover": "/workspace/bot/covers/数据要素/cover15.jpg",
+      "status": "published",
+      "taskId": "132ddf41b9484e1298342eb90ca63231",
+      "article_id": 36520,
+      "detail_url": "https://openlab.cosmoplat.com/article-detils?id=36520&articleType=0"
+    },
+    {
+      "time": "2026-09-16 16:08:33",
+      "title": "设备数据脏三成，治理要从边缘开始",
+      "category": "物联网",
+      "file": "/workspace/bot-articles/scheduled-20260913061816-217.md",
+      "summary": "物联网项目常因数据脏、断、漂而失效：单位错、时间戳漂移、采样缺失，让预测维护误报频出。本文提出把质量治理前移到边缘，通过单位归一、语义字典、质量评分和反馈闭环，把数据从可用变成可信，并给出面向工业场景的指标、治理节奏与实施路径。",
+      "images": [
+        "https://images.unsplash.com/photo-1565793298595-6a879b1d9492?w=800&q=80",
+        "https://images.unsplash.com/photo-1516937941344-00b4e0337589?w=800&q=80"
+      ],
+      "cover": "/workspace/bot/covers/物联网/cover5.jpg",
+      "status": "published",
+      "taskId": "7e9f765e617d47cc903581cd08465898",
+      "article_id": 36522,
+      "detail_url": "https://openlab.cosmoplat.com/article-detils?id=36522&articleType=0"
+    },
+    {
+      "time": "2026-09-17 09:04:10",
+      "title": "工业连接数破亿，瓶颈不是带宽",
+      "category": "物联网",
+      "file": "/workspace/bot-articles/scheduled-20260914060200-778.md",
+      "summary": "工业物联网连接数从万台设备到百万节点，真正卡住项目的往往不是“连不上”，而是数据不可用、协议不统一、边缘算力不足。本文从连接规模、数据治理、边缘协同三个层面拆解增长背后的工程瓶颈，并给出从试点到规模复制的落地路径，帮助读者判断下一步投入优先级。",
+      "images": [
+        "https://images.unsplash.com/photo-1581092160562-40aa08e78837?w=800&q=80",
+        "https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?w=800&q=80"
+      ],
+      "cover": "/workspace/bot/covers/物联网/cover6.jpg",
+      "status": "published",
+      "taskId": "8666c6e54871448c922541caaeca3578",
+      "article_id": 36546,
+      "detail_url": "https://openlab.cosmoplat.com/article-detils?id=36546&articleType=0"
+    },
+    {
+      "time": "2026-09-17 13:52:42",
+      "title": "视觉算法落地，成本大头藏在模型外",
+      "category": "机器视觉",
+      "file": "/workspace/bot-articles/scheduled-20260914060639-817.md",
+      "summary": "很多团队以为视觉算法落地难在模型精度，真正烧钱的是数据噪声、硬件错配、接口联调和产线变更。本文拆解从数据采集到边缘部署的5类隐性成本，用工厂案例说明：标注量、峰值帧率、换型频率和运维工时才是预算黑洞。读完可得到一套压降路径：评估变更频率、最小可行硬件、样本闭环和标准化发布，把预算从买模型转向算总账。",
+      "images": [
+        "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=800&q=80",
+        "https://images.unsplash.com/photo-1531746790731-6c087fecd65a?w=800&q=80"
+      ],
+      "cover": "/workspace/bot/covers/机器视觉/cover11.jpg",
+      "status": "published",
+      "taskId": "3bfca73742774b88835a0849c24d39b4",
+      "article_id": 36550,
+      "detail_url": "https://openlab.cosmoplat.com/article-detils?id=36550&articleType=0"
+    },
+    {
+      "time": "2026-09-17 18:03:44",
+      "title": "边缘设备接入从能连到管好只差身份与状态",
+      "category": "边缘计算",
+      "file": "/workspace/bot-articles/scheduled-20260914061322-559.md",
+      "summary": "很多边缘设备能连上，却掉线、重复上报、证书过期，现场越扩越乱。本文从身份注册、协议收敛和健康度看板三个角度，给出把接入从一次性工程变成长期运维能力的落地路径，帮助团队减少排障时间、降低运维成本，并支撑设备规模化接入与长期稳定运行。",
+      "images": [
+        "https://images.unsplash.com/photo-1518770660439-4636190af475?w=800&q=80",
+        "https://images.unsplash.com/photo-1580927752452-89d86da3fa0a?w=800&q=80"
+      ],
+      "cover": "/workspace/bot/covers/边缘计算/cover10.jpg",
+      "status": "published",
+      "taskId": "c536bcc76e234745a82a538e01eb0a8e",
+      "article_id": 36552,
+      "detail_url": "https://openlab.cosmoplat.com/article-detils?id=36552&articleType=0"
+    },
+    {
+      "time": "2026-09-17 18:26:33",
+      "title": "3800万条数据卖不出价，企业差在三步",
+      "category": "数据要素",
+      "file": "/workspace/bot-articles/scheduled-20260914062018-687.md",
+      "summary": "多数企业的数据停留在报表层，难以形成可交易、可定价、可审计的资产。数据变现不是把数据库打包出售，而是把数据产品嵌入业务闭环，让调用方愿意持续付费。本文从确权、产品化、交易机制三条路径拆解企业如何把数据从成本项变成收入项，并给出可落地的优先级判断。",
+      "images": [
+        "https://images.unsplash.com/photo-1484557985045-edf25e08da73?w=800&q=80",
+        "https://images.unsplash.com/photo-1504639725590-34d0984388bd?w=800&q=80"
+      ],
+      "cover": "/workspace/bot/covers/数据要素/cover16.jpg",
+      "status": "published",
+      "taskId": "4ddad499f42048d69d7639b757d135a4",
+      "article_id": 36554,
+      "detail_url": "https://openlab.cosmoplat.com/article-detils?id=36554&articleType=0"
+    },
+    {
+      "time": "2026-09-18 12:25:05",
+      "title": "把30%推理压到边缘的云边协同方案",
+      "category": "边缘计算",
+      "file": "/workspace/bot-articles/scheduled-20260915060459-650.md",
+      "summary": "很多工厂把设备数据全部上云后，发现带宽、时延和隐私成本同时失控。真正能跑通的云边协同，不是把云搬小，而是把30%实时决策压到边缘，把模型训练和全局优化留在云端。本文给出可落地的分层、数据闭环与容灾设计，帮助团队避开“边缘盒子堆砌”的坑。",
+      "images": [
+        "https://images.unsplash.com/photo-1558591710-4b4a1ae0f04d?w=800&q=80",
+        "https://images.unsplash.com/photo-1564865878688-9a244444042a?w=800&q=80"
+      ],
+      "cover": "/workspace/bot/covers/边缘计算/cover11.jpg",
+      "status": "published",
+      "taskId": "832aba38eeb94a688a169ac9001b172a",
+      "article_id": 36580,
+      "detail_url": "https://openlab.cosmoplat.com/article-detils?id=36580&articleType=0"
+    },
+    {
+      "time": "2026-09-18 14:51:43",
+      "title": "K8s运维别再背锅 3条主线救回集群",
+      "category": "云原生",
+      "file": "/workspace/bot-articles/scheduled-20260915060618-769.md",
+      "summary": "不少团队把K8s集群不稳定归因于平台本身，但生产事故更多来自资源误配、探针缺失和观测断链。本文从一次扩容打满CPU的真实场景切入，提出资源画像、健康检查、可观测性三条主线，帮助运维把故障定位从小时级压到分钟级，并建立可回滚、可审计、可复制、可度量的容器运维闭环。",
+      "images": [
+        "https://images.unsplash.com/photo-1565043666747-69f6646db940?w=800&q=80",
+        "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=800&q=80"
+      ],
+      "cover": "/workspace/bot/covers/云原生/cover16.jpg",
+      "status": "published",
+      "taskId": "9648c3cb4dac492788f8c017df20d3d7",
+      "article_id": 36582,
+      "detail_url": "https://openlab.cosmoplat.com/article-detils?id=36582&articleType=0"
+    },
+    {
+      "time": "2026-09-18 17:43:55",
+      "title": "零信任落地先补身份账再拆边界",
+      "category": "安全",
+      "file": "/workspace/bot-articles/scheduled-20260915061116-467.md",
+      "summary": "很多零信任项目不是败在技术，而是败在身份资产不清、权限颗粒度粗、策略无法审计，导致上线后审批更慢、故障更隐蔽。本文从真实落地场景出发，拆解身份盘点、最小权限、持续验证与策略自动化的90天路径，并给出复盘指标，帮助团队减少误报和审批摩擦，把零信任从架构图变成可运行闭环。",
+      "images": [
+        "https://images.unsplash.com/photo-1553877522-43269d4ea984?w=800&q=80",
+        "https://images.unsplash.com/photo-1573855619003-97b4799dcd8b?w=800&q=80"
+      ],
+      "cover": "/workspace/bot/covers/安全/cover7.jpg",
+      "status": "published",
+      "taskId": "20dab88c87934345b4c023232336e5b1",
+      "article_id": 36586,
+      "detail_url": "https://openlab.cosmoplat.com/article-detils?id=36586&articleType=0"
+    },
+    {
+      "time": "2026-09-18 18:41:45",
+      "title": "数据变资产，先确权再定价",
+      "category": "数据要素",
+      "file": "/workspace/bot-articles/scheduled-20260915061928-824.md",
+      "summary": "企业拥有海量生产数据，却常困在有数据、难定价、不敢流通的尴尬里。数据要素资产化不是把报表搬上云，而是完成确权、计量、质量、流通与收益闭环。本文以制造和能源场景为例，拆解从试点到资产池的路径，给出可执行建议，帮助业务和IT团队避免数据沉睡。",
+      "images": [
+        "https://images.unsplash.com/photo-1531403009284-440f080d1e12?w=800&q=80",
+        "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=800&q=80"
+      ],
+      "cover": "/workspace/bot/covers/数据要素/cover17.jpg",
+      "status": "published",
+      "taskId": "9823b3e85b4648829251aa2172085446",
+      "article_id": 36588,
+      "detail_url": "https://openlab.cosmoplat.com/article-detils?id=36588&articleType=0"
+    },
+    {
+      "time": "2026-09-19 11:34:26",
+      "title": "云边协同把毫秒级响应写进产线",
+      "category": "边缘计算",
+      "file": "/workspace/bot-articles/scheduled-20260916060156-773.md",
+      "summary": "很多工厂把AI和数字孪生押在云端，结果产线一断网就停摆，带宽成本和延迟也压垮体验。本文拆解云边协同体系：边缘侧负责毫秒级控制与数据预处理，云端负责模型训练与全局优化，通过任务编排、模型下发和断网自治，给出可落地的响应、成本与可靠性平衡路径。",
+      "images": [
+        "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=800&q=80",
+        "https://images.unsplash.com/photo-1580927752452-89d86da3fa0a?w=800&q=80"
+      ],
+      "cover": "/workspace/bot/covers/边缘计算/cover12.jpg",
+      "status": "published",
+      "taskId": "2ed0b7b2fc3942db82ad3524a33a3a59",
+      "article_id": 36674,
+      "detail_url": "https://openlab.cosmoplat.com/article-detils?id=36674&articleType=0"
+    },
+    {
+      "time": "2026-09-19 12:13:43",
+      "title": "0.02毫米划痕，三维视觉如何抓住？",
+      "category": "机器视觉",
+      "file": "/workspace/bot-articles/scheduled-20260916060327-724.md",
+      "summary": "产线一快，人工肉眼就漏检；曲面、反光、微小划痕让传统二维相机频频失效。三维视觉把表面变成可量化的点云，让深度、法向和纹理同时参与判断。本文拆解结构光、双目与深度学习的组合路径，给出从采样、配准到边缘部署的落地指标，并说明如何控制误报与召回，帮助工程师少走弯路。",
+      "images": [
+        "https://images.unsplash.com/photo-1555255707-c07966088b7b?w=800&q=80",
+        "https://images.unsplash.com/photo-1568819317551-31051b8b7f8e?w=800&q=80"
+      ],
+      "cover": "/workspace/bot/covers/机器视觉/cover12.jpg",
+      "status": "published",
+      "taskId": "94f596b112e1451d83d42f930da7f91d",
+      "article_id": 36676,
+      "detail_url": "https://openlab.cosmoplat.com/article-detils?id=36676&articleType=0"
+    },
+    {
+      "time": "2026-09-19 15:46:32",
+      "title": "把工厂搬进操作系统，工业平台如何赚钱",
+      "category": "工业操作系统",
+      "file": "/workspace/bot-articles/scheduled-20260916060514-693.md",
+      "summary": "很多工厂不是缺设备，而是缺一个能持续沉淀工艺、数据与应用的底座。工业操作系统若只做连接，很容易陷入低毛利；有竞争力的平台，要把设备、模型、应用和开发者生态装进同一套运行时。本文从接口、数据、生态三个切口，拆解工业平台如何从项目交付走向可复制经营。",
+      "images": [
+        "https://images.unsplash.com/photo-1587620962725-abab7fe55159?w=800&q=80",
+        "https://images.unsplash.com/photo-1535223289827-42f1e9919769?w=800&q=80"
+      ],
+      "cover": "/workspace/bot/covers/工业操作系统/cover2.jpg",
+      "status": "published",
+      "taskId": "d757d6eb125e40e2b5b3f3b3e56e1b6b",
+      "article_id": 36678,
+      "detail_url": "https://openlab.cosmoplat.com/article-detils?id=36678&articleType=0"
+    },
+    {
+      "time": "2026-09-19 19:25:08",
+      "title": "混合云落地先算清四笔账",
+      "category": "云计算",
+      "file": "/workspace/bot-articles/scheduled-20260916061517-450.md",
+      "summary": "很多制造企业把混合云当成降本工具，结果被网络延迟、数据主权、安全边界和运维复杂度拖住，项目从演示走向生产就卡壳。本文不堆概念，而是从数据分级、网络确定性、身份安全和迁移节奏四笔账切入，给出可执行的判断清单与试点路径，帮助技术负责人避开“先上云再补课”的常见坑。",
+      "images": [
+        "https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=800&q=80",
+        "https://images.unsplash.com/photo-1537432376769-00f5c2f4c8d2?w=800&q=80"
+      ],
+      "cover": "/workspace/bot/covers/云计算/cover10.jpg",
+      "status": "published",
+      "taskId": "d6d674fa8bb74576aadd91e31e4d1bba",
+      "article_id": 36680,
+      "detail_url": "https://openlab.cosmoplat.com/article-detils?id=36680&articleType=0"
+    },
+    {
+      "time": "2026-09-20 13:18:12",
+      "title": "少装十款工具，研发交付快三成",
+      "category": "编程与开发",
+      "file": "/workspace/bot-articles/scheduled-20260917061514-946.md",
+      "summary": "团队装了一堆工具，交付却更慢：环境不一致、构建排队、日志分散，让工程师把时间耗在重复配置上。本文从环境一致性、构建测试反馈、可观测排障三个环节拆解轻量研发工具链，用具体数据说明：少而准的默认路径，比堆工具更能缩短交付周期，也能降低新人上手和线上排障成本。",
+      "images": [
+        "https://images.unsplash.com/photo-1558494949-4314304c7b42?w=800&q=80",
+        "https://images.unsplash.com/photo-1590959651373-a3db0f38a961?w=800&q=80"
+      ],
+      "cover": "/workspace/bot/covers/编程与开发/cover11.jpg",
+      "status": "published",
+      "taskId": "f94e3e32c4664ccfa661afa4c4d75e0d",
+      "article_id": 36682,
+      "detail_url": "https://openlab.cosmoplat.com/article-detils?id=36682&articleType=0"
+    },
+    {
+      "time": "2026-09-20 17:19:41",
+      "title": "别再只贴二维码，给设备一张可验证身份证",
+      "category": "标识解析",
+      "file": "/workspace/bot-articles/scheduled-20260917062022-365.md",
+      "summary": "工厂里大量非计划停机、备件错配和维保扯皮，根因常常不是传感器不够，而是机器没有可信身份。本文从统一标识、可信凭证、状态闭环三条线，拆解设备身份证如何缩短故障定位时间、降低运维成本，并给出分阶段落地路径与避坑指标，避免把身份建设做成一次性贴码工程。",
+      "images": [
+        "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=800&q=80",
+        "https://images.unsplash.com/photo-1526666923127-b2970f64b422?w=800&q=80"
+      ],
+      "cover": "/workspace/bot/covers/标识解析/cover6.jpg",
+      "status": "published",
+      "taskId": "6fc629f2c188409a8c2cdd52bdc2128b",
+      "article_id": 36684,
+      "detail_url": "https://openlab.cosmoplat.com/article-detils?id=36684&articleType=0"
+    },
+    {
+      "time": "2026-09-20 17:33:21",
+      "title": "API网关别只做转发 3个指标守住生产",
+      "category": "微服务",
+      "file": "/workspace/bot-articles/scheduled-20260917062328-923.md",
+      "summary": "很多团队把API网关当反向代理，结果限流、鉴权、日志散落在各服务，大促一压就雪崩。本文给出三条可落地路径：用路由与限流写清容量边界，把鉴权脱敏前置到入口，用traceId和SLO建立可观测闭环，帮助读者把网关从转发器变成生产流量治理基线。",
+      "images": [
+        "https://images.unsplash.com/photo-1555949963-aa79dcee981c?w=800&q=80",
+        "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=800&q=80"
+      ],
+      "cover": "/workspace/bot/covers/微服务/cover11.jpg",
+      "status": "published",
+      "taskId": "f96faddbc39640f0947436c8b2d5f3bd",
+      "article_id": 36686,
+      "detail_url": "https://openlab.cosmoplat.com/article-detils?id=36686&articleType=0"
+    },
+    {
+      "time": "2026-09-20 19:07:27",
+      "title": "入表后，数据资产变现卡在确权与估值",
+      "category": "数据要素",
+      "file": "/workspace/bot-articles/scheduled-20260917063507-211.md",
+      "summary": "数据资产入表只是起点，真正难的是把原始数据变成可定价、可流通、可审计的资产。许多企业卡在权属不清、成本难归集、场景难闭环。本文以入表、估值、可信流通三个切口，拆解数据要素走向资产的落地路径，并给出可执行的治理与产品化建议，帮助团队降低合规与估值试错成本。",
+      "images": [
+        "https://images.unsplash.com/photo-1523287562758-66c7fc58967f?w=800&q=80",
+        "https://images.unsplash.com/photo-1564865878688-9a244444042a?w=800&q=80"
+      ],
+      "cover": "/workspace/bot/covers/数据要素/cover18.jpg",
+      "status": "published",
+      "taskId": "b10edbc560b54b448613b90e133e0172",
+      "article_id": 36688,
+      "detail_url": "https://openlab.cosmoplat.com/article-detils?id=36688&articleType=0"
+    },
+    {
+      "time": "2026-09-21 09:44:20",
+      "title": "联盟链不是万能账本，先解决三件事",
+      "category": "区块链",
+      "file": "/workspace/bot-articles/scheduled-20260918060654-440.md",
+      "summary": "很多团队把联盟链当成“上链即可信”的银弹，结果项目卡在节点治理、数据授权、跨链对账和审计取证上。本文从供应链、跨境贸易等场景出发，拆解联盟链落地中的节点设计、共识选择、数据脱敏、权限控制和审计闭环，给出实施路径与避坑清单，帮助读者判断哪些业务值得上链。",
+      "images": [
+        "https://images.unsplash.com/photo-1527430253228-e93688616381?w=800&q=80",
+        "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=800&q=80"
+      ],
+      "cover": "/workspace/bot/covers/区块链/cover6.jpg",
+      "status": "published",
+      "taskId": "6fd9b0a7617440cea8fcb1a750f96ad2",
+      "article_id": 36690,
+      "detail_url": "https://openlab.cosmoplat.com/article-detils?id=36690&articleType=0"
+    },
+    {
+      "time": "2026-09-21 10:24:51",
+      "title": "工业数据合规分级比平台更急",
+      "category": "安全",
+      "file": "/workspace/bot-articles/scheduled-20260918060811-858.md",
+      "summary": "工业数据合规的难点不在制度上墙，而在数据从产线、设备到云端之后，能否被识别、分级、授权和留痕。本文围绕分类分级、最小权限、审计追溯、跨域共享四个环节，拆解可落地的技术路径，并给出避免数据裸奔的自查清单，帮助制造企业把合规要求变成系统能力，减少上线前临时补票。",
+      "images": [
+        "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=800&q=80",
+        "https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?w=800&q=80"
+      ],
+      "cover": "/workspace/bot/covers/安全/cover8.jpg",
+      "status": "published",
+      "taskId": "319985fef0034cd4b15718cd0f80dc9f",
+      "article_id": 36692,
+      "detail_url": "https://openlab.cosmoplat.com/article-detils?id=36692&articleType=0"
+    },
+    {
+      "time": "2026-09-21 11:30:35",
+      "title": "企业数据要素如何变成真现金流",
+      "category": "数据要素",
+      "file": "/workspace/bot-articles/scheduled-20260918061505-821.md",
+      "summary": "很多企业的“数据资产化”停在台账、报表和汇报材料里：数据湖建了，指标有了，却说不清谁拥有、谁付费、谁担责。本文从确权、计量、定价、结算四个环节，拆解数据要素变资产的最小闭环，帮助业务负责人判断哪些数据先资产化、如何进入内部结算或外部交易，避免只投入不见收益，并给出90天落地路径。",
+      "images": [
+        "https://images.unsplash.com/photo-1526628953301-3e589a6a8b74?w=800&q=80",
+        "https://images.unsplash.com/photo-1504868584819-f8e8b4b6d7e3?w=800&q=80"
+      ],
+      "cover": "/workspace/bot/covers/数据要素/cover19.jpg",
+      "status": "published",
+      "taskId": "8e96433530834c0fbe829800103ac538",
+      "article_id": 36694,
+      "detail_url": "https://openlab.cosmoplat.com/article-detils?id=36694&articleType=0"
+    },
+    {
+      "time": "2026-09-21 12:11:54",
+      "title": "零信任不是加门禁，而是重排权限账本",
+      "category": "安全",
+      "file": "/workspace/bot-articles/scheduled-20260918061642-382.md",
+      "summary": "不少工厂把零信任理解成边界防火墙升级，结果身份、设备、应用权限仍散落各处，一次误授权就可能穿透产线。本文用一条产线改造案例，拆解从身份收敛、微隔离到持续验证的三步路径，并给出权限台账、临时授权和策略闭环的落地清单，让安全从口号变成可审计动作。",
+      "images": [
+        "https://images.unsplash.com/photo-1551650975-87deedd944c3?w=800&q=80",
+        "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&q=80"
+      ],
+      "cover": "/workspace/bot/covers/安全/cover9.jpg",
+      "status": "published",
+      "taskId": "30336e49c3934034b035558ef29bde09",
+      "article_id": 36696,
+      "detail_url": "https://openlab.cosmoplat.com/article-detils?id=36696&articleType=0"
+    },
+    {
+      "time": "2026-09-22 10:25:15",
+      "title": "AI写码越快，返工越多？3个指标控风险",
+      "category": "编程与开发",
+      "file": "/workspace/bot-articles/scheduled-20260919060156-726.md",
+      "summary": "AI辅助编程常被当成效率工具，真正拉开差距的是返工率、测试覆盖和人工审查成本。本文给出可落地的使用边界：把AI放在生成、解释、补测试和代码审查四个环节，用指标判断是否值得进入生产，避免把幻觉当能力，把快当质量。适合团队从试点走向规模化，也适合评估AI是否真的降低交付风险。",
+      "images": [
+        "https://images.unsplash.com/photo-1565043666747-69f6646db940?w=800&q=80",
+        "https://images.unsplash.com/photo-1551434678-e076c223a692?w=800&q=80"
+      ],
+      "cover": "/workspace/bot/covers/编程与开发/cover12.jpg",
       "status": "pending",
-      "taskId": "3dc705a137b74a86a4cba1bd3bb2de0d"
+      "taskId": "b8d03c8e72bd468495133044f388a868"
+    },
+    {
+      "time": "2026-09-22 14:19:03",
+      "title": "云原生安全真正漏点在镜像与运行时",
+      "category": "云原生",
+      "file": "/workspace/bot-articles/scheduled-20260919061207-733.md",
+      "summary": "云原生安全常被误做成上线前扫描，结果镜像带毒、权限过宽、运行时异常仍会击穿防线。本文从镜像供应链、平台身份与运行时检测三层拆解可落地方法，给出最小权限、持续验证和事件响应路径，帮助工程团队把安全嵌入交付闭环，降低生产事故与合规风险。",
+      "images": [
+        "https://images.unsplash.com/photo-1516937941344-00b4e0337589?w=800&q=80",
+        "https://images.unsplash.com/photo-1581094794329-c8112a89af12?w=800&q=80"
+      ],
+      "cover": "/workspace/bot/covers/云原生/cover17.jpg",
+      "status": "pending",
+      "taskId": "24fac43b4ed14860a73c301d93bdc447"
+    },
+    {
+      "time": "2026-09-22 16:58:54",
+      "title": "从产线到数据闭环，智能工厂少走弯路的5个节点",
+      "category": "智能制造",
+      "file": "/workspace/bot-articles/scheduled-20260919061531-992.md",
+      "summary": "很多工厂不是缺系统，而是缺把设备、工艺、质量、经营串成闭环的落地顺序。本文用一条可复制路径拆解：先做数据可信，再做单点智能，最后形成跨车间协同，帮助团队避免“大屏好看、现场没用”的常见陷阱，并给出优先级与验收指标，让投入更容易被验证。",
+      "images": [
+        "https://images.unsplash.com/photo-1587049352846-4a222e784d38?w=800&q=80",
+        "https://images.unsplash.com/photo-1565793298595-6a879b1d9492?w=800&q=80"
+      ],
+      "cover": "/workspace/bot/covers/智能制造/cover14.jpg",
+      "status": "pending",
+      "taskId": "fd7ce14705ea40ddb18b2f2607b7cb80"
+    },
+    {
+      "time": "2026-09-22 17:54:08",
+      "title": "产线改造从3周变3天，靠的不是更多接口",
+      "category": "工业操作系统",
+      "file": "/workspace/bot-articles/scheduled-20260919061853-270.md",
+      "summary": "很多工厂上了系统却难复制，设备数据、工艺参数、运维经验散落在不同项目里，导致每建一条新产线都像从零开始。工业OS的平台化关键不是再堆一套软件，而是把模型、数据、服务和应用拆成可复用资产，让工厂从项目交付走向能力运营。本文拆解平台化路径与落地边界。",
+      "images": [
+        "https://images.unsplash.com/photo-1563770660941-20978e870e26?w=800&q=80",
+        "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=800&q=80"
+      ],
+      "cover": "/workspace/bot/covers/工业操作系统/cover3.jpg",
+      "status": "pending",
+      "taskId": "fc94b31a69484e888469756209f6129d"
+    },
+    {
+      "time": "2026-09-23 11:35:48",
+      "title": "云账单瘦身30%的治理路径",
+      "category": "云计算",
+      "file": "/workspace/bot-articles/scheduled-20260920060248-234.md",
+      "summary": "云账单上涨常被误判为采购问题，真正痛点是资源不可见、架构不匹配、流程无闭环。本文从标签归因、弹性架构、自动化门禁三条路径切入，给出可落地的降本方法，帮助团队把云支出从月底报表变成可解释、可回收、可持续优化的工程指标，适合云平台和研发负责人快速建立治理节奏。",
+      "images": [
+        "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=800&q=80",
+        "https://images.unsplash.com/photo-1537462715879-360eeb61a0ad?w=800&q=80"
+      ],
+      "cover": "/workspace/bot/covers/云计算/cover11.jpg",
+      "status": "pending",
+      "taskId": "edb0a1cfb1294d03b854fb1fbfb2fafb"
+    },
+    {
+      "time": "2026-09-23 16:58:56",
+      "title": "数据要素流通难，工厂最贵资产仍在沉睡",
+      "category": "数据要素",
+      "file": "/workspace/bot-articles/scheduled-20260920061600-199.md",
+      "summary": "工厂里最贵的资产不是设备，而是每天产生却无人定价、不敢共享、无法复用的数据。本文从权属、质量、流通三个切口，拆解数据要素进入市场时最容易被忽视的三根刺，并给出可落地的数据产品化路径，帮助制造企业在合规前提下把沉睡数据变成可交易、可审计、可增值的资产。",
+      "images": [
+        "https://images.unsplash.com/photo-1531297484001-80022131f5a1?w=800&q=80",
+        "https://images.unsplash.com/photo-1559526324-4b87b5e36e44?w=800&q=80"
+      ],
+      "cover": "/workspace/bot/covers/数据要素/cover20.jpg",
+      "status": "pending",
+      "taskId": "e1892c9bc46c489099d754c18365b9d3"
+    },
+    {
+      "time": "2026-09-23 18:53:10",
+      "title": "API网关不是转发器，3个指标定生死",
+      "category": "微服务",
+      "file": "/workspace/bot-articles/scheduled-20260920061733-740.md",
+      "summary": "很多团队把API网关当成路由和鉴权工具，结果服务一多，限流失效、故障扩散、成本失控，甚至一次下游抖动就能拖垮入口。本文从生产事故切入，给出容量、韧性、可观测三类关键指标与落地步骤，帮助你在上线前把网关从流量入口变成可治理、可复盘、可扩容的稳定边界，并降低事故恢复成本。",
+      "images": [
+        "https://images.unsplash.com/photo-1569012871812-f38ee64cd54c?w=800&q=80",
+        "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=800&q=80"
+      ],
+      "cover": "/workspace/bot/covers/微服务/cover12.jpg",
+      "status": "pending",
+      "taskId": "319ff40b47564384a45c138a3f48be09"
+    },
+    {
+      "time": "2026-09-23 19:16:00",
+      "title": "视觉算法上产线开销PoC到量产差在哪",
+      "category": "机器视觉",
+      "file": "/workspace/bot-articles/scheduled-20260920062408-561.md",
+      "summary": "很多视觉项目PoC准确率漂亮，上产线却因标注、算力、误检、运维和变更失控而亏钱。本文拆解从数据采集、模型训练、边缘部署到长期运维的成本结构，给出可量化预算框架与降本路径，帮助团队在立项前判断视觉算法是否值得规模化，并识别项目是否具备扩线条件，把ROI算清楚。",
+      "images": [
+        "https://images.unsplash.com/photo-1555949963-aa79dcee981c?w=800&q=80",
+        "https://images.unsplash.com/photo-1581092160562-40aa08e78837?w=800&q=80"
+      ],
+      "cover": "/workspace/bot/covers/机器视觉/cover13.jpg",
+      "status": "pending",
+      "taskId": "61854d5b573d4e4492113161200c500e"
+    },
+    {
+      "time": "2026-09-24 12:15:35",
+      "title": "云边协同让90%工业数据留在厂边",
+      "category": "边缘计算",
+      "file": "/workspace/bot-articles/scheduled-20260921060350-170.md",
+      "summary": "很多工厂把云边协同做成云管边，结果延迟、带宽和成本同时失控，模型上线后仍靠人工兜底。本文从数据分层、任务编排、断网自治三个维度，拆解可落地的云边协同体系，给出选型、灰度发布和故障恢复的演进路径，帮助团队避免重复建设，让投入真正转化为稳定产能。",
+      "images": [
+        "https://images.unsplash.com/photo-1590959651373-a3db0f38a961?w=800&q=80",
+        "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=800&q=80"
+      ],
+      "cover": "/workspace/bot/covers/边缘计算/cover13.jpg",
+      "status": "pending",
+      "taskId": "99b82863a6c142b8afd7d8bd3cb50ef6"
+    },
+    {
+      "time": "2026-09-24 13:37:06",
+      "title": "混合云选型先算三笔账",
+      "category": "云计算",
+      "file": "/workspace/bot-articles/scheduled-20260921061312-106.md",
+      "summary": "很多团队把混合云当成“本地加公有云”的备份方案，结果数据孤岛、运维割裂、成本失控。本文从数据边界、弹性成本、运维复杂度三笔账切入，给出混合云选型的判断路径和落地清单，帮助架构师避免为伪弹性买单，把资源放在真正能降低风险与成本的位置。",
+      "images": [
+        "https://images.unsplash.com/photo-1551434678-e076c223a692?w=800&q=80",
+        "https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=800&q=80"
+      ],
+      "cover": "/workspace/bot/covers/云计算/cover12.jpg",
+      "status": "pending",
+      "taskId": "7ad98f2b8096474f96fa2d1e945eb3c4"
+    },
+    {
+      "time": "2026-09-24 15:14:52",
+      "title": "视觉算法落地，1%误检比GPU更烧钱",
+      "category": "机器视觉",
+      "file": "/workspace/bot-articles/scheduled-20260921062006-950.md",
+      "summary": "很多工厂以为视觉算法贵在购买GPU和算法授权，真正成本却藏在误检、漏检、数据返工与产线停机里。本文拆解从标注、训练、部署到运维的隐性成本，用产线案例说明误检率、边缘算力与数据闭环如何决定项目能否算清账，并给出可落地的成本治理路径。",
+      "images": [
+        "https://images.unsplash.com/photo-1527430253228-e93688616381?w=800&q=80",
+        "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=800&q=80"
+      ],
+      "cover": "/workspace/bot/covers/机器视觉/cover14.jpg",
+      "status": "pending",
+      "taskId": "9dcbc3680f5141a0a316f938bd92ed86"
+    },
+    {
+      "time": "2026-09-24 17:02:36",
+      "title": "微服务拆错，比单体还贵",
+      "category": "微服务",
+      "file": "/workspace/bot-articles/scheduled-20260921062128-124.md",
+      "summary": "不少团队拆完微服务后，接口数量翻了三倍，一次故障却要跨五个服务排查，最终维护成本超过单体。问题往往不在框架，而在边界拆错。本文从业务语义、数据一致性、团队边界和运维成本出发，给出可落地的拆分判断法与常见反例，帮助你在立项前避开过度拆分与职责模糊。",
+      "images": [
+        "https://images.unsplash.com/photo-1526628953301-3e589a6a8b74?w=800&q=80",
+        "https://images.unsplash.com/photo-1580927752452-89d86da3fa0a?w=800&q=80"
+      ],
+      "cover": "/workspace/bot/covers/微服务/cover13.jpg",
+      "status": "pending",
+      "taskId": "761e2f5d4dbe49839048fae81a9ccb03"
+    },
+    {
+      "time": "2026-09-25 10:55:25",
+      "title": "5G进厂，先别急着换专网",
+      "category": "智能制造",
+      "file": "/workspace/bot-articles/scheduled-20260922060325-154.md",
+      "summary": "很多工厂上了5G，却只换来更贵的网络账单。真正落地要看设备连接、边缘时延、数据闭环和投资回报。本文拆解3个可复制场景、4个避坑指标，帮你判断该上5G专网、Wi-Fi 6还是TSN，并给出从试点到复制的验收标准，避免把网络当万能药，让项目从演示走向产线。",
+      "images": [
+        "https://images.unsplash.com/photo-1581094794329-c8112a89af12?w=800&q=80",
+        "https://images.unsplash.com/photo-1568819317551-31051b8b7f8e?w=800&q=80"
+      ],
+      "cover": "/workspace/bot/covers/智能制造/cover15.jpg",
+      "status": "pending",
+      "taskId": "bfeff49dbaf74f089f8c051e400fd77e"
+    },
+    {
+      "time": "2026-09-25 10:56:41",
+      "title": "私有化大模型落地，微调不是越大越好",
+      "category": "人工智能",
+      "file": "/workspace/bot-articles/scheduled-20260922060455-938.md",
+      "summary": "企业想用大模型，却常卡在数据不出厂、通用模型不懂术语、推理成本压不住。本文给出一条可复制路径：从高质量指令数据、参数高效微调、量化压缩，到私有化推理服务、评测与运维，说明如何把通用模型改造成稳定可用的行业助手，并给出试点到生产的落地判断。",
+      "images": [
+        "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=800&q=80",
+        "https://images.unsplash.com/photo-1580757468214-c73f7062a5cb?w=800&q=80"
+      ],
+      "cover": "/workspace/bot/covers/人工智能/cover18.jpg",
+      "status": "pending",
+      "taskId": "7356c669a41d480794536f0d8d1cb9fe"
+    },
+    {
+      "time": "2026-09-25 12:56:11",
+      "title": "企业数据变资产，先过确权、计量、流通三道关",
+      "category": "数据要素",
+      "file": "/workspace/bot-articles/scheduled-20260922060944-193.md",
+      "summary": "很多制造企业把数据当报表，真正能入表、可交易、能融资的数据不到两成。文章从确权、质量、计量、流通四个环节拆解数据要素资产化路径，给出可落地的指标与风险清单，帮助技术和管理者判断哪些数据值得先资产化，尤其适合工业数据、供应链数据、设备运行数据场景，并提示合规边界。",
+      "images": [
+        "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=800&q=80",
+        "https://images.unsplash.com/photo-1535223289827-42f1e9919769?w=800&q=80"
+      ],
+      "cover": "/workspace/bot/covers/数据要素/cover21.jpg",
+      "status": "pending",
+      "taskId": "fd8cdea378344e4d846de8206f303dec"
+    },
+    {
+      "time": "2026-09-25 13:38:20",
+      "title": "大模型进厂最大坑不是模型是数据",
+      "category": "人工智能",
+      "file": "/workspace/bot-articles/scheduled-20260922061604-853.md",
+      "summary": "很多工厂引入大模型后，卡在数据口径、边缘算力、安全审计和ROI闭环上。本文以产线试点为切口，拆解工业问答为何容易误答、边缘部署如何降低时延、安全边界怎样影响采购，并给出从单点场景到可复制工程的落地路径，帮助读者判断大模型何时能真正进厂干活。",
+      "images": [
+        "https://images.unsplash.com/photo-1484557985045-edf25e08da73?w=800&q=80",
+        "https://images.unsplash.com/photo-1535378620166-273708d44e4c?w=800&q=80"
+      ],
+      "cover": "/workspace/bot/covers/人工智能/cover19.jpg",
+      "status": "pending",
+      "taskId": "077ba35cf79e427eac90b47e886b650c"
     }
   ]
 }

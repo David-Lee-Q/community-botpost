@@ -1,6 +1,6 @@
 # HEARTBEAT - 社区发文记录
 
-## 2026-09-11 发布清单
+## 2026-09-22 发布清单
 
 | 计划时间 | 标题 | 分类 | 文章ID | 详情URL | 状态 |
 |----------|------|------|--------|---------|------|
@@ -80,6 +80,34 @@
 | 2026-09-11 10:55:40 | 车间网络差1毫秒，产线成本差多少 | 网络 | 36350 | https://openlab.cosmoplat.com/article-detils?id=36350&articleType=0 | 已发布 |
 | 2026-09-11 14:32:19 | 100件小单如何重塑工厂利润表 | 智能制造 | 36348 | https://openlab.cosmoplat.com/article-detils?id=36348&articleType=0 | 已发布 |
 | 2026-09-11 18:33:42 | 边缘接入先管身份，再谈协议 | 边缘计算 | 36354 | https://openlab.cosmoplat.com/article-detils?id=36354&articleType=0 | 已发布 |
+| 2026-09-12 09:02:10 | 数据要素市场化的第一道门槛不是价格 | 数据要素 | 36378 | https://openlab.cosmoplat.com/article-detils?id=36378&articleType=0 | 已发布 |
+| 2026-09-12 11:41:51 | 设备数字身份让资产不再只活在台账里 | 标识解析 | 36380 | https://openlab.cosmoplat.com/article-detils?id=36380&articleType=0 | 已发布 |
+| 2026-09-12 18:34:55 | 实时分析平台毫秒级瓶颈的三个断点 | 大数据 | 36384 | https://openlab.cosmoplat.com/article-detils?id=36384&articleType=0 | 已发布 |
+| 2026-09-12 19:46:36 | 视觉算法落地4类成本吃掉预算 | 机器视觉 | 36386 | https://openlab.cosmoplat.com/article-detils?id=36386&articleType=0 | 已发布 |
+| 2026-09-13 11:53:19 | 300台设备凌晨失联，暴露边缘接入短板 | 边缘计算 | 36412 | https://openlab.cosmoplat.com/article-detils?id=36412&articleType=0 | 已发布 |
+| 2026-09-13 12:16:00 | 把算力调度从抢资源变成算任务 | 云原生 | 36414 | https://openlab.cosmoplat.com/article-detils?id=36414&articleType=0 | 已发布 |
+| 2026-09-13 13:28:21 | AI红队72小时打穿大模型防线 | 安全 | 36416 | https://openlab.cosmoplat.com/article-detils?id=36416&articleType=0 | 已发布 |
+| 2026-09-13 14:23:30 | 私有化部署别只算显卡 微调数据决定模型下限 | 人工智能 | 36418 | https://openlab.cosmoplat.com/article-detils?id=36418&articleType=0 | 已发布 |
+| 2026-09-14 11:34:15 | 多模态大模型进厂，少停8小时 | 人工智能 | 36448 | https://openlab.cosmoplat.com/article-detils?id=36448&articleType=0 | 已发布 |
+| 2026-09-14 12:07:06 | 云账单降22%的四步治理法 | 云计算 | 36450 | https://openlab.cosmoplat.com/article-detils?id=36450&articleType=0 | 已发布 |
+| 2026-09-14 12:55:21 | 联盟链别只谈共识，业务闭环才是胜负手 | 区块链 | 36452 | https://openlab.cosmoplat.com/article-detils?id=36452&articleType=0 | 已发布 |
+| 2026-09-14 16:39:14 | 3张表1个看板 中小工厂少花冤枉钱 | 智能制造 | 36454 | https://openlab.cosmoplat.com/article-detils?id=36454&articleType=0 | 已发布 |
+| 2026-09-15 12:30:49 | 工业连接数翻5倍，瓶颈从网络变成数据 | 物联网 | 36480 | https://openlab.cosmoplat.com/article-detils?id=36480&articleType=0 | 已发布 |
+| 2026-09-15 14:09:27 | 中间件99.99%背后不是堆机器 | 中间件 | 36482 | https://openlab.cosmoplat.com/article-detils?id=36482&articleType=0 | 已发布 |
+| 2026-09-15 14:12:15 | 工业相机怎么挑？5个参数定成败 | 机器视觉 | 36484 | https://openlab.cosmoplat.com/article-detils?id=36484&articleType=0 | 已发布 |
+| 2026-09-15 19:05:03 | 一物一码如何打通工厂数据孤岛 | 标识解析 | 36490 | https://openlab.cosmoplat.com/article-detils?id=36490&articleType=0 | 已发布 |
+| 2026-09-16 10:28:27 | HPC上云省钱，关键不在GPU单价 | 云计算 | 36516 | https://openlab.cosmoplat.com/article-detils?id=36516&articleType=0 | 已发布 |
+| 2026-09-16 10:29:08 | AI打AI 攻防窗口从小时压到分钟 | 安全 | 36518 | https://openlab.cosmoplat.com/article-detils?id=36518&articleType=0 | 已发布 |
+| 2026-09-16 12:53:10 | 100TB数据为何不能入账 | 数据要素 | 36520 | https://openlab.cosmoplat.com/article-detils?id=36520&articleType=0 | 已发布 |
+| 2026-09-16 16:08:33 | 设备数据脏三成，治理要从边缘开始 | 物联网 | 36522 | https://openlab.cosmoplat.com/article-detils?id=36522&articleType=0 | 已发布 |
+| 2026-09-17 09:04:10 | 工业连接数破亿，瓶颈不是带宽 | 物联网 | 36546 | https://openlab.cosmoplat.com/article-detils?id=36546&articleType=0 | 已发布 |
+| 2026-09-17 13:52:42 | 视觉算法落地，成本大头藏在模型外 | 机器视觉 | 36550 | https://openlab.cosmoplat.com/article-detils?id=36550&articleType=0 | 已发布 |
+| 2026-09-17 18:03:44 | 边缘设备接入从能连到管好只差身份与状态 | 边缘计算 | 36552 | https://openlab.cosmoplat.com/article-detils?id=36552&articleType=0 | 已发布 |
+| 2026-09-17 18:26:33 | 3800万条数据卖不出价，企业差在三步 | 数据要素 | 36554 | https://openlab.cosmoplat.com/article-detils?id=36554&articleType=0 | 已发布 |
+| 2026-09-18 12:25:05 | 把30%推理压到边缘的云边协同方案 | 边缘计算 | 36580 | https://openlab.cosmoplat.com/article-detils?id=36580&articleType=0 | 已发布 |
+| 2026-09-18 14:51:43 | K8s运维别再背锅 3条主线救回集群 | 云原生 | 36582 | https://openlab.cosmoplat.com/article-detils?id=36582&articleType=0 | 已发布 |
+| 2026-09-18 17:43:55 | 零信任落地先补身份账再拆边界 | 安全 | 36586 | https://openlab.cosmoplat.com/article-detils?id=36586&articleType=0 | 已发布 |
+| 2026-09-18 18:41:45 | 数据变资产，先确权再定价 | 数据要素 | 36588 | https://openlab.cosmoplat.com/article-detils?id=36588&articleType=0 | 已发布 |
 
 ## 记录
 
