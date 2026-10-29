@@ -70,13 +70,13 @@ Agent 在任务执行过程中发现的条目应遵循以下格式：
   - 发布完成后 runner.py 会自动调用 fetch_articles.py 刷新台账数据，无需手动拉取
 
 [发文质量持续改进]
-- Date: 2026-09-21
+- Date: 2026-10-26
 - Context: review_engine.py 每周一基于综合评分自动沉淀优化建议
 - Instructions:
   - 每周一更新综合评分后，自动同步优化建议到 .cosmocode/docs/质量改进记录.md 与 .cosmocode/quality_tasks.md
-  - 最新周期 2026-09-14~2026-09-20 综合分 82，当前短板维度：可读表达、完整性结构
+  - 最新周期 2026-10-19~2026-10-25 综合分 89，当前短板维度：传播表现、可读表达
+  - 改进要点：打磨标题信息量与钩子，摘要直击痛点，首段前三句抓住读者
   - 改进要点：每段聚焦单一论点并控制段落长度，增强小标题引导与图文呼应
-  - 改进要点：强化「引言-分论点-结论」框架，每个分论点配数据、案例或引用其一
   - 创作新文章前，先核对 quality_tasks.md 的未完成改进项并主动应用
   - 周综合评分低于 85 时，下批文章发布前必须优先落实对应改进要点
 
@@ -85,12 +85,12 @@ Agent 在任务执行过程中发现的条目应遵循以下格式：
 - Context: 用户明确正文配图与封面图的来源与处理方式，并因文章配图重复要求扩展图源
 - Instructions:
   - 正文配图从以下网站检索并确认所用为免费图（非付费/非授权受限），正文中直接引用图片链接：https://www.magnific.com/、https://www.pexels.com/zh-cn/、https://unsplash.com/、https://pixabay.com/
-  - 封面图必须下载到工作区再上传，保存目录按文章主题区分：/workspace/bot/covers/<主题关键词>/（如 ai、smart-manufacturing、cloud-native、industrial-internet）
-  - 封面图按主题归类，避免同一张图在多篇文章中混用
-  - 配图主题化池：IMAGE_POOL 73 张全部为记忆确认主题的 Unsplash 图，按 theme 分组（ai 11/code 9/dc 12/ind 15/data 9/abs 17）；THEMES 映射文章分类→主题组，pick_images(category) 优先分类主题组取图、不足时扩展相邻组、全池耗尽重置（保留 recent 最近9张避免立即重复）；每次发文取3张（正文2+封面1），全局去重记录于 bot/used_images.json；Pexels 随机扫描图（主题未知）已移除
+  - 封面图必须下载到工作区再上传，保存目录按文章主题区分：/workspace/bot/covers/<主题关键词>/（如 ai、smart-manufacturing、cloud-native、industrial-internet），按主题归类避免同一张图在多篇文章混用
+  - 配图主题化池：IMAGE_POOL 73 张全部为记忆确认主题的 Unsplash 图，按 theme 分组（ai 11/code 9/dc 12/ind 15/data 9/abs 17）；2026-09-22 起 pick_images 优先走 Pexels API 动态搜图（bot/image_source.py，key 存 bot/pexels_key.txt 不入 git；按 LLM 输出的 image_query 英文词搜图，photo id 全局去重，下载前校验大小/可达），静态池仅作无 key 或失败回退，recent 保留 60 张；每次发文取3张（正文2+封面1），全局去重记录于 bot/used_images.json
   - 主题分组：ai=机器人/AI/对话，code=代码编程，dc=数据中心/服务器/芯片，ind=工业制造/自动化，data=数据图表/分析，abs=抽象科技/网络；LLM 无视觉能力、Pexels/Unsplash 检索与详情页均反爬，故主题标签靠记忆标注并逐一验证可达性
   - 图源可达性结论：images.unsplash.com 与 images.pexels.com 直链可达（生成/下载用）；但发布 save 前必须转存平台 OSS（见「社区发文 bot 运行方式」），不能依赖平台抓取外链；magnific.com 是 AI 放大工具无免费图库；pixabay 搜索需 API key 且部分 CDN 图 hotlink 403，故暂未纳入池
-  - 发一篇配图流程：generate() 正文保留 IMAGE1/IMAGE2 占位→run() 调 pick_images() 选图替换占位并下载封面→发布成功后将3张图 keys 记入 used_images.json 对应文章
+  - 发一篇配图流程：generate() 正文保留 IMAGE1/IMAGE2 占位→插图路径：gen_plan 调 illustration.illustrate() 出 2 图+封面，占位改 [[IMG1]]/[[IMG2]] 并记 body_image_files，发布时品牌/敏感检查通过后再上传替换（OSS 域名含 cosmoplat 会误触品牌词）；图库路径：run() 调 pick_images() 直接替换→成功后记 used_images.json
+  - 每日发文与前端「发一篇」临时文章配图都优先线稿插图（用户 2026-10-29 指令）：走文生图 MCP（bot/illustration.py，工具 generate_image，size=1792x1024、style=sketch、response_format=b64_json，约 2 分钟/张），LLM 选 2 个认知锚点出 2 张正文图+1 张封面，Pillow 压成 JPEG（正文<880KB、封面 800x400）；shots 的 LLM 输出解析失败会重试一次、再失败用通用锚点兜底（错误写 bot/illustration_errors.log）；MCP 不可用/超时/超预算自动回退 Pexels/静态图库，保证任何情况都能发；技能源码 /root/.claude/skills/ian-xiaohei-illustrations（源自 github.com/David-Lee-Q/line-drawing）
 
 [飞书报告定时推送]
 - Date: 2026-08-08

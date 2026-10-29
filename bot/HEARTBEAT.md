@@ -1,6 +1,6 @@
 # HEARTBEAT - 社区发文记录
 
-## 2026-09-22 发布清单
+## 2026-10-29 发布清单
 
 | 计划时间 | 标题 | 分类 | 文章ID | 详情URL | 状态 |
 |----------|------|------|--------|---------|------|
@@ -123,6 +123,153 @@
 | 2026-09-22 10:25:15 | AI写码越快，返工越多？3个指标控风险 | 编程与开发 | 36700 | https://openlab.cosmoplat.com/article-detils?id=36700&articleType=0 | 已发布 |
 | 2026-09-22 14:19:03 | 云原生安全真正漏点在镜像与运行时 | 云原生 | 36702 | https://openlab.cosmoplat.com/article-detils?id=36702&articleType=0 | 已发布 |
 | 2026-09-22 16:58:54 | 从产线到数据闭环，智能工厂少走弯路的5个节点 | 智能制造 | 36706 | https://openlab.cosmoplat.com/article-detils?id=36706&articleType=0 | 已发布 |
+| 2026-09-22 17:54:08 | 产线改造从3周变3天，靠的不是更多接口 | 工业操作系统 | 36710 | https://openlab.cosmoplat.com/article-detils?id=36710&articleType=0 | 已发布 |
+| 2026-09-23 11:35:48 | 云账单瘦身30%的治理路径 | 云计算 | 36736 | https://openlab.cosmoplat.com/article-detils?id=36736&articleType=0 | 已发布 |
+| 2026-09-23 16:58:56 | 数据要素流通难，工厂最贵资产仍在沉睡 | 数据要素 | 36740 | https://openlab.cosmoplat.com/article-detils?id=36740&articleType=0 | 已发布 |
+| 2026-09-23 18:53:10 | API网关不是转发器，3个指标定生死 | 微服务 | 36742 | https://openlab.cosmoplat.com/article-detils?id=36742&articleType=0 | 已发布 |
+| 2026-09-23 19:16:00 | 视觉算法上产线开销PoC到量产差在哪 | 机器视觉 | 36744 | https://openlab.cosmoplat.com/article-detils?id=36744&articleType=0 | 已发布 |
+| 2026-09-24 12:15:35 | 云边协同让90%工业数据留在厂边 | 边缘计算 | 36770 | https://openlab.cosmoplat.com/article-detils?id=36770&articleType=0 | 已发布 |
+| 2026-09-24 13:37:06 | 混合云选型先算三笔账 | 云计算 | 36772 | https://openlab.cosmoplat.com/article-detils?id=36772&articleType=0 | 已发布 |
+| 2026-09-24 15:14:52 | 视觉算法落地，1%误检比GPU更烧钱 | 机器视觉 | 36774 | https://openlab.cosmoplat.com/article-detils?id=36774&articleType=0 | 已发布 |
+| 2026-09-24 17:02:36 | 微服务拆错，比单体还贵 | 微服务 | 36776 | https://openlab.cosmoplat.com/article-detils?id=36776&articleType=0 | 已发布 |
+| 2026-09-25 10:55:25 | 5G进厂，先别急着换专网 | 智能制造 | 36804 | https://openlab.cosmoplat.com/article-detils?id=36804&articleType=0 | 已发布 |
+| 2026-09-25 10:56:41 | 私有化大模型落地，微调不是越大越好 | 人工智能 | 36806 | https://openlab.cosmoplat.com/article-detils?id=36806&articleType=0 | 已发布 |
+| 2026-09-25 12:56:11 | 企业数据变资产，先过确权、计量、流通三道关 | 数据要素 | 36808 | https://openlab.cosmoplat.com/article-detils?id=36808&articleType=0 | 已发布 |
+| 2026-09-25 13:38:20 | 大模型进厂最大坑不是模型是数据 | 人工智能 | 36810 | https://openlab.cosmoplat.com/article-detils?id=36810&articleType=0 | 已发布 |
+| 2026-09-26 10:01:28 | 99.99%不是装饰 中间件高可用三道防线 | 中间件 | 36838 | https://openlab.cosmoplat.com/article-detils?id=36838&articleType=0 | 已发布 |
+| 2026-09-26 14:54:00 | 国产工业软件，难在产线不在功能 | 智能制造 | 36840 | https://openlab.cosmoplat.com/article-detils?id=36840&articleType=0 | 已发布 |
+| 2026-09-26 18:54:40 | 云原生安全四道防线堵住运行时风险 | 安全 | 36842 | https://openlab.cosmoplat.com/article-detils?id=36842&articleType=0 | 已发布 |
+| 2026-09-26 19:59:14 | 抓取成功率差5%，产线节拍掉三成 | 机器视觉 | 36844 | https://openlab.cosmoplat.com/article-detils?id=36844&articleType=0 | 已发布 |
+| 2026-09-27 08:05:50 | 低代码拖拽只是入口工程化才是护城河 | 编程与开发 | 36866 | https://openlab.cosmoplat.com/article-detils?id=36866&articleType=0 | 已发布 |
+| 2026-09-27 11:30:24 | 园区网故障定位从45分钟到8分钟 | 网络 | 36868 | https://openlab.cosmoplat.com/article-detils?id=36868&articleType=0 | 已发布 |
+| 2026-09-27 11:39:39 | IPv6进厂，10万台设备不再抢IP | 网络 | 36870 | https://openlab.cosmoplat.com/article-detils?id=36870&articleType=0 | 已发布 |
+| 2026-09-27 17:45:02 | 拆错一个服务，成本多付3倍 | 微服务 | 36872 | https://openlab.cosmoplat.com/article-detils?id=36872&articleType=0 | 已发布 |
+| 2026-09-28 08:58:18 | 七成攻击从依赖进来，供应链安全治理该换打法了 | 安全 | 36896 | https://openlab.cosmoplat.com/article-detils?id=36896&articleType=0 | 已发布 |
+| 2026-09-28 16:00:34 | 工业OS平台化 不是套壳是重构 | 工业操作系统 | 36910 | https://openlab.cosmoplat.com/article-detils?id=36910&articleType=0 | 已发布 |
+| 2026-09-28 16:21:12 | API网关不是反向代理这4个坑我全踩过 | 云原生 | 36912 | https://openlab.cosmoplat.com/article-detils?id=36912&articleType=0 | 已发布 |
+| 2026-09-28 18:17:10 | 代码质量不靠人肉审查 靠这4道流水线闸门 | 编程与开发 | 36916 | https://openlab.cosmoplat.com/article-detils?id=36916&articleType=0 | 已发布 |
+| 2026-09-29 08:34:44 | 数仓没死 湖仓一体正在重写数据底座 | 大数据 | 36956 | https://openlab.cosmoplat.com/article-detils?id=36956&articleType=0 | 已发布 |
+| 2026-09-29 11:03:07 | 全量Sidecar不是服务网格的最优解 | 云原生 | 36960 | https://openlab.cosmoplat.com/article-detils?id=36960&articleType=0 | 已发布 |
+| 2026-09-29 13:35:42 | 网络切片抖动50微秒确定性网络才是解药 | 网络 | 36964 | https://openlab.cosmoplat.com/article-detils?id=36964&articleType=0 | 已发布 |
+| 2026-09-29 14:08:42 | 产线延迟砍到18毫秒 我们拆了云端方案 | 边缘计算 | 36966 | https://openlab.cosmoplat.com/article-detils?id=36966&articleType=0 | 已发布 |
+| 2026-09-30 16:23:49 | 数据变现不是卖数据，是卖结果 | 数据要素 | 37006 | https://openlab.cosmoplat.com/article-detils?id=37006&articleType=0 | 已发布 |
+| 2026-09-30 16:58:45 | 工业标识体系不是打码 是数据主权入口 | 标识解析 | 37008 | https://openlab.cosmoplat.com/article-detils?id=37008&articleType=0 | 已发布 |
+| 2026-09-30 17:25:18 | 边缘节点调度别照搬K8s，先看这3个坑 | 边缘计算 | 37012 | https://openlab.cosmoplat.com/article-detils?id=37012&articleType=0 | 已发布 |
+| 2026-09-30 18:10:25 | 工厂 IPv6 部署：90% 的故障出在地址规划 | 网络 | 37014 | https://openlab.cosmoplat.com/article-detils?id=37014&articleType=0 | 已发布 |
+| 2026-10-01 08:28:59 | 质检AI改造九成精力耗在数据对齐 | 机器视觉 | 37036 | https://openlab.cosmoplat.com/article-detils?id=37036&articleType=0 | 已发布 |
+| 2026-10-01 09:24:37 | 用AI对抗AI 防守窗口只剩毫秒 | 安全 | 37038 | https://openlab.cosmoplat.com/article-detils?id=37038&articleType=0 | 已发布 |
+| 2026-10-01 13:16:11 | 99.99%可用性 中间件高可用七道防线 | 中间件 | 37042 | https://openlab.cosmoplat.com/article-detils?id=37042&articleType=0 | 已发布 |
+| 2026-10-01 13:28:36 | 吞吐量高也翻车 消息队列选型的三个真相 | 中间件 | 37044 | https://openlab.cosmoplat.com/article-detils?id=37044&articleType=0 | 已发布 |
+| 2026-10-02 10:06:38 | AI钓鱼点击率高30% 防守方还在靠规则库？ | 安全 | 37066 | https://openlab.cosmoplat.com/article-detils?id=37066&articleType=0 | 已发布 |
+| 2026-10-02 10:31:59 | 工厂断网30分钟 云边协同怎么扛 | 边缘计算 | 37068 | https://openlab.cosmoplat.com/article-detils?id=37068&articleType=0 | 已发布 |
+| 2026-10-02 16:00:31 | 网络抖动1毫秒，焊装线停了6小时 | 网络 | 37072 | https://openlab.cosmoplat.com/article-detils?id=37072&articleType=0 | 已发布 |
+| 2026-10-02 16:57:19 | 分布式事务别急着上TCC先看3个失败场景 | 微服务 | 37074 | https://openlab.cosmoplat.com/article-detils?id=37074&articleType=0 | 已发布 |
+| 2026-10-03 10:54:54 | 标识体系做错这3步，追溯直接失效 | 标识解析 | 37100 | https://openlab.cosmoplat.com/article-detils?id=37100&articleType=0 | 已发布 |
+| 2026-10-03 12:01:14 | AI攻AI防，别把裁决权交给同一个模型 | 安全 | 37102 | https://openlab.cosmoplat.com/article-detils?id=37102&articleType=0 | 已发布 |
+| 2026-10-03 17:18:53 | 漏检率0.3%到0.02%的质检AI改造复盘 | 智能制造 | 37104 | https://openlab.cosmoplat.com/article-detils?id=37104&articleType=0 | 已发布 |
+| 2026-10-03 19:51:17 | 低代码平台省下的时间 为什么总在运维期还回去 | 编程与开发 | 37108 | https://openlab.cosmoplat.com/article-detils?id=37108&articleType=0 | 已发布 |
+| 2026-10-04 09:46:10 | 数据能卖钱？先解决确权定价交割三座大山 | 数据要素 | 37134 | https://openlab.cosmoplat.com/article-detils?id=37134&articleType=0 | 已发布 |
+| 2026-10-04 10:57:09 | 订单只剩1件也要接，柔性产线怎么算账 | 智能制造 | 37136 | https://openlab.cosmoplat.com/article-detils?id=37136&articleType=0 | 已发布 |
+| 2026-10-04 13:54:16 | 工业区块链别只做溯源 这4类结算更刚需 | 区块链 | 37138 | https://openlab.cosmoplat.com/article-detils?id=37138&articleType=0 | 已发布 |
+| 2026-10-04 14:33:19 | 8个工具降40%耗时？开发者效率工具链拆解 | 编程与开发 | 37140 | https://openlab.cosmoplat.com/article-detils?id=37140&articleType=0 | 已发布 |
+| 2026-10-05 08:39:36 | 服务网格落地三年 我砍掉了七成Sidecar | 云原生 | 37162 | https://openlab.cosmoplat.com/article-detils?id=37162&articleType=0 | 已发布 |
+| 2026-10-05 15:06:08 | 数据治理投入千万 为何还要手工对数 | 大数据 | 37168 | https://openlab.cosmoplat.com/article-detils?id=37168&articleType=0 | 已发布 |
+| 2026-10-05 16:47:00 | 工厂IPv6部署80%问题不在协议栈 | 网络 | 37170 | https://openlab.cosmoplat.com/article-detils?id=37170&articleType=0 | 已发布 |
+| 2026-10-05 19:58:12 | 60%的IoT项目卡在边缘接入这一步 | 边缘计算 | 37174 | https://openlab.cosmoplat.com/article-detils?id=37174&articleType=0 | 已发布 |
+| 2026-10-06 13:17:38 | 网格上生产前，先算清三笔账 | 云原生 | 37198 | https://openlab.cosmoplat.com/article-detils?id=37198&articleType=0 | 已发布 |
+| 2026-10-06 13:49:47 | 开发者每天浪费2小时，工具链该砍掉什么 | 编程与开发 | 37200 | https://openlab.cosmoplat.com/article-detils?id=37200&articleType=0 | 已发布 |
+| 2026-10-06 15:30:19 | 工业OS的生死线不是技术是复用 | 工业操作系统 | 37202 | https://openlab.cosmoplat.com/article-detils?id=37202&articleType=0 | 已发布 |
+| 2026-10-06 16:07:00 | 按数据库表拆微服务，是项目崩盘的开始 | 微服务 | 37206 | https://openlab.cosmoplat.com/article-detils?id=37206&articleType=0 | 已发布 |
+| 2026-10-07 08:27:59 | 三份日志对不上，数据确权卡在哪 | 数据要素 | 37226 | https://openlab.cosmoplat.com/article-detils?id=37226&articleType=0 | 已发布 |
+| 2026-10-07 09:54:15 | 300个二级节点，为何解析量上不去 | 标识解析 | 37230 | https://openlab.cosmoplat.com/article-detils?id=37230&articleType=0 | 已发布 |
+| 2026-10-07 13:13:40 | 砸了千万的数字化，为何车间不买账 | 智能制造 | 37236 | https://openlab.cosmoplat.com/article-detils?id=37236&articleType=0 | 已发布 |
+| 2026-10-07 15:31:38 | AI补全80%代码剩下20%才是深坑 | 编程与开发 | 37238 | https://openlab.cosmoplat.com/article-detils?id=37238&articleType=0 | 已发布 |
+| 2026-10-08 08:15:31 | 工业操作系统平台化不是装应用商店 | 工业操作系统 | 37264 | https://openlab.cosmoplat.com/article-detils?id=37264&articleType=0 | 已发布 |
+| 2026-10-08 08:44:28 | 云原生安全崩在最信任的默认配置 | 云原生 | 37266 | https://openlab.cosmoplat.com/article-detils?id=37266&articleType=0 | 已发布 |
+| 2026-10-08 11:27:57 | 工控数据合规 最易踩的五个盲区 | 安全 | 37278 | https://openlab.cosmoplat.com/article-detils?id=37278&articleType=0 | 已发布 |
+| 2026-10-08 16:53:23 | 二级节点建了却不用 标识解析缺什么 | 标识解析 | 37288 | https://openlab.cosmoplat.com/article-detils?id=37288&articleType=0 | 已发布 |
+| 2026-10-09 08:21:03 | 算力搬进车间 产线延迟从80ms降到5ms | 边缘计算 | 37320 | https://openlab.cosmoplat.com/article-detils?id=37320&articleType=0 | 已发布 |
+| 2026-10-09 08:47:21 | 混合云选型 80% 的坑不在技术 | 云计算 | 37322 | https://openlab.cosmoplat.com/article-detils?id=37322&articleType=0 | 已发布 |
+| 2026-10-09 14:11:51 | 园区网六成故障不在设备 在变更 | 网络 | 37334 | https://openlab.cosmoplat.com/article-detils?id=37334&articleType=0 | 已发布 |
+| 2026-10-09 16:47:15 | 一物一码救不了工厂 标识体系才行 | 标识解析 | 37344 | https://openlab.cosmoplat.com/article-detils?id=37344&articleType=0 | 已发布 |
+| 2026-10-10 16:11:45 | 视觉算法上产线为何总超预算 | 机器视觉 | 37380 | https://openlab.cosmoplat.com/article-detils?id=37380&articleType=0 | 已发布 |
+| 2026-10-10 16:23:20 | 一条产线混产百种型号，柔性制造靠什么 | 智能制造 | 37384 | https://openlab.cosmoplat.com/article-detils?id=37384&articleType=0 | 已发布 |
+| 2026-10-10 18:06:18 | 边缘调度算力够用为何时延仍飙到200ms | 边缘计算 | 37396 | https://openlab.cosmoplat.com/article-detils?id=37396&articleType=0 | 已发布 |
+| 2026-10-10 19:17:40 | 工业PaaS堆了API，为何生态仍难闭环 | 工业操作系统 | 37400 | https://openlab.cosmoplat.com/article-detils?id=37400&articleType=0 | 已发布 |
+| 2026-10-11 10:33:12 | 给100万台设备发身份证，为何仍挡不住伪造 | 标识解析 | 37426 | https://openlab.cosmoplat.com/article-detils?id=37426&articleType=0 | 已发布 |
+| 2026-10-11 11:12:33 | 80%的误检不是算法问题 相机选型第一步就错 | 机器视觉 | 37430 | https://openlab.cosmoplat.com/article-detils?id=37430&articleType=0 | 已发布 |
+| 2026-10-11 11:55:21 | 工业多模态大模型落地，卡在数据而非参数 | 人工智能 | 37434 | https://openlab.cosmoplat.com/article-detils?id=37434&articleType=0 | 已发布 |
+| 2026-10-11 18:13:33 | 数据入表不等于资产化，缺哪三张底牌？ | 数据要素 | 37444 | https://openlab.cosmoplat.com/article-detils?id=37444&articleType=0 | 已发布 |
+| 2026-10-12 08:41:44 | 80%的联调时间，耗在设备接入标准不统一 | 物联网 | 37468 | https://openlab.cosmoplat.com/article-detils?id=37468&articleType=0 | 已发布 |
+| 2026-10-12 09:00:15 | 32.85ZB数据沉睡 市场化卡在哪 | 数据要素 | 37472 | https://openlab.cosmoplat.com/article-detils?id=37472&articleType=0 | 已发布 |
+| 2026-10-12 11:18:32 | 10万台边缘设备接入后 运维为何先撑不住 | 边缘计算 | 37476 | https://openlab.cosmoplat.com/article-detils?id=37476&articleType=0 | 已发布 |
+| 2026-10-12 19:16:10 | 一个零件37种编码 工业标识如何统一 | 标识解析 | 37494 | https://openlab.cosmoplat.com/article-detils?id=37494&articleType=0 | 已发布 |
+| 2026-10-13 15:17:52 | 别再把 AI Agent 当企业聊天助手 | 人工智能 | 37528 | https://openlab.cosmoplat.com/article-detils?id=37528&articleType=0 | 已发布 |
+| 2026-10-13 15:23:18 | 服务网格上生产前 先算清三笔账 | 云原生 | 37530 | https://openlab.cosmoplat.com/article-detils?id=37530&articleType=0 | 已发布 |
+| 2026-10-13 19:31:10 | 传感器没坏 数据先烂了 物联网数据质量治理 | 物联网 | 37542 | https://openlab.cosmoplat.com/article-detils?id=37542&articleType=0 | 已发布 |
+| 2026-10-13 19:39:00 | 中小制造数字化 最贵的不是软件是试错 | 智能制造 | 37544 | https://openlab.cosmoplat.com/article-detils?id=37544&articleType=0 | 已发布 |
+| 2026-10-14 09:13:10 | 七成平台工程试点停摆 问题不在工具 | 云原生 | 37566 | https://openlab.cosmoplat.com/article-detils?id=37566&articleType=0 | 已发布 |
+| 2026-10-14 09:52:18 | 国产工业软件份额不足10%，卡点不在算法 | 智能制造 | 37570 | https://openlab.cosmoplat.com/article-detils?id=37570&articleType=0 | 已发布 |
+| 2026-10-14 10:25:53 | AI Agent 重塑工作流，先过 4 道坎 | 人工智能 | 37574 | https://openlab.cosmoplat.com/article-detils?id=37574&articleType=0 | 已发布 |
+| 2026-10-14 19:51:49 | 云边协同延迟降10倍背后的架构代价 | 边缘计算 | 37600 | https://openlab.cosmoplat.com/article-detils?id=37600&articleType=0 | 已发布 |
+| 2026-10-15 10:44:57 | 1600亿数据交易市场，场内为何冷清 | 数据要素 | 37640 | https://openlab.cosmoplat.com/article-detils?id=37640&articleType=0 | 已发布 |
+| 2026-10-15 11:13:27 | 平均 500 个依赖，供应链攻击为何防不住？ | 安全 | 37642 | https://openlab.cosmoplat.com/article-detils?id=37642&articleType=0 | 已发布 |
+| 2026-10-15 18:27:43 | 深夜救火 园区网80%故障不在设备 | 网络 | 37686 | https://openlab.cosmoplat.com/article-detils?id=37686&articleType=0 | 已发布 |
+| 2026-10-15 19:28:23 | 5G基站已超425万，工厂产线为何还靠网线？ | 智能制造 | 37690 | https://openlab.cosmoplat.com/article-detils?id=37690&articleType=0 | 已发布 |
+| 2026-10-16 09:33:29 | 别再迷信双机热备 中间件高可用真相 | 中间件 | 37746 | https://openlab.cosmoplat.com/article-detils?id=37746&articleType=0 | 已发布 |
+| 2026-10-16 09:46:38 | AI Agent接管工作流前先补这3课 | 人工智能 | 37748 | https://openlab.cosmoplat.com/article-detils?id=37748&articleType=0 | 已发布 |
+| 2026-10-16 15:12:16 | 抓取成功率卡在85% 问题不在相机 | 机器视觉 | 37752 | https://openlab.cosmoplat.com/article-detils?id=37752&articleType=0 | 已发布 |
+| 2026-10-16 17:34:47 | 容器化3年，我把K8s故障率降了80% | 云原生 | 37780 | https://openlab.cosmoplat.com/article-detils?id=37780&articleType=0 | 已发布 |
+| 2026-10-17 09:07:18 | 工业软件国产化，卡点不在代码在数学 | 智能制造 | 37800 | https://openlab.cosmoplat.com/article-detils?id=37800&articleType=0 | 已发布 |
+| 2026-10-17 10:06:39 | 混合云选型 80%的账单在资源之外 | 云计算 | 37804 | https://openlab.cosmoplat.com/article-detils?id=37804&articleType=0 | 已发布 |
+| 2026-10-17 14:46:32 | 服务网格可观测性为何越监控越模糊 | 云原生 | 37806 | https://openlab.cosmoplat.com/article-detils?id=37806&articleType=0 | 已发布 |
+| 2026-10-17 17:03:36 | 多模态大模型进工厂 先过三道脏数据关 | 人工智能 | 37808 | https://openlab.cosmoplat.com/article-detils?id=37808&articleType=0 | 已发布 |
+| 2026-10-18 08:14:21 | 18家公司入表1亿，数据资产还在挤水分 | 数据要素 | 37830 | https://openlab.cosmoplat.com/article-detils?id=37830&articleType=0 | 已发布 |
+| 2026-10-18 15:33:18 | 上线前夜改Bug 代码质量得用工程化兜底 | 编程与开发 | 37834 | https://openlab.cosmoplat.com/article-detils?id=37834&articleType=0 | 已发布 |
+| 2026-10-18 16:27:54 | 3个副本救不了中间件高可用 | 中间件 | 37836 | https://openlab.cosmoplat.com/article-detils?id=37836&articleType=0 | 已发布 |
+| 2026-10-18 19:55:54 | 混合云选型别只看成本 三个盲区 | 云计算 | 37838 | https://openlab.cosmoplat.com/article-detils?id=37838&articleType=0 | 已发布 |
+| 2026-10-19 08:58:55 | 工业相机选错一个参数整条产线白干 | 机器视觉 | 37860 | https://openlab.cosmoplat.com/article-detils?id=37860&articleType=0 | 已发布 |
+| 2026-10-19 10:01:11 | 推理成本打一折，哪些产业先重估 | 人工智能 | 37864 | https://openlab.cosmoplat.com/article-detils?id=37864&articleType=0 | 已发布 |
+| 2026-10-19 14:37:48 | 供应链数据互信 先解决这3个断点 | 区块链 | 37868 | https://openlab.cosmoplat.com/article-detils?id=37868&articleType=0 | 已发布 |
+| 2026-10-19 18:41:18 | 传感器漂移正在拖垮你的AI模型 | 物联网 | 37870 | https://openlab.cosmoplat.com/article-detils?id=37870&articleType=0 | 已发布 |
+| 2026-10-20 11:52:36 | 吞吐量最高的MQ，为什么让我们丢了订单 | 中间件 | 37872 | https://openlab.cosmoplat.com/article-detils?id=37872&articleType=0 | 已发布 |
+| 2026-10-20 17:14:39 | 选错一颗工业相机 整条产线良率跌了17% | 机器视觉 | 37874 | https://openlab.cosmoplat.com/article-detils?id=37874&articleType=0 | 已发布 |
+| 2026-10-20 18:14:35 | 数据入表不是记账 先过四道确认关 | 数据要素 | 37876 | https://openlab.cosmoplat.com/article-detils?id=37876&articleType=0 | 已发布 |
+| 2026-10-20 19:36:26 | 延迟超10毫秒就停机 产线算力必须下沉 | 边缘计算 | 37878 | https://openlab.cosmoplat.com/article-detils?id=37878&articleType=0 | 已发布 |
+| 2026-10-21 08:13:40 | 云边协同真正难的是状态同步 | 边缘计算 | 37918 | https://openlab.cosmoplat.com/article-detils?id=37918&articleType=0 | 已发布 |
+| 2026-10-21 12:47:32 | 大模型进工厂，别把Demo当产能 | 人工智能 | 37922 | https://openlab.cosmoplat.com/article-detils?id=37922&articleType=0 | 已发布 |
+| 2026-10-21 13:43:03 | 选错消息队列，一次积压丢了80万订单 | 中间件 | 37924 | https://openlab.cosmoplat.com/article-detils?id=37924&articleType=0 | 已发布 |
+| 2026-10-21 19:47:55 | 工厂上IPv6 先填平照搬办公网的三个坑 | 网络 | 37926 | https://openlab.cosmoplat.com/article-detils?id=37926&articleType=0 | 已发布 |
+| 2026-10-22 08:01:07 | 99%的云安全失败，都写在那份YAML里 | 云原生 | 37946 | https://openlab.cosmoplat.com/article-detils?id=37946&articleType=0 | 已发布 |
+| 2026-10-22 08:11:55 | 工业数据合规，先拆掉三张伪安全台账 | 安全 | 37948 | https://openlab.cosmoplat.com/article-detils?id=37948&articleType=0 | 已发布 |
+| 2026-10-22 15:10:16 | 工业PaaS生态90%的失败都源于这3个误判 | 工业操作系统 | 37952 | https://openlab.cosmoplat.com/article-detils?id=37952&articleType=0 | 已发布 |
+| 2026-10-22 18:12:36 | 一箱货转手5次，数据对不上4次 | 区块链 | 37954 | https://openlab.cosmoplat.com/article-detils?id=37954&articleType=0 | 已发布 |
+| 2026-10-23 11:59:42 | GPU利用率从30%到80%的调度账 | 云计算 | 37976 | https://openlab.cosmoplat.com/article-detils?id=37976&articleType=0 | 已发布 |
+| 2026-10-23 14:00:31 | 2D相机漏掉的0.02毫米，3D视觉怎么补 | 机器视觉 | 37978 | https://openlab.cosmoplat.com/article-detils?id=37978&articleType=0 | 已发布 |
+| 2026-10-23 17:32:01 | 别把中间件高可用做成多副本摆设 | 中间件 | 37980 | https://openlab.cosmoplat.com/article-detils?id=37980&articleType=0 | 已发布 |
+| 2026-10-23 18:36:21 | 数据被复制10次，确权为何仍靠截图 | 数据要素 | 37982 | https://openlab.cosmoplat.com/article-detils?id=37982&articleType=0 | 已发布 |
+| 2026-10-24 08:41:49 | 5G专网建了3年，产线为何还在插网线？ | 智能制造 | 38002 | https://openlab.cosmoplat.com/article-detils?id=38002&articleType=0 | 已发布 |
+| 2026-10-24 09:05:03 | 服务网格可观测性别让Sidecar吃掉收益 | 云原生 | 38004 | https://openlab.cosmoplat.com/article-detils?id=38004&articleType=0 | 已发布 |
+| 2026-10-24 15:37:53 | 产线推理延迟从200ms压到8ms的代价 | 边缘计算 | 38008 | https://openlab.cosmoplat.com/article-detils?id=38008&articleType=0 | 已发布 |
+| 2026-10-24 17:39:09 | 云原生安全最大的漏洞不是容器 | 云原生 | 38010 | https://openlab.cosmoplat.com/article-detils?id=38010&articleType=0 | 已发布 |
+| 2026-10-25 11:11:04 | 工业多模态大模型落地，先算清三笔账 | 人工智能 | 38034 | https://openlab.cosmoplat.com/article-detils?id=38034&articleType=0 | 已发布 |
+| 2026-10-25 14:16:44 | 数据治理翻车的团队，90%先买了平台 | 大数据 | 38036 | https://openlab.cosmoplat.com/article-detils?id=38036&articleType=0 | 已发布 |
+| 2026-10-25 15:52:21 | AI打AI，攻防时差缩到分钟级 | 安全 | 38038 | https://openlab.cosmoplat.com/article-detils?id=38038&articleType=0 | 已发布 |
+| 2026-10-25 16:03:07 | 一张百万罚单背后 工业数据合规的3个死角 | 安全 | 38040 | https://openlab.cosmoplat.com/article-detils?id=38040&articleType=0 | 已发布 |
+| 2026-10-26 08:24:33 | 漏检率从3%到0.3% 多模态大模型做对了什么 | 智能制造 | 38062 | https://openlab.cosmoplat.com/article-detils?id=38062&articleType=0 | 已发布 |
+| 2026-10-26 11:23:52 | 产线每毫秒都在烧钱 算力不能全押云端 | 边缘计算 | 38068 | https://openlab.cosmoplat.com/article-detils?id=38068&articleType=0 | 已发布 |
+| 2026-10-26 16:56:25 | 数据确权卡在贡献度 上链救不了 | 数据要素 | 38072 | https://openlab.cosmoplat.com/article-detils?id=38072&articleType=0 | 已发布 |
+| 2026-10-26 18:51:53 | MQ选型别踩坑 先算清这3笔账 | 中间件 | 38074 | https://openlab.cosmoplat.com/article-detils?id=38074&articleType=0 | 已发布 |
+| 2026-10-27 08:14:35 | 一条产线停机3小时暴露的网络债 | 网络 | 38076 | https://openlab.cosmoplat.com/article-detils?id=38076&articleType=0 | 已发布 |
+| 2026-10-27 09:59:43 | 工业相机别只看像素 选型先算三笔账 | 机器视觉 | 38078 | https://openlab.cosmoplat.com/article-detils?id=38078&articleType=0 | 已发布 |
+| 2026-10-27 11:11:07 | 一物一码追溯断链，问题不在二维码 | 标识解析 | 38098 | https://openlab.cosmoplat.com/article-detils?id=38098&articleType=0 | 已发布 |
+| 2026-10-27 18:26:20 | 推理成本降90%，AI应用开始算细账 | 人工智能 | 38104 | https://openlab.cosmoplat.com/article-detils?id=38104&articleType=0 | 已发布 |
+| 2026-10-28 10:36:24 | 云边协同不是把云搬到边缘 三层架构才是关键 | 边缘计算 | 38126 | https://openlab.cosmoplat.com/article-detils?id=38126&articleType=0 | 已发布 |
+| 2026-10-28 11:14:28 | 良率卡在97% 3D视觉把漏检压到0.3% | 机器视觉 | 38128 | https://openlab.cosmoplat.com/article-detils?id=38128&articleType=0 | 已发布 |
+| 2026-10-28 17:14:30 | 数据入表一年，九成企业卡在确权与定价 | 数据要素 | 38130 | https://openlab.cosmoplat.com/article-detils?id=38130&articleType=0 | 已发布 |
+| 2026-10-28 19:36:50 | 推理成本降九成，大模型产业逻辑重写 | 人工智能 | 38132 | https://openlab.cosmoplat.com/article-detils?id=38132&articleType=0 | 已发布 |
+| 2026-10-29 11:00:32 | 数据交易卡在哪 三本账算清 | 数据要素 | 38154 | https://openlab.cosmoplat.com/article-detils?id=38154&articleType=0 | 已发布 |
+| 2026-10-29 11:31:04 | 数据上链了，供应链为何还互不信任 | 区块链 | 38156 | https://openlab.cosmoplat.com/article-detils?id=38156&articleType=0 | 已发布 |
 
 ## 记录
 

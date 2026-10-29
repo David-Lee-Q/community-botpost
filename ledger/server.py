@@ -354,7 +354,7 @@ class Handler(http.server.SimpleHTTPRequestHandler):
 def _run(prompt):
     try:
         subprocess.run([sys.executable, ONE_SHOT, prompt],
-                       capture_output=True, timeout=600)
+                       capture_output=True, timeout=900)
     finally:
         _lock.release()
 

@@ -3,6 +3,7 @@ import json
 import os
 import random
 import sys
+import time
 import uuid
 
 BOT_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -20,10 +21,13 @@ def _write_json(path, obj):
 
 sys.path.insert(0, BOT_DIR)
 import one_shot as osx  # noqa: E402
+import illustration  # noqa: E402
 
 LOOKAHEAD_DAYS = 3
 DAILY_COUNT = 4
 DAY_START, DAY_END = 8, 20  # 随机发布时间范围 08:00-20:00
+GEN_START = time.time()
+ILLU_BUDGET = 3300  # 插图生成时间预算（秒），超时后回退图库，避免 gen_plan 整体超时
 
 TOPICS = {
     "人工智能": ["大模型推理成本下降对产业的影响", "多模态大模型在工业场景的落地", "AI Agent 重塑企业工作流",
@@ -71,19 +75,39 @@ def random_times(date_str, n):
 def gen_one(direction, time_str, existing_titles):
     gen = osx.generate(direction)
     cover_path = None
-    for _ in range(5):
-        imgs = osx.pick_images(gen["category"])
-        body = (gen["body"].replace("IMAGE1", imgs["body"][0])
-                .replace("IMAGE2", imgs["body"][1]))
-        cover_path = osx.build_cover_path(gen["category"])
+    body = None
+    images = []
+    body_image_files = []
+
+    # 优先用小黑线稿插图（文生图 MCP）；超预算或失败时回退到图库
+    if time.time() - GEN_START < ILLU_BUDGET:
         try:
-            osx._download_cover(imgs["cover"], cover_path)
-            break
+            illu = illustration.illustrate(
+                gen["title"], gen["summary"], gen["body"],
+                prefix="ill-" + time_str.replace(":", "").replace(" ", "-"))
+            body = (gen["body"].replace("IMAGE1", "[[IMG1]]")
+                    .replace("IMAGE2", "[[IMG2]]"))
+            cover_path = illu["cover"]
+            body_image_files = illu["body_files"]
         except Exception as e:
-            print("封面下载失败(%s)，换图重试: %s" % (imgs["cover"], str(e)[:80]), flush=True)
-            cover_path = None
-    if cover_path is None:
-        raise RuntimeError("封面下载多次失败，无法排期")
+            print("插图失败，回退图库(%s): %s" % (gen["title"][:14], str(e)[:100]), flush=True)
+            body = None
+
+    if body is None:
+        for _ in range(5):
+            imgs = osx.pick_images(gen["category"], hint=gen.get("image_query", ""))
+            body = (gen["body"].replace("IMAGE1", imgs["body"][0])
+                    .replace("IMAGE2", imgs["body"][1]))
+            cover_path = osx.build_cover_path(gen["category"])
+            try:
+                osx._download_cover(imgs["cover"], cover_path)
+                images = [imgs["body"][0], imgs["body"][1]]
+                break
+            except Exception as e:
+                print("封面下载失败(%s)，换图重试: %s" % (imgs["cover"], str(e)[:80]), flush=True)
+                cover_path = None
+        if cover_path is None:
+            raise RuntimeError("封面下载多次失败，无法排期")
 
     os.makedirs(ARTICLES_DIR, exist_ok=True)
     article_file = os.path.join(
@@ -96,7 +120,7 @@ def gen_one(direction, time_str, existing_titles):
     return {
         "time": time_str, "title": gen["title"], "category": gen["category"],
         "file": article_file, "summary": gen["summary"],
-        "images": [imgs["body"][0], imgs["body"][1]],
+        "images": images, "body_image_files": body_image_files,
         "cover": cover_path, "status": "pending",
         "taskId": uuid.uuid4().hex,
     }

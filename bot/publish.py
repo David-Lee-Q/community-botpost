@@ -131,6 +131,43 @@ def upload_cover(token, cover_path):
     return d["data"]["path"]
 
 
+def _upload_local(token, path):
+    ext = os.path.splitext(path)[1].lower().lstrip(".") or "jpg"
+    mime = "image/png" if ext == "png" else "image/jpeg"
+    with open(path, "rb") as fh:
+        d = requests.post(
+            f"{BASE}/file/uploadFileStream?type=1",
+            headers={"s-user-token": token},
+            files={"file": (os.path.basename(path), fh, mime)},
+            timeout=90,
+        ).json()
+    if d.get("code") != 0:
+        raise RuntimeError("正文图上传失败: " + str(d))
+    return d["data"]["path"]
+
+
+def _resolve_body_images(token, body, item):
+    """把正文占位符 [[IMG1]]/[[IMG2]] 替换为平台 OSS 路径。
+
+    必须在品牌/敏感检查之后调用：OSS 域名含 cosmoplat，会误触品牌词。
+    优先用 item['body_image_files'] 的本地文件上传，其次用已就绪路径 item['body_images']/['images']。
+    """
+    files = item.get("body_image_files") or []
+    paths = item.get("body_images") or item.get("images") or []
+    for i in (1, 2):
+        ph = "[[IMG%d]]" % i
+        if ph not in body:
+            continue
+        val = None
+        if i - 1 < len(files) and files[i - 1] and os.path.exists(files[i - 1]):
+            val = _upload_local(token, files[i - 1])
+        elif i - 1 < len(paths) and paths[i - 1]:
+            val = paths[i - 1]
+        if val:
+            body = body.replace(ph, val)
+    return body
+
+
 def _rehost_body_images(token, body):
     """将正文外链图片上传平台 OSS 并替换为平台路径。
 
@@ -234,7 +271,8 @@ def publish_one(token, item):
         if hits_body:
             body = sensitive.optimize_text(body, hits_body, "正文")
 
-    # 品牌检查通过后，再转存正文外链图片（平台 OSS 域名含 cosmoplat，不能参与品牌检查）
+    # 品牌检查通过后，再解析插图占位符、转存正文外链图片（平台 OSS 域名含 cosmoplat，不能参与品牌检查）
+    body = _resolve_body_images(token, body, item)
     body = _rehost_body_images(token, body)
 
     payload = {

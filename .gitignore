@@ -52,3 +52,7 @@ logs/
 vendor/
 bot/.publish.lock
 bot/.token_state.json
+bot/pexels_key.txt
+bot/t2i_mcp.json
+bot/illustrations/
+bot/illustration_errors.log

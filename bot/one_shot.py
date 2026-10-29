@@ -19,6 +19,7 @@ USED_FILE = os.path.join(BOT_DIR, "used_images.json")
 sys.path.insert(0, BOT_DIR)
 from publish import CATEGORY_IDS, get_token, publish_one  # noqa: E402
 import sensitive  # noqa: E402
+import image_source  # noqa: E402
 
 IMG_BASE = "https://images.unsplash.com/{}?w=800&q=80"
 COVER_BASE = "https://images.unsplash.com/{}?w=800&h=400&fit=crop&q=80"
@@ -154,29 +155,43 @@ THEMES = {
 _DEFAULT_THEMES = ["abs", "dc", "ai"]
 
 
-def pick_images(category="人工智能"):
-    """按文章分类从对应主题组随机取 3 张（正文2+封面1），排除已用图并记录。
-    主题组不足 3 张时扩展相邻组；全池耗尽时重置（保留最近 9 张避免立即重复）。
+def pick_images(category="人工智能", hint=""):
+    """取 3 张配图（正文2+封面1），排除已用图并全局记录。
+
+    优先用 Pexels 按 hint/category 关键词动态搜图（池近乎无限，几乎不重复）；
+    无 key 或动态源失败时回退静态主题图池。
+    静态池不足 3 张时扩展相邻组；全池耗尽时重置（保留最近 60 张避免立即重复）。
     返回 {"body": [url1, url2], "cover": url, "items": [item1, item2, item3]}。"""
     used = _load_used()
     used_ids = set(used.get("used_ids", []))
-    themes = THEMES.get(category) or _DEFAULT_THEMES
-    cand = []
-    for t in themes:
-        cand += [i for i in IMAGE_POOL if i["theme"] == t and _img_key(i) not in used_ids]
-    if len(cand) < 3:
-        cand += [i for i in IMAGE_POOL if _img_key(i) not in used_ids and i not in cand]
-    if len(cand) < 3:
-        recent = used.get("recent", [])
-        used_ids = set(recent)
-        used["used_ids"] = list(recent)
-        cand = [i for i in IMAGE_POOL if _img_key(i) not in used_ids]
-    random.shuffle(cand)
-    picks = cand[:3]
+
+    picks = None
+    try:
+        dyn = image_source.pick(category, hint=hint, used_ids=used_ids)
+        if len(dyn) == 3:
+            picks = dyn
+    except Exception:
+        picks = None
+
+    if picks is None:
+        themes = THEMES.get(category) or _DEFAULT_THEMES
+        cand = []
+        for t in themes:
+            cand += [i for i in IMAGE_POOL if i["theme"] == t and _img_key(i) not in used_ids]
+        if len(cand) < 3:
+            cand += [i for i in IMAGE_POOL if _img_key(i) not in used_ids and i not in cand]
+        if len(cand) < 3:
+            recent = used.get("recent", [])
+            used_ids = set(recent)
+            used["used_ids"] = list(recent)
+            cand = [i for i in IMAGE_POOL if _img_key(i) not in used_ids]
+        random.shuffle(cand)
+        picks = cand[:3]
+
     keys = [_img_key(i) for i in picks]
-    new_ids = sorted(set(used_ids) | set(keys))
+    new_ids = sorted(used_ids | set(keys))
     used["used_ids"] = new_ids
-    used["recent"] = new_ids[-9:]
+    used["recent"] = new_ids[-60:]
     _save_used(used)
     return {"body": [_img_url(picks[0], "body"), _img_url(picks[1], "body")],
             "cover": _img_url(picks[2], "cover"),
@@ -191,7 +206,7 @@ SYSTEM_PROMPT = (
     "你是卡奥斯开源社区的资深科技文章作者，擅长写出高传播、高可读的深度技术文章。"
     "输出必须是合法 JSON 对象，不要输出任何其他文字。JSON 结构："
     '{"title":"标题(不超过24字,不含冒号)","category":"分类","summary":"约120字摘要",'
-    '"body":"markdown正文"}。'
+    '"body":"markdown正文","image_query":"2-4个英文单词的配图搜索词(与文章主题高度相关、具体)"}。'
     "内容质量要求（严格执行）："
     "1. 标题信息量大且有钩子：用具体数字、强观点、反差对比或读者痛点，"
     "避免「赋能」「新引擎」「新范式」「加速落地」「驶入快车道」等空泛套话；"
@@ -259,6 +274,7 @@ def generate(prompt):
         category = str(data.get("category", "")).strip()
         summary = str(data.get("summary", "")).strip()
         body = str(data.get("body", "")).strip()
+        image_query = str(data.get("image_query", "")).strip()[:60]
         if category not in CATEGORY_IDS:
             category = "人工智能"
         if ":" in title:
@@ -277,7 +293,8 @@ def generate(prompt):
               and not (sensitive.check_brand(title) or sensitive.check_brand(summary) or sensitive.check_brand(body)))
         if ok:
             return {"title": title, "category": category, "summary": summary,
-                    "body": body, "cat_name": CATEGORY_IDS.get(category, "人工智能")}
+                    "body": body, "image_query": image_query,
+                    "cat_name": CATEGORY_IDS.get(category, "人工智能")}
     raise RuntimeError("内容生成未通过规范校验，请更换关键词重试")
 
 
@@ -293,15 +310,32 @@ def build_cover_path(category):
 
 def run(prompt):
     gen = generate(prompt)
-    imgs = pick_images(gen["category"])
-    gen["body"] = (gen["body"].replace("IMAGE1", imgs["body"][0])
-                   .replace("IMAGE2", imgs["body"][1]))
-    cover_path = build_cover_path(gen["category"])
-    _download_cover(imgs["cover"], cover_path)
+    ts = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
+    images = []
+    body_image_files = []
+    used_items = []
+
+    # 与每日发文一致：优先小黑线稿插图，失败回退图库
+    try:
+        import illustration
+        illu = illustration.illustrate(gen["title"], gen["summary"], gen["body"],
+                                       prefix="oneshot-" + ts, img_timeout=180, budget=300)
+        gen["body"] = (gen["body"].replace("IMAGE1", "[[IMG1]]")
+                       .replace("IMAGE2", "[[IMG2]]"))
+        cover_path = illu["cover"]
+        body_image_files = illu["body_files"]
+    except Exception as e:
+        print("插图失败，回退图库: %s" % str(e)[:120], flush=True)
+        imgs = pick_images(gen["category"], hint=gen.get("image_query", ""))
+        gen["body"] = (gen["body"].replace("IMAGE1", imgs["body"][0])
+                       .replace("IMAGE2", imgs["body"][1]))
+        cover_path = build_cover_path(gen["category"])
+        _download_cover(imgs["cover"], cover_path)
+        images = [imgs["body"][0], imgs["body"][1]]
+        used_items = imgs["items"]
 
     os.makedirs(ARTICLES_DIR, exist_ok=True)
-    article_file = os.path.join(ARTICLES_DIR,
-                                "oneshot-" + datetime.datetime.now().strftime("%Y%m%d%H%M%S") + ".md")
+    article_file = os.path.join(ARTICLES_DIR, "oneshot-" + ts + ".md")
     with open(article_file, "w", encoding="utf-8") as f:
         f.write("# " + gen["title"] + "\n\n" + gen["body"])
 
@@ -309,6 +343,7 @@ def run(prompt):
     item = {
         "title": gen["title"], "category": gen["category"],
         "file": article_file, "summary": gen["summary"], "cover": cover_path,
+        "images": images, "body_image_files": body_image_files,
     }
 
     hits = sensitive.check(gen["title"]) + sensitive.check(gen["summary"]) + sensitive.check(gen["body"])
@@ -326,9 +361,9 @@ def run(prompt):
         gen["title"] = item["title"]
 
     result = publish_one(token, item)
-    if result.get("status") == "published" and result.get("article_id"):
+    if result.get("status") == "published" and result.get("article_id") and used_items:
         used = _load_used()
-        used["articles"][str(result["article_id"])] = [_img_key(i) for i in imgs["items"]]
+        used["articles"][str(result["article_id"])] = [_img_key(i) for i in used_items]
         _save_used(used)
     return gen, result, cover_path
 
