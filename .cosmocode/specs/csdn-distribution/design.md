@@ -149,3 +149,13 @@ graph LR
 - **网关签名坑**：query 串参与签名时按端点固定 schema 顺序重建（实测 `article/list` 为 `pageNum,pageSize,status`），顺序不符或出现白名单外参数一律 401 `HMAC signature does not match`。已签名端点的参数顺序登记在 `csdn_api.QUERY_ORDER`，新增带参 GET 时先实测登记。
 - 已验证：`user/list-permission`、`article/list`（200）。POST `saveArticle` 未灰度（额度限制），UI 发布器仍为主发布路径。
 - 扩展架构结论：其「多平台同步」= 扩展自己持各平台登录 Cookie 直调各平台 web API（掘金 `content_api/v1/article_draft/create`、微博 `card.weibo.com/article/v5/aj/editor/draft/create|publish`、51CTO `blog.51cto.com/blogger/publish` 等）+ `declarativeNetRequest` 伪造 Origin/Referer；并向 CSDN `multi-platform-sync/report` 上报结果。扩展自带 MCP 协议（WS `127.0.0.1:3721`，token 校验）仅支持草稿。若要多平台分发，需为各平台做同样的「人工登录 + Cookie 持久化 + API 发布」流程。
+
+## 多平台一键分发桥（channels/multiplatform/，对接扩展 MCP 协议）
+
+- 策略（用户拍板）：不自研 16 平台发布器，直接集成用户本机 Chrome 的「CSDN同步助手」扩展 MCP 协议。要求：监测各平台登录态 + 每平台一个同步脚本，不限次数。
+- `mcp_bridge.py` 是 WS 服务端（扩展是 WS 客户端）：`serve` = WS(127.0.0.1:3721) + 本地看板(127.0.0.1:8390) + 登录态监测（`listPlatforms` 默认 10min 一次写 `state.json`）。
+- 协议帧：请求 `{"id":uuid,"token","method","params"}`，响应 `{"id","result"}` / `{"id","error":{"code","message"}}`；keepalive 扩展发 `{"type":"ping"}` 服务端必须回 `{"type":"pong"}`（60s 无 pong 重连）；token 经 `?token=` 传递，不匹配 close 1008。
+- `syncArticle` 约束：`idempotencyKey` 必填 ≤128、`platforms` 非空、`article.title` 必填、`markdown|content` 至少一；`draft:false` 被扩展拒绝（硬编码草稿）。执行需一个活跃普通网页 tab（内容脚本预处理）。
+- `uploadImage`：`{imageData:base64,mimeType,platform}` → `{url,platform}`，≤5MB；markdown 本地图片路径自动上传替换。
+- 17 个 `sync_<平台>.py` 薄封装 + `sync-all`；同步优先走常驻桥 HTTP(8390)，未运行则临时起 WS 等扩展。
+- 结果均为各平台**草稿**，需去各平台后台点发布。已用假扩展端到端验证（ping/pong、token 拒绝/放行、check-auth、sync、图片上传替换）。

@@ -63,4 +63,6 @@ channels/csdn/logs/
 channels/csdn/state.json
 channels/csdn/queue.json
 channels/csdn/sms_code.txt
+channels/multiplatform/state.json
+channels/multiplatform/config.json
 ian-xiaohei-illustrations.zip
