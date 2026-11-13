@@ -8,6 +8,12 @@
   header { background: linear-gradient(135deg, #1f3b8f, #2f6fed); color: #fff; padding: 20px 28px; display: flex; align-items: center; flex-wrap: wrap; gap: 12px; }
   header h1 { font-size: 22px; font-weight: 600; }
   header .sub { font-size: 13px; opacity: .85; margin-top: 6px; flex-basis: 100%; }
+  .csdn-entry {
+    display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px; border-radius: 14px;
+    background: rgba(255,255,255,.16); border: 1px solid rgba(255,255,255,.38); color: #fff;
+    font-size: 13px; text-decoration: none; transition: background .2s ease, transform .2s ease;
+  }
+  .csdn-entry:hover { background: rgba(255,255,255,.3); transform: translateY(-1px); }
   .score-tag {
     display: inline-block; margin-left: auto; padding: 6px 18px; border-radius: 14px;
     text-align: center; line-height: 1.2; color: #1f3b8f; background: linear-gradient(135deg, #ffe066, #ffc53d);

@@ -56,3 +56,10 @@ bot/pexels_key.txt
 bot/t2i_mcp.json
 bot/illustrations/
 bot/illustration_errors.log
+channels/csdn/credentials.json
+channels/csdn/storage_state.json
+channels/csdn/.lock
+channels/csdn/logs/
+channels/csdn/state.json
+channels/csdn/queue.json
+channels/csdn/sms_code.txt
