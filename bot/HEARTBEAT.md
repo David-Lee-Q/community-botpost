@@ -1,6 +1,6 @@
 # HEARTBEAT - 社区发文记录
 
-## 2026-10-29 发布清单
+## 2026-11-13 发布清单
 
 | 计划时间 | 标题 | 分类 | 文章ID | 详情URL | 状态 |
 |----------|------|------|--------|---------|------|
@@ -270,6 +270,66 @@
 | 2026-10-28 19:36:50 | 推理成本降九成，大模型产业逻辑重写 | 人工智能 | 38132 | https://openlab.cosmoplat.com/article-detils?id=38132&articleType=0 | 已发布 |
 | 2026-10-29 11:00:32 | 数据交易卡在哪 三本账算清 | 数据要素 | 38154 | https://openlab.cosmoplat.com/article-detils?id=38154&articleType=0 | 已发布 |
 | 2026-10-29 11:31:04 | 数据上链了，供应链为何还互不信任 | 区块链 | 38156 | https://openlab.cosmoplat.com/article-detils?id=38156&articleType=0 | 已发布 |
+| 2026-10-29 13:25:29 | 标识不通，工业数据就是孤岛 | 标识解析 | 38158 | https://openlab.cosmoplat.com/article-detils?id=38158&articleType=0 | 已发布 |
+| 2026-10-29 15:59:02 | 切片不是万能药 确定性网络先算账 | 网络 | 38166 | https://openlab.cosmoplat.com/article-detils?id=38166&articleType=0 | 已发布 |
+| 2026-10-30 13:05:09 | GPU利用率不到40%，调度该换算法了 | 云计算 | 38198 | https://openlab.cosmoplat.com/article-detils?id=38198&articleType=0 | 已发布 |
+| 2026-10-30 15:53:23 | 3副本只够扛1次宕机？中间件高可用真相 | 中间件 | 38202 | https://openlab.cosmoplat.com/article-detils?id=38202&articleType=0 | 已发布 |
+| 2026-10-30 16:36:08 | 云账单砍掉38%后我推翻了三条经验 | 云计算 | 38204 | https://openlab.cosmoplat.com/article-detils?id=38204&articleType=0 | 已发布 |
+| 2026-10-30 18:40:50 | 漏检率18%降到1.2% 3D视觉做对了什么 | 机器视觉 | 38206 | https://openlab.cosmoplat.com/article-detils?id=38206&articleType=0 | 已发布 |
+| 2026-10-31 09:17:10 | 云原生安全别把容器当虚拟机 | 安全 | 38230 | https://openlab.cosmoplat.com/article-detils?id=38230&articleType=0 | 已发布 |
+| 2026-10-31 10:59:59 | 7B模型私有化 90%的坑不在微调 | 人工智能 | 38234 | https://openlab.cosmoplat.com/article-detils?id=38234&articleType=0 | 已发布 |
+| 2026-10-31 14:02:34 | 九成混合云选型错在把成本当第一指标 | 云计算 | 38236 | https://openlab.cosmoplat.com/article-detils?id=38236&articleType=0 | 已发布 |
+| 2026-10-31 16:44:01 | 湖仓一体不是银弹，90%的企业卡在这三步 | 大数据 | 38238 | https://openlab.cosmoplat.com/article-detils?id=38238&articleType=0 | 已发布 |
+| 2026-11-01 10:23:03 | 漏检率从8%降到0.3% 3D视觉做对了什么 | 机器视觉 | 38264 | https://openlab.cosmoplat.com/article-detils?id=38264&articleType=0 | 已发布 |
+| 2026-11-01 12:18:16 | 供应链可信数据不是上链就完事 | 数据要素 | 38266 | https://openlab.cosmoplat.com/article-detils?id=38266&articleType=0 | 已发布 |
+| 2026-11-01 14:50:00 | 2D漏检30%后，产线开始为3D点云买单 | 机器视觉 | 38268 | https://openlab.cosmoplat.com/article-detils?id=38268&articleType=0 | 已发布 |
+| 2026-11-01 17:59:17 | 代码质量别靠人肉门禁3层自动化拦截 | 编程与开发 | 38270 | https://openlab.cosmoplat.com/article-detils?id=38270&articleType=0 | 已发布 |
+| 2026-11-02 08:18:18 | 别再无脑上Kafka 五个硬指标定选型 | 中间件 | 38296 | https://openlab.cosmoplat.com/article-detils?id=38296&articleType=0 | 已发布 |
+| 2026-11-02 08:57:08 | 低代码省下的时间 终要还给治理 | 编程与开发 | 38298 | https://openlab.cosmoplat.com/article-detils?id=38298&articleType=0 | 已发布 |
+| 2026-11-02 13:11:49 | 延迟从5分钟到1秒 我们砍掉了什么 | 大数据 | 38308 | https://openlab.cosmoplat.com/article-detils?id=38308&articleType=0 | 已发布 |
+| 2026-11-02 15:50:15 | 把云账单砍掉43%，靠的不是折扣 | 云计算 | 38310 | https://openlab.cosmoplat.com/article-detils?id=38310&articleType=0 | 已发布 |
+| 2026-11-03 09:46:33 | 96%的代码靠开源 供应链怎么治 | 安全 | 38336 | https://openlab.cosmoplat.com/article-detils?id=38336&articleType=0 | 已发布 |
+| 2026-11-03 11:40:00 | 攻击者已用上大模型，防守还在看日志？ | 安全 | 38340 | https://openlab.cosmoplat.com/article-detils?id=38340&articleType=0 | 已发布 |
+| 2026-11-03 12:18:05 | 压测三款消息队列后，我们选了最慢的那个 | 中间件 | 38342 | https://openlab.cosmoplat.com/article-detils?id=38342&articleType=0 | 已发布 |
+| 2026-11-03 14:42:46 | 别急着微调 先算清数据和显存两本账 | 人工智能 | 38344 | https://openlab.cosmoplat.com/article-detils?id=38344&articleType=0 | 已发布 |
+| 2026-11-04 08:08:57 | K8s故障复盘 80%问题出在容器外 | 云原生 | 38370 | https://openlab.cosmoplat.com/article-detils?id=38370&articleType=0 | 已发布 |
+| 2026-11-04 09:31:59 | 边缘节点利用率不到四成，根子在调度模型 | 边缘计算 | 38372 | https://openlab.cosmoplat.com/article-detils?id=38372&articleType=0 | 已发布 |
+| 2026-11-04 10:58:40 | 零信任落地两年，多数企业卡在同一道坎 | 安全 | 38378 | https://openlab.cosmoplat.com/article-detils?id=38378&articleType=0 | 已发布 |
+| 2026-11-04 19:52:23 | 别把工具当效率研发提速的三笔账 | 编程与开发 | 38380 | https://openlab.cosmoplat.com/article-detils?id=38380&articleType=0 | 已发布 |
+| 2026-11-05 08:57:08 | 少采一半指标 服务网格仍能定位故障 | 云原生 | 38404 | https://openlab.cosmoplat.com/article-detils?id=38404&articleType=0 | 已发布 |
+| 2026-11-05 11:48:27 | 数据治理建了三年，报表为什么还在打架 | 数据要素 | 38410 | https://openlab.cosmoplat.com/article-detils?id=38410&articleType=0 | 已发布 |
+| 2026-11-05 16:05:01 | 私有化部署大模型，微调不是第一步 | 人工智能 | 38412 | https://openlab.cosmoplat.com/article-detils?id=38412&articleType=0 | 已发布 |
+| 2026-11-05 16:43:33 | 开发者平台先做减法再谈自助化 | 云原生 | 38414 | https://openlab.cosmoplat.com/article-detils?id=38414&articleType=0 | 已发布 |
+| 2026-11-06 09:23:18 | 数据卖不出价，缺的不是交易所 | 数据要素 | 38442 | https://openlab.cosmoplat.com/article-detils?id=38442&articleType=0 | 已发布 |
+| 2026-11-06 12:03:29 | 边缘AI推理，90%的延迟优化都做反了 | 边缘计算 | 38448 | https://openlab.cosmoplat.com/article-detils?id=38448&articleType=0 | 已发布 |
+| 2026-11-06 13:26:34 | 微服务边界别按组织图画 | 微服务 | 38450 | https://openlab.cosmoplat.com/article-detils?id=38450&articleType=0 | 已发布 |
+| 2026-11-06 15:30:40 | 混合云选型别被30%价差带偏 | 云计算 | 38452 | https://openlab.cosmoplat.com/article-detils?id=38452&articleType=0 | 已发布 |
+| 2026-11-07 08:18:58 | 80%联盟链项目败在治理而非共识 | 区块链 | 38482 | https://openlab.cosmoplat.com/article-detils?id=38482&articleType=0 | 已发布 |
+| 2026-11-07 14:37:58 | 替换一套CAD，为何比买它贵三倍 | 智能制造 | 38488 | https://openlab.cosmoplat.com/article-detils?id=38488&articleType=0 | 已发布 |
+| 2026-11-07 14:59:26 | 推理成本跌到厘级，大模型生意重排座次 | 人工智能 | 38490 | https://openlab.cosmoplat.com/article-detils?id=38490&articleType=0 | 已发布 |
+| 2026-11-07 16:40:23 | 点云进产线，3D视觉检测要算清三笔账 | 机器视觉 | 38492 | https://openlab.cosmoplat.com/article-detils?id=38492&articleType=0 | 已发布 |
+| 2026-11-08 10:23:23 | 质检AI改造 七成预算耗在数据清洗 | 智能制造 | 38522 | https://openlab.cosmoplat.com/article-detils?id=38522&articleType=0 | 已发布 |
+| 2026-11-08 16:03:06 | 推理成本降90%，大模型生意开始反向定价 | 人工智能 | 38524 | https://openlab.cosmoplat.com/article-detils?id=38524&articleType=0 | 已发布 |
+| 2026-11-08 17:16:07 | 别只盯运行时，七成云原生风险在镜像里 | 安全 | 38526 | https://openlab.cosmoplat.com/article-detils?id=38526&articleType=0 | 已发布 |
+| 2026-11-08 19:20:27 | 微调不是万能药 私有化部署先算三笔账 | 人工智能 | 38528 | https://openlab.cosmoplat.com/article-detils?id=38528&articleType=0 | 已发布 |
+| 2026-11-09 11:08:16 | 别全量铺Sidecar，网格落地先划边界 | 云原生 | 38562 | https://openlab.cosmoplat.com/article-detils?id=38562&articleType=0 | 已发布 |
+| 2026-11-09 14:08:26 | 七成产线网络故障藏在组网设计 | 网络 | 38566 | https://openlab.cosmoplat.com/article-detils?id=38566&articleType=0 | 已发布 |
+| 2026-11-09 14:40:23 | 低代码省下的时间 正被集成债吃掉 | 编程与开发 | 38568 | https://openlab.cosmoplat.com/article-detils?id=38568&articleType=0 | 已发布 |
+| 2026-11-09 16:35:53 | 工业区块链值钱场景不在存证 | 区块链 | 38570 | https://openlab.cosmoplat.com/article-detils?id=38570&articleType=0 | 已发布 |
+| 2026-11-10 08:00:51 | 物联网数据治理 七成工作不在平台 | 物联网 | 38598 | https://openlab.cosmoplat.com/article-detils?id=38598&articleType=0 | 已发布 |
+| 2026-11-10 08:51:23 | 二级节点只发码 标识解析注定空转 | 标识解析 | 38600 | https://openlab.cosmoplat.com/article-detils?id=38600&articleType=0 | 已发布 |
+| 2026-11-10 10:02:28 | 网关延迟涨到38ms后，我们删掉了80%的插件 | 微服务 | 38604 | https://openlab.cosmoplat.com/article-detils?id=38604&articleType=0 | 已发布 |
+| 2026-11-10 11:51:17 | 5G进车间不是换Wi-Fi 先算清三笔账 | 智能制造 | 38608 | https://openlab.cosmoplat.com/article-detils?id=38608&articleType=0 | 已发布 |
+| 2026-11-11 08:59:55 | 99.99%可用性不是堆机器堆出来 | 中间件 | 38638 | https://openlab.cosmoplat.com/article-detils?id=38638&articleType=0 | 已发布 |
+| 2026-11-11 10:17:47 | 平台工程先砍掉80%自助入口 | 云原生 | 38644 | https://openlab.cosmoplat.com/article-detils?id=38644&articleType=0 | 已发布 |
+| 2026-11-11 11:32:15 | 镜像扫描救不了云原生安全，身份才是闸门 | 安全 | 38646 | https://openlab.cosmoplat.com/article-detils?id=38646&articleType=0 | 已发布 |
+| 2026-11-11 11:47:54 | 90%高端工业软件靠进口，国产替代卡在哪 | 智能制造 | 38648 | https://openlab.cosmoplat.com/article-detils?id=38648&articleType=0 | 已发布 |
+| 2026-11-12 09:11:02 | 数据入表不是财务魔术 先过三道关 | 数据要素 | 38676 | https://openlab.cosmoplat.com/article-detils?id=38676&articleType=0 | 已发布 |
+| 2026-11-12 12:53:33 | 当攻击者用上大模型 防守方还剩几秒 | 安全 | 38682 | https://openlab.cosmoplat.com/article-detils?id=38682&articleType=0 | 已发布 |
+| 2026-11-12 14:06:18 | Agent不是聊天框 是流程重写器 | 人工智能 | 38684 | https://openlab.cosmoplat.com/article-detils?id=38684&articleType=0 | 已发布 |
+| 2026-11-12 16:29:46 | 攻击侧AI按秒变种 防守侧还靠人工研判 | 安全 | 38686 | https://openlab.cosmoplat.com/article-detils?id=38686&articleType=0 | 已发布 |
+| 2026-11-13 10:06:37 | 流程不重构，Agent只会更贵 | 人工智能 | 38716 | https://openlab.cosmoplat.com/article-detils?id=38716&articleType=0 | 已发布 |
+| 2026-11-13 13:24:49 | 抓取成功率97%背后 视觉系统还差哪3步 | 机器视觉 | 38718 | https://openlab.cosmoplat.com/article-detils?id=38718&articleType=0 | 已发布 |
 
 ## 记录
 

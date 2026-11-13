@@ -1738,5 +1738,359 @@
     "cateName": "",
     "createTime": "",
     "source": "发一篇"
+  },
+  "38166": {
+    "title": "切片不是万能药 确定性网络先算账",
+    "cateName": "网络",
+    "createTime": "",
+    "source": "定时发文"
+  },
+  "38198": {
+    "title": "GPU利用率不到40%，调度该换算法了",
+    "cateName": "云计算",
+    "createTime": "",
+    "source": "定时发文"
+  },
+  "38202": {
+    "title": "3副本只够扛1次宕机？中间件高可用真相",
+    "cateName": "中间件",
+    "createTime": "",
+    "source": "定时发文"
+  },
+  "38204": {
+    "title": "云账单砍掉38%后我推翻了三条经验",
+    "cateName": "云计算",
+    "createTime": "",
+    "source": "定时发文"
+  },
+  "38206": {
+    "title": "漏检率18%降到1.2% 3D视觉做对了什么",
+    "cateName": "机器视觉",
+    "createTime": "",
+    "source": "定时发文"
+  },
+  "38230": {
+    "title": "云原生安全别把容器当虚拟机",
+    "cateName": "安全",
+    "createTime": "",
+    "source": "定时发文"
+  },
+  "38234": {
+    "title": "7B模型私有化 90%的坑不在微调",
+    "cateName": "人工智能",
+    "createTime": "",
+    "source": "定时发文"
+  },
+  "38236": {
+    "title": "九成混合云选型错在把成本当第一指标",
+    "cateName": "云计算",
+    "createTime": "",
+    "source": "定时发文"
+  },
+  "38238": {
+    "title": "湖仓一体不是银弹，90%的企业卡在这三步",
+    "cateName": "大数据",
+    "createTime": "",
+    "source": "定时发文"
+  },
+  "38264": {
+    "title": "漏检率从8%降到0.3% 3D视觉做对了什么",
+    "cateName": "机器视觉",
+    "createTime": "",
+    "source": "定时发文"
+  },
+  "38266": {
+    "title": "供应链可信数据不是上链就完事",
+    "cateName": "数据要素",
+    "createTime": "",
+    "source": "定时发文"
+  },
+  "38268": {
+    "title": "2D漏检30%后，产线开始为3D点云买单",
+    "cateName": "机器视觉",
+    "createTime": "",
+    "source": "定时发文"
+  },
+  "38270": {
+    "title": "代码质量别靠人肉门禁3层自动化拦截",
+    "cateName": "编程与开发",
+    "createTime": "",
+    "source": "定时发文"
+  },
+  "38296": {
+    "title": "别再无脑上Kafka 五个硬指标定选型",
+    "cateName": "中间件",
+    "createTime": "",
+    "source": "定时发文"
+  },
+  "38298": {
+    "title": "低代码省下的时间 终要还给治理",
+    "cateName": "编程与开发",
+    "createTime": "",
+    "source": "定时发文"
+  },
+  "38308": {
+    "title": "延迟从5分钟到1秒 我们砍掉了什么",
+    "cateName": "大数据",
+    "createTime": "",
+    "source": "定时发文"
+  },
+  "38310": {
+    "title": "把云账单砍掉43%，靠的不是折扣",
+    "cateName": "云计算",
+    "createTime": "",
+    "source": "定时发文"
+  },
+  "38336": {
+    "title": "96%的代码靠开源 供应链怎么治",
+    "cateName": "安全",
+    "createTime": "",
+    "source": "定时发文"
+  },
+  "38340": {
+    "title": "攻击者已用上大模型，防守还在看日志？",
+    "cateName": "安全",
+    "createTime": "",
+    "source": "定时发文"
+  },
+  "38342": {
+    "title": "压测三款消息队列后，我们选了最慢的那个",
+    "cateName": "中间件",
+    "createTime": "",
+    "source": "定时发文"
+  },
+  "38344": {
+    "title": "别急着微调 先算清数据和显存两本账",
+    "cateName": "人工智能",
+    "createTime": "",
+    "source": "定时发文"
+  },
+  "38370": {
+    "title": "K8s故障复盘 80%问题出在容器外",
+    "cateName": "云原生",
+    "createTime": "",
+    "source": "定时发文"
+  },
+  "38372": {
+    "title": "边缘节点利用率不到四成，根子在调度模型",
+    "cateName": "边缘计算",
+    "createTime": "",
+    "source": "定时发文"
+  },
+  "38378": {
+    "title": "零信任落地两年，多数企业卡在同一道坎",
+    "cateName": "安全",
+    "createTime": "",
+    "source": "定时发文"
+  },
+  "38380": {
+    "title": "别把工具当效率研发提速的三笔账",
+    "cateName": "编程与开发",
+    "createTime": "",
+    "source": "定时发文"
+  },
+  "38404": {
+    "title": "少采一半指标 服务网格仍能定位故障",
+    "cateName": "云原生",
+    "createTime": "",
+    "source": "定时发文"
+  },
+  "38410": {
+    "title": "数据治理建了三年，报表为什么还在打架",
+    "cateName": "数据要素",
+    "createTime": "",
+    "source": "定时发文"
+  },
+  "38412": {
+    "title": "私有化部署大模型，微调不是第一步",
+    "cateName": "人工智能",
+    "createTime": "",
+    "source": "定时发文"
+  },
+  "38414": {
+    "title": "开发者平台先做减法再谈自助化",
+    "cateName": "云原生",
+    "createTime": "",
+    "source": "定时发文"
+  },
+  "38442": {
+    "title": "数据卖不出价，缺的不是交易所",
+    "cateName": "数据要素",
+    "createTime": "",
+    "source": "定时发文"
+  },
+  "38448": {
+    "title": "边缘AI推理，90%的延迟优化都做反了",
+    "cateName": "边缘计算",
+    "createTime": "",
+    "source": "定时发文"
+  },
+  "38450": {
+    "title": "微服务边界别按组织图画",
+    "cateName": "微服务",
+    "createTime": "",
+    "source": "定时发文"
+  },
+  "38452": {
+    "title": "混合云选型别被30%价差带偏",
+    "cateName": "云计算",
+    "createTime": "",
+    "source": "定时发文"
+  },
+  "38482": {
+    "title": "80%联盟链项目败在治理而非共识",
+    "cateName": "区块链",
+    "createTime": "",
+    "source": "定时发文"
+  },
+  "38488": {
+    "title": "替换一套CAD，为何比买它贵三倍",
+    "cateName": "智能制造",
+    "createTime": "",
+    "source": "定时发文"
+  },
+  "38490": {
+    "title": "推理成本跌到厘级，大模型生意重排座次",
+    "cateName": "人工智能",
+    "createTime": "",
+    "source": "定时发文"
+  },
+  "38492": {
+    "title": "点云进产线，3D视觉检测要算清三笔账",
+    "cateName": "机器视觉",
+    "createTime": "",
+    "source": "定时发文"
+  },
+  "38522": {
+    "title": "质检AI改造 七成预算耗在数据清洗",
+    "cateName": "智能制造",
+    "createTime": "",
+    "source": "定时发文"
+  },
+  "38524": {
+    "title": "推理成本降90%，大模型生意开始反向定价",
+    "cateName": "人工智能",
+    "createTime": "",
+    "source": "定时发文"
+  },
+  "38526": {
+    "title": "别只盯运行时，七成云原生风险在镜像里",
+    "cateName": "安全",
+    "createTime": "",
+    "source": "定时发文"
+  },
+  "38528": {
+    "title": "微调不是万能药 私有化部署先算三笔账",
+    "cateName": "人工智能",
+    "createTime": "",
+    "source": "定时发文"
+  },
+  "38562": {
+    "title": "别全量铺Sidecar，网格落地先划边界",
+    "cateName": "云原生",
+    "createTime": "",
+    "source": "定时发文"
+  },
+  "38566": {
+    "title": "七成产线网络故障藏在组网设计",
+    "cateName": "网络",
+    "createTime": "",
+    "source": "定时发文"
+  },
+  "38568": {
+    "title": "低代码省下的时间 正被集成债吃掉",
+    "cateName": "编程与开发",
+    "createTime": "",
+    "source": "定时发文"
+  },
+  "38570": {
+    "title": "工业区块链值钱场景不在存证",
+    "cateName": "区块链",
+    "createTime": "",
+    "source": "定时发文"
+  },
+  "38598": {
+    "title": "物联网数据治理 七成工作不在平台",
+    "cateName": "物联网",
+    "createTime": "",
+    "source": "定时发文"
+  },
+  "38600": {
+    "title": "二级节点只发码 标识解析注定空转",
+    "cateName": "标识解析",
+    "createTime": "",
+    "source": "定时发文"
+  },
+  "38604": {
+    "title": "网关延迟涨到38ms后，我们删掉了80%的插件",
+    "cateName": "微服务",
+    "createTime": "",
+    "source": "定时发文"
+  },
+  "38608": {
+    "title": "5G进车间不是换Wi-Fi 先算清三笔账",
+    "cateName": "智能制造",
+    "createTime": "",
+    "source": "定时发文"
+  },
+  "38638": {
+    "title": "99.99%可用性不是堆机器堆出来",
+    "cateName": "中间件",
+    "createTime": "",
+    "source": "定时发文"
+  },
+  "38644": {
+    "title": "平台工程先砍掉80%自助入口",
+    "cateName": "云原生",
+    "createTime": "",
+    "source": "定时发文"
+  },
+  "38646": {
+    "title": "镜像扫描救不了云原生安全，身份才是闸门",
+    "cateName": "安全",
+    "createTime": "",
+    "source": "定时发文"
+  },
+  "38648": {
+    "title": "90%高端工业软件靠进口，国产替代卡在哪",
+    "cateName": "智能制造",
+    "createTime": "",
+    "source": "定时发文"
+  },
+  "38676": {
+    "title": "数据入表不是财务魔术 先过三道关",
+    "cateName": "数据要素",
+    "createTime": "",
+    "source": "定时发文"
+  },
+  "38682": {
+    "title": "当攻击者用上大模型 防守方还剩几秒",
+    "cateName": "安全",
+    "createTime": "",
+    "source": "定时发文"
+  },
+  "38684": {
+    "title": "Agent不是聊天框 是流程重写器",
+    "cateName": "人工智能",
+    "createTime": "",
+    "source": "定时发文"
+  },
+  "38686": {
+    "title": "攻击侧AI按秒变种 防守侧还靠人工研判",
+    "cateName": "安全",
+    "createTime": "",
+    "source": "定时发文"
+  },
+  "38716": {
+    "title": "流程不重构，Agent只会更贵",
+    "cateName": "人工智能",
+    "createTime": "",
+    "source": "定时发文"
+  },
+  "38718": {
+    "title": "抓取成功率97%背后 视觉系统还差哪3步",
+    "cateName": "机器视觉",
+    "createTime": "",
+    "source": "定时发文"
   }
 }
