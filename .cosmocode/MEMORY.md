@@ -31,13 +31,6 @@ Agent 在任务执行过程中发现的条目应遵循以下格式：
 
 ## 条目
 
-[社区发文记录详情 URL]
-- Date: 2026-08-08
-- Context: 用户要求每天发布完成后记录文章详情页 URL
-- Instructions:
-  - 每批发布完成后 fetch_detail_urls.py 自动抓取：优先从「我的文章」页（usercenter/1447/article/全部文章）点击取真实 URL，以发布接口返回的 article_id 构造 `https://openlab.cosmoplat.com/article-detils?id={id}&articleType=0` 兜底（列表页存在同名/重复文章，避免误记）
-  - 记录位置：/workspace/bot/plan.json 的 detail_url 字段 与 /workspace/bot/HEARTBEAT.md 当日清单
-
 [社区发文 bot 运行方式]
 - Date: 2026-08-08
 - Context: Agent 构建社区自动发文 bot 时掌握的环境知识
@@ -48,6 +41,7 @@ Agent 在任务执行过程中发现的条目应遵循以下格式：
   - 封面上传：POST /api/file/uploadFileStream?type=1（multipart）返回 data.path 作 thumbnail；封面 800×400、jpg/png、≤1MB
   - 发布必填字段：cateId（分类ID，见 publish.py CATEGORY_IDS）、thumbnail、title、description（摘要）、content（markdown正文，不含首行#标题）、viewRank=0；正文配图至少2张，图源见「配图来源规范」
   - 正文配图（unsplash/pexels 外链）save 前必须转存平台 OSS（publish._rehost_body_images）：平台 WAF 拦截正文中这两个域名并返回误导性的 10002「无效的token」；转存须放在品牌检查之后（平台 OSS 域名含 cosmoplat，会误触品牌词 COSMOPlat）
+  - 每批发布完成后 fetch_detail_urls.py 自动抓取详情 URL：优先从「我的文章」页（usercenter/1447/article/全部文章）点击取真实 URL，以发布接口返回的 article_id 构造 `https://openlab.cosmoplat.com/article-detils?id={id}&articleType=0` 兜底（列表页存在同名/重复文章，避免误记）；记录位置：plan.json 的 detail_url 字段与 HEARTBEAT.md 当日清单
 
 [内容源目录]
 - Date: 2026-08-10
@@ -70,11 +64,11 @@ Agent 在任务执行过程中发现的条目应遵循以下格式：
   - 发布完成后 runner.py 会自动调用 fetch_articles.py 刷新台账数据，无需手动拉取
 
 [发文质量持续改进]
-- Date: 2026-11-09
+- Date: 2026-11-16
 - Context: review_engine.py 每周一基于综合评分自动沉淀优化建议
 - Instructions:
   - 每周一更新综合评分后，自动同步优化建议到 .cosmocode/docs/质量改进记录.md 与 .cosmocode/quality_tasks.md
-  - 最新周期 2026-11-02~2026-11-08 综合分 91，当前短板维度：传播表现、可读表达
+  - 最新周期 2026-11-09~2026-11-15 综合分 90，当前短板维度：传播表现、可读表达
   - 改进要点：打磨标题信息量与钩子，摘要直击痛点，首段前三句抓住读者
   - 改进要点：每段聚焦单一论点并控制段落长度，增强小标题引导与图文呼应
   - 创作新文章前，先核对 quality_tasks.md 的未完成改进项并主动应用
@@ -131,10 +125,8 @@ Agent 在任务执行过程中发现的条目应遵循以下格式：
   - gen_plan.py 已改为每篇排期成功立即落盘 plan.json；单篇 LLM 生成失败（如 JSONDecodeError）捕获跳过该时段继续，不再整体崩溃丢进度
   - 恢复发布流程：POST /api/article/list 验证 token(code=0)→清理 plan.json 过期 pending→python3 gen_plan.py 3 补计划（12篇约40-60分钟）→重启 runner
   - 当日补发：bot/backfill_today.py 把当天剩余时段（now+45min 起均匀分布到 19:30）补足 4 篇 pending，runner 到点自动发布；gen_plan.py 只补未来天数不含当天；某选题连续生成失败会跳过该时段致当天不足 4 篇，需次日 gen_plan 或 backfill_today 补齐
-  - 2026-09-02 停发案例：LLM 模型 cosmo-mind-coder 被平台下线返回 403（r.json() 解析 "Forbidden" 文本报 JSONDecodeError char 0），gen_plan 全失败→计划池耗尽→停发；修复：sensitive.chat() 统一 LLM 调用，主模型 403/404/410 自动按 MCAI_LLM_FALLBACK_MODELS 回退，超时 600s；可用模型 cosmo-mind-vl-think（think 模型慢，单篇约 256s）
-  - LLM 故障排查法：直接 POST {MCAI_LLM_BASE_URL}/chat/completions 逐模型试 status_code（403=模型下线/无权限，404=不存在），/v1/models 无权限不可用；修模型后需带新 env 重启 runner
-  - 2026-09-02 停发案例二：token 过期 + 平台 WAF 拦截正文 unsplash/pexels 图链，save 返回 10002「无效的token」；探测法：save 带空标题→500 标题为空 / 短正文→500 字符数不足 说明鉴权已过，鉴权过后仍 10002 = token 真失效或 WAF 内容拦截（正文含被拦域名）
-  - save 校验顺序：标题 → 正文长度 → token 严格校验；故过期 token 下短探测报 500、真实长文报 10002，两者并存时优先查 WAF 图链再查 token
+  - 2026-09-02 停发案例：LLM 模型 cosmo-mind-coder 被平台下线返回 403（r.json() 解析 "Forbidden" 文本报 JSONDecodeError），gen_plan 全失败→计划池耗尽→停发；修复：sensitive.chat() 统一 LLM 调用，主模型 403/404/410 自动按 MCAI_LLM_FALLBACK_MODELS 回退，超时 600s，可用模型 cosmo-mind-vl-think（think 模型慢，单篇约 256s）；排查法：直接 POST {MCAI_LLM_BASE_URL}/chat/completions 逐模型试 status_code（403=下线/无权限，404=不存在），/v1/models 无权限不可用；修模型后需带新 env 重启 runner
+  - save 校验顺序：标题→正文长度→token 严格校验；过期 token 下短探测报 500、真实长文报 10002（10002 也可能是平台 WAF 拦截正文 unsplash/pexels 图链，见「社区发文 bot 运行方式」），两者并存时优先查 WAF 图链再查 token
   - runner.py due 块的 publish/fetch_detail_urls/fetch_articles 子进程超时（TimeoutExpired）现统一块内捕获记日志，不再打崩主循环（9-02 曾 37 次崩溃重启）
   - fetch_detail_urls.py 重构：列表页只加载一次；详情 URL 以 DETAIL_PATTERN(article_id) 兜底直出，列表点击仅增强（敏感词优化改过标题的文章标题校验必然 mismatch，旧逻辑会误清 detail_url）；依赖 /tmp/login_state.json，token 变更后必须刷新，否则挂起超时
   - 2026-09-11 停发案例三：token 约 7 天到期（9-09 失效）→ 9-10/9-11 共 8 篇积压 10002；2026-09-22 起 runner 内置 token 看门狗（剩余不足 1 天自动调 bot/login.py 重登，失败 6 小时后再试），手动兜底：python3 bot/login.py → publish.py 补发；token 到期是周期性事件
@@ -148,3 +140,13 @@ Agent 在任务执行过程中发现的条目应遵循以下格式：
   - 拦截点：publish.py publish_one 命中即返回 blocked（title/summary/body 任一命中，不发布不发请求）；one_shot.py 生成校验命中则重试，SYSTEM_PROMPT 要求规避竞品品牌名
   - 此红线属于隐形规定：不得在《社区文章质量评价标准》（ledger/index.html）等任何对外展示文档中列出该关键词清单
   - runner 启动优先用后台终端方式运行（本环境 shell 工具下 nohup 后台进程会被清理）
+
+[CSDN 分发通道排障要点]
+- Date: 2026-11-16
+- Context: Agent 修复 CSDN 发布器「未找到确认发布按钮」失败（2026-11 CSDN 编辑器改版）时发现
+- Category: 排错调试
+- Instructions:
+  - 通道位于 channels/csdn：csdn_runner.py daemon（flock 持 .lock 终身，--loop 60s 轮询+2s 轮询 logs/sync.trigger 触发文件提前唤醒）、csdn_publisher.py（Playwright 发布，--stage dry-run/preview/publish）、webui.py 8300 看板（/relay 登录中转台+分发看板）；状态 state.json（articles/days/quota_blocked_date）+ queue.json（jobs）
+  - 发布账号「墨衍 MoGrow」博客等级<3：不能创建自定义标签，标签必须点选 el-autocomplete 建议列表的 li（fill+Enter 会被拒，发布时报「请设置文章标签」）；无精确匹配自动跳过，兜底追加 人工智能/大数据/云计算 通用标签
+  - 新编辑器发布弹窗会被 Escape 键关闭：publisher 不再在弹窗内按 Escape（封面仅裁剪弹层 .vicp-crop 可见时按）；弹窗丢失时 _confirm 会自动重点击底栏 btn-publish 重开；发布成功标志=弹窗关闭或跳转 /article/details/
+  - 每日额度 2 篇（平台硬限）：仅发布成功才计当日 total（失败扣额度 bug 已于 2026-11-16 修复）；看板「手动同步」按钮→POST /api/sync-now→job 置 manual_sync/priority+写触发文件（豁免时段/限速/重试等待，不豁免额度），daemon 停摆时 webui 代跑 --once；调试用 CSDN_DEBUG=1 环境变量输出弹窗快照日志
