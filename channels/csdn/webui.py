@@ -571,9 +571,9 @@ input[type=text]{flex:1;min-width:100px;padding:6px 8px;border:1px solid #c9ced6
   <h1>CSDN 登录中转台</h1>
   <a href="." style="color:#1a56b0;text-decoration:none;font-weight:600">一键分发</a>
   <button class="primary" onclick="act('/sendcode')">1. 填手机号并获取验证码</button>
+  <button onclick="act('/editor')">2. 去编辑器校验登录</button>
   <button onclick="act('/login')">打开登录页</button>
   <button onclick="act('/restart')">重启浏览器</button>
-  <button onclick="act('/editor')">2. 去编辑器校验登录</button>
   <span id="login" class="badge">未登录</span>
   <span id="saved" class="badge">未保存</span>
   <span id="msg"></span>
