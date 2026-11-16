@@ -138,10 +138,17 @@ def http_json(url, payload=None, timeout=60, cookie=""):
     失败时把响应体并入异常，便于定位网关错误。"""
     import urllib.request
     import urllib.error
+    from urllib.parse import urlparse
     data = None
+    origin = "%s://%s" % (urlparse(url).scheme, urlparse(url).netloc)
     headers = {"User-Agent": _UA, "Accept": "application/json",
                "Accept-Language": "zh-CN,zh;q=0.9",
-               "Referer": "https://code.cosmoplat.cn/"}
+               "Referer": origin + "/",
+               "Origin": origin,
+               "Sec-Fetch-Site": "same-origin",
+               "Sec-Fetch-Mode": "cors",
+               "Sec-Fetch-Dest": "empty",
+               "Upgrade-Insecure-Requests": "1"}
     if cookie:
         headers["Cookie"] = cookie
     if payload is not None:
@@ -520,8 +527,8 @@ async def ledger_loop(bridge, cfg):
           % (base_url, poll_sec, "已配置" if cookie else "未配置"), flush=True)
     try:
         await asyncio.get_running_loop().run_in_executor(
-            None, lambda: http_json(base_url + "/api/platform-auth",
-                                    timeout=15, cookie=cookie))
+            None, lambda: http_json(base_url + "/api/distribute-poll",
+                                    payload={}, timeout=15, cookie=cookie))
         await _ledger_set_status(bridge, cfg, True)
         print("[ledger] 台账自检通过：链路正常", flush=True)
     except Exception as e:
