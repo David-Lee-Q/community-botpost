@@ -42,7 +42,7 @@ CONFIG_FILE = os.path.join(BASE, "config.json")
 STATE_FILE = os.path.join(BASE, "state.json")
 PLATFORMS_FILE = os.path.join(BASE, "platforms.json")
 # 构建标记：每次发版更新（日期-短哈希），回传台账用于确认线上跑的版本
-BRIDGE_BUILD = "20261116-r4"
+BRIDGE_BUILD = "20261116-r5"
 
 DEFAULTS = {
     "ws_port": 3721,
@@ -328,7 +328,11 @@ def replace_local_images(md, path_base):
 
 
 def idempotency_key(title, md, platforms):
-    raw = "|".join([title, md[:300], ",".join(sorted(platforms))])
+    # 键必须覆盖全文（md 摘要），不能只取前 300 字：
+    # 正文尾部变化（如追加原文链接）若不影响键，扩展会按
+    # 「同键不同文章」拒绝。同键=同内容，幂等语义才成立。
+    md_digest = hashlib.sha1(md.encode("utf-8", "replace")).hexdigest()
+    raw = "|".join([title, md_digest, ",".join(sorted(platforms))])
     return hashlib.sha1(raw.encode()).hexdigest()
 
 
