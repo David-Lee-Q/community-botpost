@@ -149,6 +149,8 @@ Agent 在任务执行过程中发现的条目应遵循以下格式：
   - mcp_bridge.py 的 `ledger_base()`/`resolve_relay_base()` 已自动完成"稳定地址→302→真实 host"解析并缓存 30 分钟（`ledger_loop`/`push_auth`/`_post_distribute_result` 都走它）；台账 server.py 的 `do_POST` 需同时注册 `/api/distribute-poll`（轮询）和 `/api/distribute-result`/`/api/platform-auth`（回传），否则 POST 落到 404；`ledger_cookie` 对轮询链路已非必需（真实 host 匿名放行），仅在直接打稳定地址的旧路径下才有意义
   - 首选路线=本地桥直连（台账页与桥同机）：页面 JS 直连 http://127.0.0.1:8390（/api/status、/api/sync、/api/check-auth）绕开网关；桥响应必须带 CORS + Access-Control-Allow-Private-Network: true（公网 HTTPS 页→回环触发 Chrome PNA 预检，缺该头被 block；127.0.0.1 不受混合内容拦截）
   - 排查入口：桥看板 8390 页头「台账在线/离线/未配置」徽标（tooltip 含原因）+ serve 控制台「台账自检通过/失败」；state.json.ledger 记录 last_poll_at/last_error
+  - 「CSDN同步助手」扩展身份：CSDN 官方闭源 fork（Chrome 商店 ncjocoihljjgjgopejkmcjbgaeaaomjj，开发者 CSDN/app@csdn.net，v1.2.1 2026-11-05），协议源头是开源 Wechatsync（github.com/wechatsync/Wechatsync，Chrome 扩展+MCP Server+CLI，GPL-3.0）但行为不同：上游 syncArticle 同步返回 {results,syncId}，fork 异步返回 {syncId:"mcp_task_...",status:"preparing",fingerprint} 且带 idempotencyKey 去重（同键不同内容→拒收"已用于不同的文章"，同键同内容→应命中去重）
+  - 异步同步结果获取（20261116-r6）：桥 track_sync_task 双通道——①抓扩展主动推送的 WS 帧（按 syncId 匹配，_capture_frame 落 state.ws_frames 并上报台账 POST /api/bridge-frame，GET /api/bridge-frames 可查；若扩展推完成事件帧此通道即可拿到逐平台草稿 ID）②60s 无推送后用原幂等键重发 syncArticle 命中去重；拿到逐平台结果后按 DRAFT_URL_TEMPLATES（8 平台草稿编辑页模板，用户 2026-11-16 提供；小红书长文/思否为固定入口页）拼直达链接回传 /api/distribute-result；等待期任务状态 "syncing"（poll 的 stale 回收只扫 running，防重复领取）；BRIDGE_BUILD 版本标记随登录态推送可查 platform_auth.json.bridge_build
 
 [CSDN 分发通道排障要点]
 - Date: 2026-11-16

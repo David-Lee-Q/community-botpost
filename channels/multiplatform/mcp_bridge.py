@@ -27,6 +27,7 @@ import threading
 import time
 import webbrowser
 import uuid
+from collections import deque
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
 try:
@@ -42,7 +43,9 @@ CONFIG_FILE = os.path.join(BASE, "config.json")
 STATE_FILE = os.path.join(BASE, "state.json")
 PLATFORMS_FILE = os.path.join(BASE, "platforms.json")
 # 构建标记：每次发版更新（日期-短哈希），回传台账用于确认线上跑的版本
-BRIDGE_BUILD = "20261116-r5"
+BRIDGE_BUILD = "20261116-r6"
+# serve 启动时填充，供 WS 帧捕获推送台账使用
+_CAPTURE_CFG = {}
 
 DEFAULTS = {
     "ws_port": 3721,
@@ -228,6 +231,17 @@ def invalidate_relay_cache():
     _RELAY_CACHE["ts"] = 0.0
 
 
+async def _push_frame_to_ledger(base_url, rec, cookie=""):
+    """把扩展主动推送的 WS 帧上报台账（排查异步同步结果形态用）。"""
+    try:
+        await asyncio.get_running_loop().run_in_executor(
+            None, lambda: http_json(base_url + "/api/bridge-frame",
+                                    {"ts": rec.get("ts", ""), "frame": rec.get("frame", {})},
+                                    15, cookie=cookie))
+    except Exception:
+        pass
+
+
 class ExtBridge:
     """与扩展的 WS 连接管理。"""
 
@@ -235,6 +249,8 @@ class ExtBridge:
         self.token = token
         self.conn = None
         self.pending = {}
+        self.frames = deque(maxlen=300)
+        self._frame_subs = {}
 
     def connected(self):
         return self.conn is not None
@@ -267,9 +283,63 @@ class ExtBridge:
             save_state({"last_pong": time.strftime("%H:%M:%S")})
             return
         mid = msg.get("id")
+        self._capture_frame(msg, mid)
         fut = self.pending.pop(mid, None) if isinstance(mid, str) else None
         if fut is not None and not fut.done():
             fut.set_result(msg)
+
+    def _capture_frame(self, msg, mid):
+        """抓非心跳帧：请求响应帧只进环形缓冲；扩展主动推送的帧（无匹配请求 id）
+        持久化到 state.ws_frames，并通知异步同步跟踪器（sync 结果回填的发现通道）。"""
+        try:
+            rec = {"ts": time.strftime("%H:%M:%S"),
+                   "method": msg.get("method", ""),
+                   "frame": msg}
+            self.frames.append(rec)
+            if isinstance(mid, str) and mid in self.pending:
+                return
+            try:
+                st = load_state()
+                frames = (st.get("ws_frames") or [])[-99:]
+                frames.append(rec)
+                save_state({"ws_frames": frames})
+            except Exception:
+                pass
+            try:
+                cfg = _CAPTURE_CFG
+                if cfg.get("ledger_url"):
+                    base = ledger_base(cfg, (cfg.get("ledger_cookie") or "").strip())
+                    if base:
+                        cookie = (cfg.get("ledger_cookie") or "").strip()
+                        asyncio.get_running_loop().create_task(
+                            _push_frame_to_ledger(base, rec, cookie))
+            except Exception:
+                pass
+            s = json.dumps(msg, ensure_ascii=False)
+            for sid, qs in list(self._frame_subs.items()):
+                if sid and sid in s:
+                    for q in qs:
+                        try:
+                            q.put_nowait(msg)
+                        except Exception:
+                            pass
+        except Exception:
+            pass
+
+    def watch_frames(self, sync_id):
+        q = asyncio.Queue()
+        self._frame_subs.setdefault(sync_id, []).append(q)
+        return q
+
+    def unwatch_frames(self, sync_id, q=None):
+        qs = self._frame_subs.get(sync_id)
+        if qs:
+            if q is not None and q in qs:
+                qs.remove(q)
+            else:
+                qs.clear()
+        if not self._frame_subs.get(sync_id):
+            self._frame_subs.pop(sync_id, None)
 
     async def request(self, method, params=None, timeout=120):
         if not self.conn:
@@ -431,6 +501,7 @@ async def do_sync(bridge, art, cfg, log=print):
         NAME_BY_ID.get(p, p) for p in platforms)))
     r = await bridge.request("syncArticle", params,
                              timeout=int(cfg.get("request_timeout_sec", 300)))
+    art["_sync_params"] = params
     return r
 
 
@@ -477,17 +548,83 @@ def _sync_entry_from_obj(e):
     return {"ok": bool(ok), "url": str(url or "")[:500], "error": str(err or "")[:300]}
 
 
+# 草稿编辑页链接模板（用户 2026-11-16 提供；{id} 用扩展返回的草稿 ID 填充，
+# 无 {id} 占位的平台是固定入口页）
+DRAFT_URL_TEMPLATES = {
+    "juejin": "https://juejin.cn/editor/drafts/{id}",
+    "baijiahao": "https://baijiahao.baidu.com/builder/rc/edit?type=news&article_id={id}&is_pay_training_camp=",
+    "xiaohongshu": "https://creator.xiaohongshu.com/publish/publish?from=menu&target=article",
+    "51cto": "https://blog.51cto.com/blogger/draft/{id}",
+    "jianshu": "https://www.jianshu.com/writer#/notebooks/{nb}/notes/{id}",
+    "segmentfault": "https://segmentfault.com/user/draft",
+    "oschina": "https://my.oschina.net/u/7905287/blog/ai-write/draft/{id}",
+    "tencentcloud": "https://cloud.tencent.com/developer/article/write-new?draftId={id}",
+}
+DRAFT_ID_KEYS = ("draftId", "draft_id", "draftID", "postId", "articleId",
+                 "article_id", "noteId", "note_id", "blogId")
+
+
+def extract_draft_id(entry):
+    if not isinstance(entry, dict):
+        return ""
+    for k in DRAFT_ID_KEYS:
+        v = entry.get(k)
+        if v not in (None, "", 0):
+            return str(v)
+    v = entry.get("id")
+    if v not in (None, "") and not isinstance(v, bool):
+        return str(v)
+    return ""
+
+
+def build_draft_url(pid, entry, url):
+    """草稿链接：扩展返回的编辑页 URL 优先；否则按模板+草稿 ID 拼直达链接；
+    拼不出时保留原值（空 url 由看板回退到 platforms.json 的入口地址）。"""
+    t = DRAFT_URL_TEMPLATES.get(pid)
+    if not t:
+        return url
+    if "{id}" not in t:
+        return t
+    if url and re.search(r"(draft|edit|write|editor)", url, re.I):
+        return url
+    did = extract_draft_id(entry)
+    if not did:
+        return url
+    if "{nb}" in t:
+        nb = str((entry or {}).get("notebookId") or (entry or {}).get("notebook_id") or "")
+        if not nb:
+            return "https://www.jianshu.com/writer"
+        t = t.replace("{nb}/", nb + "/")
+    try:
+        return t.format(id=did)[:500]
+    except Exception:
+        return url
+
+
 def normalize_sync_result(r, platform_ids):
-    """syncArticle 响应 -> {platform_id: {ok,url,error}}（容错多种返回形态）。"""
+    """syncArticle 响应 -> ({platform_id: {ok,url,error}}, async_info)。
+
+    扩展为异步任务模型：先回 {syncId, status:"preparing"}，逐平台草稿结果稍后产生。
+    识别到该形态时 async_info 非空，由 track_sync_task 跟踪回填；
+    其余形态按原有逻辑归一化（async_info 为 None）。"""
     out = {p: {"ok": False, "url": "", "error": ""} for p in platform_ids}
     if not isinstance(r, dict):
-        return out
+        return out, None
     if "error" in r:
         msg = str((r["error"] or {}).get("message", "同步失败"))[:300]
         for p in out:
             out[p]["error"] = msg
-        return out
+        return out, None
     res = r.get("result")
+    async_info = None
+    if isinstance(res, dict) and res:
+        st = res.get("status")
+        has_list = any(isinstance(res.get(k), list)
+                       for k in ("platforms", "results", "items", "list", "synced"))
+        if st in ("preparing", "syncing", "pending", "running", "queued", "processing"):
+            async_info = {"syncId": str(res.get("syncId") or ""), "status": st}
+        elif "syncId" in res and not has_list:
+            async_info = {"syncId": str(res.get("syncId") or ""), "status": "unknown"}
     cands = []
     if isinstance(res, dict):
         for k in ("platforms", "results", "items", "list", "synced"):
@@ -500,7 +637,8 @@ def normalize_sync_result(r, platform_ids):
             if known:
                 for p, v in known.items():
                     out[p] = _sync_entry_from_obj(v)
-                return out
+                    out[p]["url"] = build_draft_url(p, v, out[p]["url"])
+                return out, None
     elif isinstance(res, list):
         cands = res
     for e in cands:
@@ -509,11 +647,19 @@ def normalize_sync_result(r, platform_ids):
         pid = e.get("platform") or e.get("platformId") or e.get("id")
         if pid in out:
             out[pid] = _sync_entry_from_obj(e)
+            out[pid]["url"] = build_draft_url(pid, e, out[pid]["url"])
+    if cands and any(v["ok"] or v["url"] or v["error"] for v in out.values()):
+        return out, None
+    if async_info:
+        note = "扩展异步生成草稿中（status=%s），完成后自动回填草稿链接" % async_info["status"]
+        for p in out:
+            out[p]["error"] = note
+        return out, async_info
     if all(not v["ok"] and not v["error"] for v in out.values()) and isinstance(res, dict) and res:
         u = res.get("url") or res.get("draftUrl") or ""
         for p in out:
             out[p] = {"ok": True, "url": str(u or "")[:500], "error": ""}
-    return out
+    return out, None
 
 
 async def push_auth_to_ledger(bridge, cfg, plats):
@@ -574,7 +720,20 @@ async def run_distribute_task(bridge, cfg, base_url, task):
         art["markdown"] = md2
         art["todo_images"] = todo
         r = await do_sync(bridge, art, cfg, log=log)
-        res = normalize_sync_result(r, targets)
+        res, async_info = normalize_sync_result(r, targets)
+        if async_info:
+            status = "syncing"
+            log("扩展异步受理（syncId=%s…），等待草稿生成，完成后自动回填链接"
+                % async_info["syncId"][:24])
+            save_state({"last_distribute": {"time": time.strftime("%Y-%m-%d %H:%M:%S"),
+                                            "task_id": t_id, "status": status,
+                                            "platforms": res,
+                                            "raw": json.dumps(r, ensure_ascii=False)[:8000]}})
+            await _post_distribute_result(cfg, base_url, t_id, "syncing", res, raw=r)
+            asyncio.get_running_loop().create_task(
+                track_sync_task(bridge, cfg, base_url, t_id, async_info["syncId"],
+                                targets, requery_params=art.get("_sync_params"), log=log))
+            return
         status = "done" if any(v["ok"] for v in res.values()) else "failed"
         log("完成: %s（成功 %d/%d）" % (status, sum(1 for v in res.values() if v["ok"]), len(targets)))
         save_state({"last_distribute": {"time": time.strftime("%Y-%m-%d %H:%M:%S"),
@@ -590,6 +749,75 @@ async def run_distribute_task(bridge, cfg, base_url, task):
                 {p: {"ok": False, "url": "", "error": str(e)[:300]} for p in PLATFORM_IDS})
         except Exception as e2:
             log("回传失败结果也失败: %s" % e2)
+
+
+TRACK_TIMEOUT_SEC = 600
+TRACK_REQUERY_FIRST = 60
+TRACK_REQUERY_EVERY = 30
+
+
+async def track_sync_task(bridge, cfg, base_url, task_id, sync_id,
+                          platform_ids, requery_params=None, log=print):
+    """扩展异步受理后跟踪逐平台草稿结果并回填台账。
+
+    两条获取通道：
+      1) 扩展主动推送的 WS 帧（按 syncId 匹配，_capture_frame 通知）
+      2) 60s 无推送后，用原幂等键重发 syncArticle（内容相同应命中去重，
+         返回原任务结果而非重复建草稿）"""
+    if not sync_id:
+        return
+    q = bridge.watch_frames(sync_id)
+    log("异步同步已受理（syncId=%s…），开始跟踪草稿链接（上限 %d 分钟）"
+        % (sync_id[:24], TRACK_TIMEOUT_SEC // 60))
+    deadline = time.time() + TRACK_TIMEOUT_SEC
+    next_requery = time.time() + TRACK_REQUERY_FIRST
+    found = None
+    try:
+        while time.time() < deadline:
+            frame = None
+            try:
+                frame = await asyncio.wait_for(q.get(), timeout=5)
+            except asyncio.TimeoutError:
+                pass
+            if frame is not None:
+                cand = frame if ("result" in frame or "error" in frame) else {"result": frame}
+                norm, _a = normalize_sync_result(cand, platform_ids)
+                if any(v["ok"] or v["url"] or v["error"] for v in norm.values()):
+                    found = norm
+                    log("收到扩展推送的逐平台同步结果，回填草稿链接")
+                    break
+            if requery_params and time.time() >= next_requery:
+                next_requery = time.time() + TRACK_REQUERY_EVERY
+                try:
+                    r2 = await bridge.request("syncArticle", requery_params, timeout=30)
+                    norm2, a2 = normalize_sync_result(r2, platform_ids)
+                    if a2 is None and any(v["ok"] or v["url"] or v["error"] for v in norm2.values()):
+                        found = norm2
+                        log("幂等键复查命中逐平台结果，回填草稿链接")
+                        break
+                    why = (a2 or {}).get("status") or \
+                        str(((r2.get("error") or {}).get("message")) or "")[:60]
+                    log("幂等键复查：仍在等待（%s）" % why)
+                except Exception as e:
+                    log("幂等键复查异常: %s" % str(e)[:120])
+    except Exception as e:
+        log("跟踪异常退出: %s" % e)
+    finally:
+        bridge.unwatch_frames(sync_id, q)
+    if found:
+        status = "done" if any(v["ok"] for v in found.values()) else "failed"
+        try:
+            await _post_distribute_result(
+                cfg, base_url, task_id, status, found,
+                raw={"event": "track_backfill", "syncId": sync_id,
+                     "time": time.strftime("%Y-%m-%d %H:%M:%S")})
+            log("草稿链接回填完成: %s（%d/%d 带链接）"
+                % (status, sum(1 for v in found.values() if v["url"]), len(found)))
+        except Exception as e:
+            log("回填结果上报台账失败: %s" % e)
+    else:
+        log("等待 %d 分钟仍未拿到逐平台结果（syncId=%s…），停止自动回填，可到各平台草稿箱查看"
+            % (TRACK_TIMEOUT_SEC // 60, sync_id[:24]))
 
 
 async def _ledger_set_status(bridge, cfg, ok, error=""):
@@ -978,6 +1206,10 @@ class DashHandler(BaseHTTPRequestHandler):
             self.wfile.write(data)
         elif p == "/api/status":
             self._json(200, load_state())
+        elif p == "/api/frames":
+            st = load_state()
+            self._json(200, {"ws_frames": (st.get("ws_frames") or [])[-50:],
+                             "ring": list(self.bridge.frames)[-30:]})
         else:
             self._json(404, {"error": "not found"})
 
@@ -993,6 +1225,7 @@ class DashHandler(BaseHTTPRequestHandler):
                        "cover": body.get("cover") or "",
                        "tags": body.get("tags") or [],
                        "article_id": str(body.get("article_id") or ""),
+                       "task_id": str(body.get("task_id") or ""),
                        "retry": False}
                 if not art["markdown"].strip():
                     return {"error": "正文为空"}
@@ -1005,8 +1238,25 @@ class DashHandler(BaseHTTPRequestHandler):
                 art["markdown"] = md2
                 art["todo_images"] = todo
                 r = await do_sync(self.bridge, art, self.cfg, log=self._log)
-                norm = normalize_sync_result(r, art["platforms"])
-                status = "done" if any(v["ok"] for v in norm.values()) else "failed"
+                norm, async_info = normalize_sync_result(r, art["platforms"])
+                if async_info:
+                    status = "syncing"
+                    t_id = art.get("task_id") or ""
+                    lb = ledger_base(self.cfg, (self.cfg.get("ledger_cookie") or "").strip()) \
+                        if self.cfg.get("ledger_url") else ""
+                    if t_id and lb:
+                        try:
+                            await _post_distribute_result(self.cfg, lb, t_id, "syncing",
+                                                          norm, raw=r)
+                        except Exception as e:
+                            self._log("syncing 状态上报台账失败: %s" % e)
+                        asyncio.get_running_loop().create_task(
+                            track_sync_task(self.bridge, self.cfg, lb, t_id,
+                                            async_info["syncId"], art["platforms"],
+                                            requery_params=art.get("_sync_params"),
+                                            log=lambda s: self._log("[track][%s] %s" % (t_id, s))))
+                else:
+                    status = "done" if any(v["ok"] for v in norm.values()) else "failed"
                 try:
                     save_state({"last_http_sync": {
                         "time": time.strftime("%Y-%m-%d %H:%M:%S"),
@@ -1014,7 +1264,10 @@ class DashHandler(BaseHTTPRequestHandler):
                         "platforms": norm}})
                 except Exception:
                     pass
-                return {"status": status, "platforms": norm, "raw": r}
+                out = {"status": status, "platforms": norm, "raw": r}
+                if async_info:
+                    out["async"] = async_info
+                return out
             try:
                 fut = asyncio.run_coroutine_threadsafe(run(), self.loop)
                 self._json(200, fut.result())
@@ -1073,6 +1326,12 @@ PROBE_METHODS = [
     "syncStatus", "tasks", "getTask",
     "openUrl", "openTab", "open", "openPage", "navigate", "goto",
     "executeScript", "getContent", "screenshot", "getCookies", "getPlatformCookies",
+    # 异步任务（syncId 前缀 mcp_task_）状态/结果查询候选
+    "getMcpTask", "getMcpTaskStatus", "getMcpTaskResult", "mcpTask", "mcpTaskStatus",
+    "getTaskStatus", "getTaskResult", "queryTask", "queryTaskStatus",
+    "getSyncTask", "getSyncTaskStatus", "getSyncTaskResult", "getSyncResult",
+    "syncResult", "listTasks", "listMcpTasks", "getSyncTasks", "syncTasks",
+    "taskStatus", "getDraftUrl", "getDraftUrls", "getSyncDrafts",
 ]
 
 
@@ -1148,7 +1407,9 @@ async def cmd_serve(args):
 
 
 async def _cmd_serve_inner(args):
+    global _CAPTURE_CFG
     cfg = load_config()
+    _CAPTURE_CFG = cfg
     if ws_serve is None:
         raise SystemExit("缺少依赖：pip3 install websockets")
     bridge = ExtBridge(cfg["token"])

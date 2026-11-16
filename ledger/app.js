@@ -1378,21 +1378,30 @@ function openDistribute(aid, btn) {
     const res = await localBridgePost('/api/sync', {
       title: art.title || '', markdown: content,
       cover: mimg ? mimg[1] : '', tags: [art.cateName || ''].filter(Boolean),
-      platforms: targets
+      platforms: targets, task_id: task ? task.task_id : ''
     }, 600000);
     if (res.error) throw new Error(res.error);
     const platforms = res.platforms || (res.result && res.result.platforms) || {};
     const raw = res.raw ? JSON.stringify(res.raw).slice(0, 8000) : '';
+    const isSyncing = res.status === 'syncing';
     const t = {
       task_id: task ? task.task_id : 'local-' + Date.now(), article_id: aid,
       status: res.status || (Object.values(platforms).some(x => x && x.ok) ? 'done' : 'failed'),
       title: art.title || '', created_at: task ? task.created_at : nowLocal(),
-      finished_at: nowLocal(), platforms, raw
+      finished_at: isSyncing ? '' : nowLocal(), platforms, raw
     };
     if (task) apiPost('api/distribute-result', { task_id: task.task_id, status: t.status, platforms, raw }).catch(() => {});
     DIST_TASKS[String(aid)] = t;
     renderTable();
     showDistResult(t);
+    if (isSyncing) {
+      if (task) {
+        pollDistTask(task.task_id, aid, btn);
+      } else {
+        document.getElementById('distMeta').textContent =
+          `${art.title || ''} · 草稿生成中…（任务记录创建失败，无法自动回填链接，可到各平台草稿箱查看）`;
+      }
+    }
   }).catch(e => {
     document.getElementById('distMask').classList.remove('show');
     if (btn) { btn.disabled = false; btn.classList.remove('dist-busy'); }
@@ -1412,12 +1421,17 @@ function pollDistTask(taskId, aid, btn) {
       .then(d => {
         const t = d.task;
         if (!t) return;
-        if (t.status === 'pending' || t.status === 'running') {
+        if (t.status === 'pending' || t.status === 'running' || t.status === 'syncing') {
+          if (t.status === 'syncing' && t.platforms && Object.keys(t.platforms).length) {
+            showDistResult(t);
+          }
           if (Date.now() - start > 600000) {
             clearInterval(timer);
             delete DIST_POLLERS[taskId];
             if (btn) { btn.disabled = false; btn.classList.remove('dist-busy'); }
-            alert('仍在等待桥领取任务。请确认本机桥已运行、扩展已连接，且 Chrome 有激活的网页标签页。');
+            alert(t.status === 'syncing'
+              ? '草稿仍在生成中，完成后链接会自动回填。可关闭此窗口稍后在「一键分发结果」里查看，或直接到各平台草稿箱确认。'
+              : '仍在等待桥领取任务。请确认本机桥已运行、扩展已连接，且 Chrome 有激活的网页标签页。');
           }
           return;
         }
@@ -1454,10 +1468,14 @@ function showDistResult(t) {
       const u = e.url || home;
       if (u) DIST_OK_URLS.push(u);
     }
-    const st = e.ok ? '<span class="tag g">草稿已创建</span>' : '<span class="tag s">失败</span>';
+    const st = e.ok ? '<span class="tag g">草稿已创建</span>'
+      : (e.error && String(e.error).indexOf('异步') >= 0 ? '<span class="tag o">生成中</span>'
+      : '<span class="tag s">失败</span>');
+    const isAsync = !e.ok && e.error && String(e.error).indexOf('异步') >= 0;
     let detail;
     if (e.url) detail = `<a href="${escapeHtml(e.url)}" target="_blank" rel="noopener" title="${escapeHtml(e.url)}">打开草稿发布</a>`;
     else if (e.ok && home) detail = `<a href="${escapeHtml(home)}" target="_blank" rel="noopener">打开平台去发布</a>`;
+    else if (isAsync) detail = `<span style="color:var(--muted)">${escapeHtml(e.error)}</span>`;
     else detail = escapeHtml(e.error || '—');
     return `<tr><td>${escapeHtml(distName(pid))}</td><td>${st}</td><td>${detail}</td></tr>`;
   }).join('');

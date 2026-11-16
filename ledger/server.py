@@ -24,6 +24,7 @@ BOT_POSTS_FILE = os.path.join(LEDGER, "data", "bot_posts.json")
 DIST_TASKS_FILE = os.path.join(LEDGER, "data", "distribute_tasks.json")
 PLATFORM_AUTH_FILE = os.path.join(LEDGER, "data", "platform_auth.json")
 BRIDGE_PROBE_FILE = os.path.join(LEDGER, "data", "bridge_probe.json")
+BRIDGE_FRAMES_FILE = os.path.join(LEDGER, "data", "bridge_frames.json")
 BODIES_FILE = os.path.join(LEDGER, "data", "article_bodies.json")
 
 sys.path.insert(0, LEDGER)
@@ -198,6 +199,27 @@ class Handler(http.server.SimpleHTTPRequestHandler):
         if self.path == "/api/bridge-probe":
             data = self._body() or {}
             _write_json(BRIDGE_PROBE_FILE, data)
+            self._json(200, {"ok": True})
+            return
+        if self.path == "/api/bridge-frame":
+            data = self._body() or {}
+            frame = data.get("frame")
+            if not isinstance(frame, dict):
+                self._json(400, {"error": "缺少 frame 对象"})
+                return
+            try:
+                frames = _read_json(BRIDGE_FRAMES_FILE, [])
+                if not isinstance(frames, list):
+                    frames = []
+                key = (str(frame.get("id", "")), str(frame.get("method", "")))
+                if not any((str((f.get("frame") or {}).get("id", "")),
+                            str((f.get("frame") or {}).get("method", ""))) == key
+                           for f in frames if isinstance(f, dict)):
+                    frames.append({"ts": str(data.get("ts") or time.strftime("%Y-%m-%d %H:%M:%S")),
+                                   "frame": frame})
+                _write_json(BRIDGE_FRAMES_FILE, frames[-300:])
+            except Exception:
+                pass
             self._json(200, {"ok": True})
             return
         if self.path != "/api/publish":
@@ -636,6 +658,13 @@ class Handler(http.server.SimpleHTTPRequestHandler):
             return
         if self.path.startswith("/api/distribute-history"):
             self._handle_distribute_history()
+            return
+        if self.path.startswith("/api/bridge-frames"):
+            try:
+                frames = _read_json(BRIDGE_FRAMES_FILE, [])
+            except Exception:
+                frames = []
+            self._json(200, {"frames": frames[-100:] if isinstance(frames, list) else []})
             return
         if self.path.startswith("/api/platform-auth"):
             self._handle_platform_auth_get()
