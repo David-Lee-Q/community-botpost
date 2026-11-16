@@ -822,10 +822,26 @@ class DashHandler(BaseHTTPRequestHandler):
     def log_message(self, *a):
         pass
 
+    def _cors(self):
+        # 允许台账页（任意源）跨源直连本机桥
+        self.send_header("Access-Control-Allow-Origin", "*")
+        self.send_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+        self.send_header("Access-Control-Allow-Headers", "Content-Type")
+        # 台账页是公网 HTTPS 站，直连本机 127.0.0.1 触发 Chrome Private Network Access，
+        # 预检必须回这个头，否则浏览器直接 block 本地请求
+        self.send_header("Access-Control-Allow-Private-Network", "true")
+
+    def do_OPTIONS(self):
+        self.send_response(204)
+        self._cors()
+        self.send_header("Content-Length", "0")
+        self.end_headers()
+
     def _json(self, code, obj):
         data = json.dumps(obj, ensure_ascii=False).encode()
         self.send_response(code)
         self.send_header("Content-Type", "application/json; charset=utf-8")
+        self._cors()
         self.send_header("Content-Length", str(len(data)))
         self.end_headers()
         self.wfile.write(data)
@@ -836,6 +852,7 @@ class DashHandler(BaseHTTPRequestHandler):
             data = DASH.encode()
             self.send_response(200)
             self.send_header("Content-Type", "text/html; charset=utf-8")
+            self._cors()
             self.send_header("Content-Length", str(len(data)))
             self.end_headers()
             self.wfile.write(data)
@@ -866,8 +883,14 @@ class DashHandler(BaseHTTPRequestHandler):
                 md2, todo = replace_local_images(art["markdown"], BASE)
                 art["markdown"] = md2
                 art["todo_images"] = todo
-                return await do_sync(self.bridge, art, self.cfg,
-                                     log=self._log)
+                r = await do_sync(self.bridge, art, self.cfg, log=self._log)
+                try:
+                    save_state({"last_http_sync": {
+                        "time": time.strftime("%Y-%m-%d %H:%M:%S"),
+                        "title": art["title"], "result": r}})
+                except Exception:
+                    pass
+                return r
             try:
                 fut = asyncio.run_coroutine_threadsafe(run(), self.loop)
                 self._json(200, fut.result())

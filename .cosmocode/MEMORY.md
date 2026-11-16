@@ -57,10 +57,9 @@ Agent 在任务执行过程中发现的条目应遵循以下格式：
 - Context: Agent 构建社区发文台账前端展示页时发现
 - Category: 运维部署
 - Instructions:
-  - 台账项目位于 /workspace/ledger：index.html（前端页面）+ fetch_articles.py（数据拉取脚本）+ data/articles.json（数据）
+  - 台账项目位于 /workspace/ledger：server.py（ThreadingHTTPServer 8090，API+静态页，根路径即首页）+ app.js/index.html（前端）+ data/articles.json（元数据，无正文；正文缓存 data/article_bodies.json）
   - 数据源：POST /api/member/article/1447?pageNum=N&pageSize=100，返回账号全部文章（含 cateId/createTime/status/viewCount/commentCount/favor/collect），total 为总量
-  - 分类名映射从 GET /api/cate/list 获取 id→name
-  - 静态服务器：/workspace/ledger 下 `python3 -m http.server 8090 --bind 0.0.0.0`，根路径即首页 index.html
+  - 分类名映射从 GET /api/cate/list 获取 id→name；改 app.js/index.html 后须升 index.html 内 `?v=` 版本号
   - 发布完成后 runner.py 会自动调用 fetch_articles.py 刷新台账数据，无需手动拉取
 
 [发文质量持续改进]
@@ -140,6 +139,15 @@ Agent 在任务执行过程中发现的条目应遵循以下格式：
   - 拦截点：publish.py publish_one 命中即返回 blocked（title/summary/body 任一命中，不发布不发请求）；one_shot.py 生成校验命中则重试，SYSTEM_PROMPT 要求规避竞品品牌名
   - 此红线属于隐形规定：不得在《社区文章质量评价标准》（ledger/index.html）等任何对外展示文档中列出该关键词清单
   - runner 启动优先用后台终端方式运行（本环境 shell 工具下 nohup 后台进程会被清理）
+
+[多平台桥↔台账联动排障要点]
+- Date: 2026-11-16
+- Context: Agent 排查「平台登录态不显示/桥轮询 400」时发现
+- Category: 排错调试
+- Instructions:
+  - 预览网关(code.cosmoplat.cn/api/v1/p/{taskId}/{port})按登录态放行：匿名/脚本请求（即使伪装 Chrome UA）一律 400「请求错误 [trace_id]」，带平台会话 Cookie 的浏览器请求 200；桥走网关需在 config.json 配 ledger_cookie（浏览器 F12→Network 复制完整 Cookie 头，数天过期需重拷）
+  - 首选路线=本地桥直连（台账页与桥同机）：页面 JS 直连 http://127.0.0.1:8390（/api/status、/api/sync、/api/check-auth）绕开网关；桥响应必须带 CORS + Access-Control-Allow-Private-Network: true（公网 HTTPS 页→回环触发 Chrome PNA 预检，缺该头被 block；127.0.0.1 不受混合内容拦截）
+  - 排查入口：桥看板 8390 页头「台账在线/离线/未配置」徽标（tooltip 含原因）+ serve 控制台「台账自检通过/失败」；state.json.ledger 记录 last_poll_at/last_error
 
 [CSDN 分发通道排障要点]
 - Date: 2026-11-16

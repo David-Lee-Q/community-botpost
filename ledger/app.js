@@ -17,6 +17,13 @@ let charts = {};
 let OPT_AID = null;
 let selectedCates = [];
 let DIST_TASKS = {};      // article_id -> 最近一次分发任务
+const LOCAL_BRIDGE = 'http://127.0.0.1:8390';  // 本机桥直连（台账页与桥同机时可用）
+let AUTH_MODE = 'ledger'; // 'local'=本机桥直连 | 'ledger'=经台账中转
+
+function nowLocal() {
+  const d = new Date(), p = n => String(n).padStart(2, '0');
+  return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}:${p(d.getSeconds())}`;
+}
 let PLATFORM_META = [];   // 17 平台元数据（名称/登录 URL）
 const DIST_POLLERS = {};  // task_id -> 轮询定时器
 
@@ -1291,7 +1298,34 @@ function openDetail(aid) {
 document.getElementById('drawerClose').addEventListener('click', () => document.getElementById('drawerMask').classList.remove('show'));
 document.getElementById('drawerMask').addEventListener('click', e => { if (e.target === e.currentTarget) document.getElementById('drawerMask').classList.remove('show'); });
 
-/* ============ 一键分发（经本机桥同步到各平台草稿箱） ============ */
+/* ============ 本机桥直连（优先路径，绕过公网网关） ============ */
+
+function localBridgeStatus(ms = 2500) {
+  const ac = new AbortController();
+  const timer = setTimeout(() => ac.abort(), ms);
+  return fetch(LOCAL_BRIDGE + '/api/status', { signal: ac.signal, cache: 'no-store' })
+    .then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+    .catch(e => { clearTimeout(timer); throw e; });
+}
+
+function localBridgePost(path, body, ms = 0) {
+  const ac = new AbortController();
+  if (ms) setTimeout(() => ac.abort(), ms);
+  return fetch(LOCAL_BRIDGE + path, {
+    method: 'POST', signal: ac.signal,
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body || {})
+  }).then(r => {
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    return r.json();
+  });
+}
+
+function localAuthPlatforms(st) {
+  return Object.keys(st.platforms || {}).filter(p => (st.platforms[p] || {}).authenticated);
+}
+
+/* ============ 一键分发（本机桥直连优先） ============ */
 
 function distBtnCls(aid) {
   const t = DIST_TASKS[String(aid)];
@@ -1320,14 +1354,52 @@ function openDistribute(aid, btn) {
     : '将同步到本机桥当前已登录的全部平台';
   if (!confirm(`一键分发《${a ? a.title : ''}》？\n\n${tip}\n各平台生成草稿，需到平台后台点发布。`)) return;
   if (btn) { btn.disabled = true; btn.classList.remove('dist-ok', 'dist-err'); btn.classList.add('dist-busy'); }
-  apiPost('api/distribute', { article_id: aid }).then(r => r.json().catch(() => ({}))).then(d => {
-    if (!d.ok) throw new Error(d.error || '创建分发任务失败');
-    DIST_TASKS[String(aid)] = { task_id: d.task_id, article_id: aid, status: d.status,
-                                created_at: '', platforms: {}, title: a ? a.title : '' };
-    pollDistTask(d.task_id, aid, btn);
+  localBridgeStatus().then(async st => {
+    const targets = localAuthPlatforms(st);
+    if (!targets.length) throw new Error('本机桥当前无已登录平台：请先在「平台登录态」里对目标平台点「一键登录」');
+    // 台账侧留一条任务记录（失败不阻断本机直连分发）
+    let task = null;
+    try {
+      const r = await apiPost('api/distribute', { article_id: aid }).then(x => x.json().catch(() => ({})));
+      if (r.ok) task = { task_id: r.task_id, article_id: aid, title: a ? a.title : '', created_at: r.created_at || '' };
+    } catch (e) { task = null; }
+    const d = await (await fetch(`/api/article?id=${aid}`)).json();
+    if (!d.ok) throw new Error(d.error || '文章正文加载失败');
+    const art = d.article || {};
+    const content = (art.content || '').trim();
+    if (!content) throw new Error('文章正文为空');
+    const mimg = content.match(/!\[[^\]]*\]\((https?:[^)\s]+)\)/);
+    // 多平台同步可能需数分钟：先在结果弹窗展示进行中状态
+    document.getElementById('distMeta').textContent =
+      `${art.title || ''} · 分发中（已登录 ${targets.length} 个平台，可能需要数分钟）…`;
+    document.getElementById('distBody').innerHTML =
+      `<tr><td colspan="3">正在同步到：${targets.map(distName).join('、')}</td></tr>`;
+    document.getElementById('distMask').classList.add('show');
+    const res = await localBridgePost('/api/sync', {
+      title: art.title || '', markdown: content,
+      cover: mimg ? mimg[1] : '', tags: [art.cateName || ''].filter(Boolean),
+      platforms: targets
+    }, 600000);
+    if (res.error) throw new Error(res.error);
+    const platforms = (res.result && res.result.platforms) || res.platforms || {};
+    const t = {
+      task_id: task ? task.task_id : 'local-' + Date.now(), article_id: aid,
+      status: Object.values(platforms).some(x => x && x.ok) ? 'done' : 'failed',
+      title: art.title || '', created_at: task ? task.created_at : nowLocal(),
+      finished_at: nowLocal(), platforms
+    };
+    if (task) apiPost('api/distribute-result', { task_id: task.task_id, status: t.status, platforms }).catch(() => {});
+    DIST_TASKS[String(aid)] = t;
+    renderTable();
+    showDistResult(t);
   }).catch(e => {
+    document.getElementById('distMask').classList.remove('show');
     if (btn) { btn.disabled = false; btn.classList.remove('dist-busy'); }
-    alert('分发失败: ' + e.message);
+    const net = e instanceof TypeError || (e && e.name === 'AbortError')
+      || /fetch/i.test(String((e && e.message) || e));
+    alert('分发失败: ' + ((e && e.message) || e) + (net
+      ? '\n\n本机桥未运行或无响应：请在 multiplatform 目录的 cmd 窗口执行 python mcp_bridge.py serve，并保持该窗口打开。'
+      : ''));
   });
 }
 
@@ -1389,11 +1461,40 @@ function openAuthModal() {
   refreshAuthView();
 }
 
+function renderAuthRows(plats, has) {
+  const list = (PLATFORM_META.length ? PLATFORM_META
+    : Object.keys(plats || {}).map(id => ({ id, name: id })));
+  document.getElementById('authBody').innerHTML = list.map(m => {
+    const p = (plats || {})[m.id] || {};
+    const st = !has ? '<span class="tag">未监测</span>'
+      : (p.authenticated ? '<span class="tag g">已登录</span>' : '<span class="tag s">未登录</span>');
+    const op = (!p.authenticated && m.url)
+      ? `<button class="fab-btn ghost" style="padding:3px 10px;font-size:12px" onclick="window.open('${m.url}','_blank')">一键登录</button>`
+      : '<span style="color:var(--muted)">—</span>';
+    return `<tr><td>${escapeHtml(m.name || m.id)}</td><td>${st}</td><td>${escapeHtml(p.error || '')}</td><td class="num">${op}</td></tr>`;
+  }).join('');
+}
+
 function refreshAuthView() {
-  return fetchJson('api/platform-auth', { platforms: {}, meta: [] }).then(d => {
-    if (d && Array.isArray(d.meta) && d.meta.length) PLATFORM_META = d.meta;
-    renderAuthTable(d || { platforms: {}, meta: [] });
-    return d;
+  return localBridgeStatus().then(s => {
+    AUTH_MODE = 'local';
+    const plats = s.platforms || {};
+    const has = !!s.platforms_ts;
+    document.getElementById('authMeta').textContent =
+      `桥在线（本机直连 127.0.0.1:8390）· 扩展${s.connected ? '已连接' : '未连接'} · ` +
+      (has ? `最近检查 ${s.platforms_ts}` : '尚未检查登录态（可点「刷新登录态」）') +
+      ' · 同步产出为草稿，需到各平台后台发布';
+    renderAuthRows(plats, has);
+    if (!PLATFORM_META.length) fetchJson('api/platform-auth', { platforms: {}, meta: [] })
+      .then(d => { if (d && Array.isArray(d.meta) && d.meta.length) { PLATFORM_META = d.meta; renderAuthRows(plats, has); } });
+    return { _local: true, platforms: plats, connected: s.connected };
+  }).catch(() => {
+    AUTH_MODE = 'ledger';
+    return fetchJson('api/platform-auth', { platforms: {}, meta: [] }).then(d => {
+      if (d && Array.isArray(d.meta) && d.meta.length) PLATFORM_META = d.meta;
+      renderAuthTable(d || { platforms: {}, meta: [] });
+      return d;
+    });
   });
 }
 
@@ -1412,23 +1513,27 @@ function renderAuthTable(d) {
     ? ` · 桥在线（最近轮询 ${d.last_poll_at}）`
     : ` · 桥离线（最近轮询 ${d.last_poll_at || '无记录'}）：请在本机更新并运行桥——解压新版 multiplatform.zip 覆盖后执行 python mcp_bridge.py serve`;
   document.getElementById('authMeta').textContent = meta;
-  const list = (PLATFORM_META.length ? PLATFORM_META
-    : Object.keys(d.platforms || {}).map(id => ({ id, name: id })));
-  document.getElementById('authBody').innerHTML = list.map(m => {
-    const p = (d.platforms || {})[m.id] || {};
-    const st = !has ? '<span class="tag">未监测</span>'
-      : (p.authenticated ? '<span class="tag g">已登录</span>' : '<span class="tag s">未登录</span>');
-    const op = (!p.authenticated && m.url)
-      ? `<button class="fab-btn ghost" style="padding:3px 10px;font-size:12px" onclick="window.open('${m.url}','_blank')">一键登录</button>`
-      : '<span style="color:var(--muted)">—</span>';
-    return `<tr><td>${escapeHtml(m.name || m.id)}</td><td>${st}</td><td>${escapeHtml(p.error || '')}</td><td class="num">${op}</td></tr>`;
-  }).join('');
+  renderAuthRows(d.platforms || {}, has);
 }
 
 async function authRecheck() {
   const btn = document.getElementById('authRefresh');
   const hint = document.getElementById('authHint');
   btn.disabled = true;
+  // 本机桥直连模式：直接调桥的 check-auth，无需经台账中转
+  if (AUTH_MODE === 'local') {
+    hint.textContent = '正在通知本机桥重新检查登录态…';
+    try {
+      const d = await localBridgePost('/api/check-auth', {}, 180000);
+      btn.disabled = false;
+      hint.textContent = d.ok ? '登录态已更新' : ('刷新失败: ' + (d.error || '未知错误'));
+      refreshAuthView();
+    } catch (e) {
+      btn.disabled = false;
+      hint.textContent = '本机桥无响应: ' + (e && e.message || e);
+    }
+    return;
+  }
   hint.textContent = '通知桥重新检查中…';
   let ok = false;
   try {
