@@ -25,6 +25,7 @@ import re
 import tempfile
 import threading
 import time
+import webbrowser
 import uuid
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
@@ -913,6 +914,21 @@ class DashHandler(BaseHTTPRequestHandler):
                 self._json(200, fut.result())
             except Exception as e:
                 self._json(500, {"ok": False, "error": str(e)})
+        elif p == "/api/open-drafts":
+            urls = body.get("urls") or []
+            if isinstance(urls, str):
+                urls = [u.strip() for u in urls.split(",")]
+            urls = [u for u in urls
+                    if isinstance(u, str) and u.startswith(("http://", "https://"))][:20]
+            opened = 0
+            for u in urls:
+                try:
+                    webbrowser.open(u)
+                    opened += 1
+                    time.sleep(0.4)
+                except Exception:
+                    pass
+            self._json(200, {"ok": True, "opened": opened, "requested": len(urls)})
         else:
             self._json(404, {"error": "not found"})
 

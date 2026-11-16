@@ -1437,6 +1437,8 @@ function distName(pid) {
   return m ? m.name : pid;
 }
 
+let DIST_OK_URLS = [];
+
 function showDistResult(t) {
   const plats = t.platforms || {};
   let rows = Object.keys(plats).map(pid => {
@@ -1451,7 +1453,30 @@ function showDistResult(t) {
   document.getElementById('distMeta').textContent =
     `${t.title || ''} · 创建 ${t.created_at || '—'} · 完成 ${t.finished_at || '—'}`;
   document.getElementById('distBody').innerHTML = rows;
+  const btn = document.getElementById('distOpenBtn');
+  DIST_OK_URLS = Object.values(plats).filter(e => e && e.ok && e.url).map(e => e.url);
+  if (btn) {
+    btn.style.display = DIST_OK_URLS.length ? '' : 'none';
+    btn.textContent = `一键打开 ${DIST_OK_URLS.length} 个发布页`;
+    btn.disabled = false;
+  }
   document.getElementById('distMask').classList.add('show');
+}
+
+function openAllDrafts() {
+  if (!DIST_OK_URLS.length) return;
+  const btn = document.getElementById('distOpenBtn');
+  if (btn) { btn.disabled = true; btn.textContent = '正在打开…'; }
+  localBridgePost('/api/open-drafts', { urls: DIST_OK_URLS }, 60000)
+    .then(r => {
+      if (btn) btn.textContent = `已打开 ${r.opened || 0} 个页面，请在各页点「发布」`;
+    })
+    .catch(e => {
+      if (btn) {
+        btn.disabled = false;
+        btn.textContent = '打开失败：' + (e && e.message || e);
+      }
+    });
 }
 
 /* ============ 平台登录态 ============ */
