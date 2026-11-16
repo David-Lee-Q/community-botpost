@@ -359,6 +359,8 @@ class Handler(http.server.SimpleHTTPRequestHandler):
         """桥端轮询：领取一个待分发任务，顺带返回登录态重查标志。"""
         doc = _read_json(PLATFORM_AUTH_FILE, {})
         recheck = bool(doc.get("recheck_requested"))
+        doc["last_poll_at"] = time.strftime("%Y-%m-%d %H:%M:%S")
+        doc["last_poll_ts"] = int(time.time())
         task_out = None
         with DIST_LOCK:
             tasks = _dist_load()
@@ -402,9 +404,8 @@ class Handler(http.server.SimpleHTTPRequestHandler):
                 break
             if changed:
                 _dist_save(tasks)
-        if recheck:
-            doc["recheck_requested"] = False
-            _write_json(PLATFORM_AUTH_FILE, doc)
+        doc["recheck_requested"] = False
+        _write_json(PLATFORM_AUTH_FILE, doc)
         self._json(200, {"task": task_out, "recheck": recheck})
 
     def _handle_distribute_result(self):
@@ -487,6 +488,8 @@ class Handler(http.server.SimpleHTTPRequestHandler):
                          "platforms_ts": doc.get("platforms_ts", ""),
                          "connected": doc.get("connected", False),
                          "recheck": bool(doc.get("recheck_requested")),
+                         "last_poll_at": doc.get("last_poll_at", ""),
+                         "last_poll_ts": int(doc.get("last_poll_ts") or 0),
                          "meta": _platforms_meta()})
 
     def _handle_plan_update(self):

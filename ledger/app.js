@@ -1397,49 +1397,72 @@ function refreshAuthView() {
   });
 }
 
+function bridgeOnline(d) {
+  const ts = Number(d && d.last_poll_ts) || 0;
+  return ts > 0 && (Date.now() / 1000 - ts) < 90;
+}
+
 function renderAuthTable(d) {
   const has = !!(d.platforms_ts);
-  document.getElementById('authMeta').textContent = has
+  const online = bridgeOnline(d);
+  let meta = has
     ? `最近检查 ${d.platforms_ts} · 扩展${d.connected ? '已连接' : '未连接'} · 同步产出为草稿，需到各平台后台发布`
-    : '暂无数据（本机桥连上扩展后会自动推送登录态）';
+    : '暂无登录态数据（桥连上扩展后会自动推送）';
+  meta += online
+    ? ` · 桥在线（最近轮询 ${d.last_poll_at}）`
+    : ` · 桥离线（最近轮询 ${d.last_poll_at || '无记录'}）：请在本机更新并运行桥——解压新版 multiplatform.zip 覆盖后执行 python mcp_bridge.py serve`;
+  document.getElementById('authMeta').textContent = meta;
   const list = (PLATFORM_META.length ? PLATFORM_META
     : Object.keys(d.platforms || {}).map(id => ({ id, name: id })));
   document.getElementById('authBody').innerHTML = list.map(m => {
     const p = (d.platforms || {})[m.id] || {};
     const st = !has ? '<span class="tag">未监测</span>'
       : (p.authenticated ? '<span class="tag g">已登录</span>' : '<span class="tag s">未登录</span>');
-    const op = (has && !p.authenticated && m.url)
+    const op = (!p.authenticated && m.url)
       ? `<button class="fab-btn ghost" style="padding:3px 10px;font-size:12px" onclick="window.open('${m.url}','_blank')">一键登录</button>`
       : '<span style="color:var(--muted)">—</span>';
     return `<tr><td>${escapeHtml(m.name || m.id)}</td><td>${st}</td><td>${escapeHtml(p.error || '')}</td><td class="num">${op}</td></tr>`;
   }).join('');
 }
 
-function authRecheck() {
+async function authRecheck() {
   const btn = document.getElementById('authRefresh');
   const hint = document.getElementById('authHint');
   btn.disabled = true;
+  hint.textContent = '通知桥重新检查中…';
+  let ok = false;
+  try {
+    const r = await apiPost('api/platform-auth-recheck', {});
+    const d = await r.json().catch(() => ({}));
+    ok = !!d.ok;
+  } catch (e) { ok = false; }
+  if (!ok) {
+    btn.disabled = false;
+    hint.textContent = '通知桥失败，请检查网络';
+    return;
+  }
   hint.textContent = '已通知桥重新检查，等待中…';
-  refreshAuthView().then(d0 => {
-    const oldTs = (d0 && d0.platforms_ts) || '';
-    let n = 0;
-    const t = setInterval(() => {
-      n += 1;
-      refreshAuthView().then(d => {
-        if (d && d.platforms_ts && d.platforms_ts !== oldTs) {
-          clearInterval(t);
-          btn.disabled = false;
-          hint.textContent = '登录态已更新';
-        } else if (n >= 20) {
-          clearInterval(t);
-          btn.disabled = false;
-          hint.textContent = (d0 && d0.connected)
-            ? '仍在等待桥返回…（可稍后再试）'
-            : '扩展未连接桥：请确认本机桥在运行且 Chrome 已打开';
-        }
-      });
-    }, 3000);
-  });
+  const d0 = await refreshAuthView();
+  const oldTs = (d0 && d0.platforms_ts) || '';
+  let n = 0;
+  let last = d0;
+  const t = setInterval(() => {
+    n += 1;
+    refreshAuthView().then(d => {
+      last = d || last;
+      if (last && last.platforms_ts && last.platforms_ts !== oldTs) {
+        clearInterval(t);
+        btn.disabled = false;
+        hint.textContent = '登录态已更新';
+      } else if (n >= 20) {
+        clearInterval(t);
+        btn.disabled = false;
+        hint.textContent = bridgeOnline(last)
+          ? '桥在线，但登录态暂未更新（可稍后再试）'
+          : '桥未响应：请确认本机桥进程在运行（新版代码，config.json 已配 ledger_url）';
+      }
+    });
+  }, 3000);
 }
 
 document.getElementById('authEntryBtn').addEventListener('click', openAuthModal);
