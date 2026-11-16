@@ -210,6 +210,27 @@ def _open_publish_dialog(page):
     page.wait_for_timeout(3000)
 
 
+def _tag_remain(page):
+    try:
+        return page.evaluate("""()=>{const m=document.querySelector('.modal');
+          const c=m&&m.innerText.match(/还可添加(\\d+)个标签/);
+          return c?c[1]:'';}""")
+    except Exception:
+        return ""
+
+
+def _pick_tag(page, t):
+    try:
+        li = page.locator(".el-autocomplete-suggestion__list li")
+        for i in range(li.count()):
+            if (li.nth(i).inner_text() or "").strip() == t:
+                li.nth(i).click(timeout=3000)
+                return True
+    except Exception:
+        pass
+    return False
+
+
 def _set_tags(page, tags):
     if not tags:
         return 0
@@ -220,17 +241,20 @@ def _set_tags(page, tags):
         btn.click()
         page.wait_for_timeout(600)
         inp = page.get_by_placeholder(re.compile("Enter键入")).first
+        if not inp.count():
+            return 0
+        cands = list(dict.fromkeys(list(tags[:5]) + ["人工智能", "大数据", "云计算"]))
         n = 0
-        for t in tags[:5]:
+        for t in cands:
+            if n >= 5:
+                break
+            before = _tag_remain(page)
             inp.click()
             inp.fill(t)
-            page.keyboard.press("Enter")
-            page.wait_for_timeout(700)
-            n += 1
-        try:
-            page.keyboard.press("Escape")
-        except Exception:
-            pass
+            page.wait_for_timeout(1500)
+            if _pick_tag(page, t) and _tag_remain(page) != before:
+                n += 1
+                page.wait_for_timeout(800)
         page.evaluate("""()=>{const m=document.querySelector('.modal');
           const h=m&&m.querySelector('.modal-title,.title,.ant-modal-title');if(h)h.click();else if(m)m.click();}""")
         page.wait_for_timeout(700)
@@ -348,8 +372,9 @@ def _set_cover(page, path):
     if not url:
         log("封面：上传后未出现新封面")
     try:
-        page.keyboard.press("Escape")
-        page.wait_for_timeout(800)
+        if _crop_visible(page):
+            page.keyboard.press("Escape")
+            page.wait_for_timeout(800)
     except Exception:
         pass
     return bool(url)
@@ -377,13 +402,61 @@ def _dbg(page, tag):
     log("[dbg] %s url=%s modal=%s" % (tag, page.url, txt))
 
 
-def _confirm(page):
+def _red_publish_btn(page):
+    red = page.locator("button.btn-b-red")
+    try:
+        for i in range(red.count()):
+            if (red.nth(i).inner_text() or "").strip() == "发布文章":
+                return red.nth(i)
+        if red.count():
+            return red.last
+    except Exception:
+        pass
     cand = page.get_by_role("button", name="发布文章", exact=True)
-    if cand.count():
-        loc = cand.last
-    else:
-        loc = page.locator("button.btn-b-red.ml16").last
-    if loc is None or not loc.count():
+    try:
+        for i in range(cand.count()):
+            el = cand.nth(i)
+            if "btn-publish" not in (el.get_attribute("class") or ""):
+                return el
+    except Exception:
+        pass
+    return None
+
+
+def _ensure_dialog(page):
+    deadline = time.time() + 8
+    while time.time() < deadline:
+        if _red_publish_btn(page) is not None:
+            return True
+        page.wait_for_timeout(500)
+    try:
+        btn = page.query_selector("button.btn-publish")
+        if btn:
+            log("发布弹窗未就绪，重新点击底栏发布按钮")
+            btn.click(timeout=8000)
+    except Exception as e:
+        log("重开发布弹窗失败: " + str(e)[:100])
+        return False
+    deadline = time.time() + 20
+    while time.time() < deadline:
+        if _red_publish_btn(page) is not None:
+            return True
+        page.wait_for_timeout(500)
+    return False
+
+
+def _confirm(page):
+    if not _ensure_dialog(page):
+        _dbg(page, "confirm=no-dialog")
+        return False
+    loc = None
+    deadline = time.time() + 20
+    while time.time() < deadline:
+        loc = _red_publish_btn(page)
+        if loc is not None:
+            break
+        page.wait_for_timeout(500)
+    if loc is None:
         _dbg(page, "confirm=no-button")
         return False
     hits = []
@@ -396,18 +469,32 @@ def _confirm(page):
     page.on("request", _on_req)
     page.on("response", _on_resp)
     try:
+        loc.scroll_into_view_if_needed()
+        page.wait_for_timeout(300)
         loc.click(timeout=8000)
     except Exception as e:
         log("点击发布按钮失败: " + str(e)[:100])
         page.remove_listener("request", _on_req); page.remove_listener("response", _on_resp)
         return False
-    page.wait_for_timeout(7000)
-    txt = page.evaluate("()=>document.body.innerText")
-    if "发文上限" in txt or "发文上限" in page.content():
-        log("CSDN 提示已达发文上限")
-        return "quota"
-    left = page.evaluate("()=>!!document.querySelector('.modal')")
-    if left:
+    result = False
+    quota = False
+    deadline = time.time() + 25
+    while time.time() < deadline:
+        page.wait_for_timeout(1000)
+        try:
+            txt = page.evaluate("()=>document.body.innerText")
+        except Exception:
+            txt = ""
+        if "发文上限" in txt:
+            log("CSDN 提示已达发文上限")
+            quota = True
+            break
+        left = page.evaluate("""()=>{const m=document.querySelector('.modal');
+          return m&&m.offsetParent!==null;}""")
+        if not left:
+            result = True
+            break
+    if not result and not quota:
         info = page.evaluate("""()=>({
           toast:[...document.querySelectorAll('.el-message,.toast,.message,.ant-message-notice,.layui-layer')]
             .map(e=>(e.innerText||'').trim()).filter(Boolean).slice(0,3).join(' | '),
@@ -418,7 +505,9 @@ def _confirm(page):
         log("确认后弹窗未关闭 hits=%s %s" % (hits, str(info)[:200]))
     _dbg(page, "after-confirm")
     page.remove_listener("request", _on_req); page.remove_listener("response", _on_resp)
-    return not left
+    if quota:
+        return "quota"
+    return result
 
 
 def _article_url(page, before_url):

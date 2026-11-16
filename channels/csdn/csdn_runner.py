@@ -25,6 +25,7 @@ CONFIG_FILE = os.path.join(BASE, "config.json")
 LOGS = os.path.join(BASE, "logs")
 LOCK_FILE = os.path.join(BASE, ".lock")
 ALERT_FILE = os.path.join(LOGS, "alerts.json")
+TRIGGER_FILE = os.path.join(LOGS, "sync.trigger")
 PUBLISHER = os.path.join(BASE, "csdn_publisher.py")
 
 
@@ -122,14 +123,15 @@ def _in_window(cfg, now):
 
 
 def can_run(job, cfg, state, now):
+    manual = bool(job.get("manual_sync"))
     if state.get("quota_blocked_date") == now.strftime("%Y-%m-%d"):
         return False, "今日发文上限"
-    if not _in_window(cfg, now):
+    if not manual and not _in_window(cfg, now):
         return False, "不在发布时段"
-    if job.get("next_try_at") and job["next_try_at"] > now.strftime("%Y-%m-%d %H:%M:%S"):
+    if not manual and job.get("next_try_at") and job["next_try_at"] > now.strftime("%Y-%m-%d %H:%M:%S"):
         return False, "等待重试"
     last = state.get("last_publish") or ""
-    if last:
+    if last and not manual:
         try:
             gap = (dt.datetime.now() - dt.datetime.strptime(last, "%Y-%m-%d %H:%M:%S")).total_seconds()
         except ValueError:
@@ -169,16 +171,17 @@ def process(state, queue, cfg):
         ok, why = can_run(job, cfg, state, now)
         if not ok:
             continue
-        log("开始分发 %s %s%s" % (job["article_id"], job.get("title", "")[:24],
-                                  "（置顶）" if job.get("priority") else ""))
+        tag = "（手动同步）" if job.get("manual_sync") else ("（置顶）" if job.get("priority") else "")
+        log("开始分发 %s %s%s" % (job["article_id"], job.get("title", "")[:24], tag))
         job.pop("priority", None)
+        job.pop("manual_sync", None)
         res = run_job(job, cfg)
-        day = _daily(state, today)
-        day["total"] += 1
-        if job.get("backfill"):
-            day["backfill"] += 1
         aid = str(job["article_id"])
         if res.get("ok"):
+            day = _daily(state, today)
+            day["total"] += 1
+            if job.get("backfill"):
+                day["backfill"] += 1
             state.setdefault("articles", {})[aid] = {
                 "status": "success", "url": res.get("url", ""), "time": now_s,
                 "attempts": job.get("attempts", 0) + 1,
@@ -268,6 +271,20 @@ def one_round(cfg, days, dry_run=False):
     return 0
 
 
+def _wait_next(timeout=60):
+    """等待下一轮；出现手动同步触发文件时立即唤醒。"""
+    end = time.time() + timeout
+    while time.time() < end:
+        try:
+            if os.path.exists(TRIGGER_FILE):
+                os.unlink(TRIGGER_FILE)
+                log("收到手动同步触发，提前唤醒")
+                return
+        except OSError:
+            pass
+        time.sleep(2)
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--once", action="store_true")
@@ -293,7 +310,7 @@ def main():
                     one_round(cfg, days)
                 except Exception as e:
                     log("轮询异常: " + repr(e)[:200])
-                time.sleep(60)
+                _wait_next()
         return one_round(cfg, days)
     finally:
         try:

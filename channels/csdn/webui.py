@@ -10,6 +10,8 @@ import io
 import json
 import os
 import queue
+import subprocess
+import sys
 import tempfile
 import threading
 import time
@@ -853,7 +855,7 @@ async function refresh(){
       let act='';
       if(r.status==='published') act='<a href="'+r.url+'" target="_blank">查看</a>';
       else if(r.status==='failed') act='<button class="go" onclick="doQueue(\''+r.article_id+'\')">重试发布</button> <button class="warn" onclick="doLog(\''+r.error.replace(/'/g,"\\'")+'\')">原因</button>';
-      else if(r.status==='queued') act=(r.priority?'<span class="hint">已置顶</span> ':'')+'<button class="warn" onclick="doUnqueue(\''+r.article_id+'\')">移出队列</button>';
+      else if(r.status==='queued') act=(r.priority?'<span class="hint">已置顶</span> ':'')+'<button class="go" onclick="doSyncNow(\''+r.article_id+'\')">手动同步</button> <button class="warn" onclick="doUnqueue(\''+r.article_id+'\')">移出队列</button>';
       else act='<button class="go" onclick="doQueue(\''+r.article_id+'\')">置顶发布</button>';
       const err=r.error?'<div class="hint" style="max-width:340px">'+r.error.slice(0,80)+'</div>':'';
       return '<tr><td>'+r.time+'</td><td class="title">'+r.title+err+'</td><td>'+badge({published:'已发布',queued:r.priority?'队列·置顶':'队列中',failed:'失败',pending:'未分发'}[r.status],r.status)+'</td><td>'+act+'</td></tr>';
@@ -863,6 +865,11 @@ async function refresh(){
 async function doQueue(id){
   try{const d=await post('/api/queue',{article_ids:[id]});
     msg((d.added.length?'已置顶 '+d.added.join(','):'')+(d.skipped.length?'，跳过 '+d.skipped.join(','):''));
+    setTimeout(refresh,400);}catch(e){msg('操作失败 '+e,false);}
+}
+async function doSyncNow(id){
+  try{const d=await post('/api/sync-now',{article_id:id});
+    msg(d.ok?d.msg:('未执行同步：'+(d.error||'')),!!d.ok);
     setTimeout(refresh,400);}catch(e){msg('操作失败 '+e,false);}
 }
 async function doUnqueue(id){
@@ -1014,6 +1021,61 @@ def api_queue():
             added.append(aid)
     _mutate_queue(do)
     return jsonify({"added": added, "skipped": skipped})
+
+
+def _spawn_once():
+    try:
+        subprocess.run([sys.executable, os.path.join(BASE, "csdn_runner.py"), "--once"],
+                       capture_output=True, timeout=900)
+    except Exception:
+        pass
+
+
+@app.post("/api/sync-now")
+def api_sync_now():
+    d = request.get_json(force=True, silent=True) or {}
+    aid = str(d.get("article_id") or "")
+    if not aid:
+        return jsonify({"error": "参数缺失"}), 400
+    import csdn_runner as rr
+    q = rr.load_json(rr.QUEUE_FILE, {"jobs": []})
+    job = next((j for j in q.get("jobs", []) if str(j.get("article_id")) == aid), None)
+    if job is None:
+        return jsonify({"error": "该文章不在分发队列中"}), 400
+    st = rr.load_json(rr.STATE_FILE, {})
+    st.setdefault("session", {})
+    cfg = rr.load_json(rr.CONFIG_FILE, {})
+    now = dt.datetime.now()
+    today = now.strftime("%Y-%m-%d")
+    if st.get("quota_blocked_date") == today:
+        return jsonify({"ok": False,
+                        "error": "CSDN 今日发文额度已用尽，明日 08:00 后自动恢复"}), 400
+    if st.get("session", {}).get("needs_login"):
+        return jsonify({"ok": False, "error": "登录态失效，请先在登录中转台重新登录"}), 400
+    probe = dict(job)
+    probe["manual_sync"] = True
+    ok, why = rr.can_run(probe, cfg, st, now)
+    if not ok:
+        return jsonify({"ok": False, "error": why}), 400
+    job["priority"] = True
+    job["manual_sync"] = True
+    fd, tmp = tempfile.mkstemp(dir=BASE, suffix=".tmp")
+    with os.fdopen(fd, "w", encoding="utf-8") as f:
+        json.dump(q, f, ensure_ascii=False, indent=2)
+    os.replace(tmp, rr.QUEUE_FILE)
+    try:
+        os.makedirs(rr.LOGS, exist_ok=True)
+        with open(rr.TRIGGER_FILE, "w") as f:
+            f.write(today)
+    except OSError:
+        pass
+    spawned = False
+    if not _runner_alive():
+        spawned = True
+        threading.Thread(target=_spawn_once, daemon=True).start()
+    msg = "已触发手动同步" + (
+        "，daemon 未运行，正在后台执行单轮" if spawned else "，daemon 将在数秒内开始执行")
+    return jsonify({"ok": True, "title": job.get("title", ""), "msg": msg})
 
 
 @app.post("/api/unqueue")
