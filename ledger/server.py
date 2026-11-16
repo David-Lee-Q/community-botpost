@@ -23,6 +23,7 @@ BOT_SCORE_FILE = os.path.join(LEDGER, "data", "bot_score.json")
 BOT_POSTS_FILE = os.path.join(LEDGER, "data", "bot_posts.json")
 DIST_TASKS_FILE = os.path.join(LEDGER, "data", "distribute_tasks.json")
 PLATFORM_AUTH_FILE = os.path.join(LEDGER, "data", "platform_auth.json")
+BRIDGE_PROBE_FILE = os.path.join(LEDGER, "data", "bridge_probe.json")
 BODIES_FILE = os.path.join(LEDGER, "data", "article_bodies.json")
 
 sys.path.insert(0, LEDGER)
@@ -193,6 +194,11 @@ class Handler(http.server.SimpleHTTPRequestHandler):
             return
         if self.path == "/api/platform-auth-recheck":
             self._handle_platform_auth_recheck()
+            return
+        if self.path == "/api/bridge-probe":
+            data = self._body() or {}
+            _write_json(BRIDGE_PROBE_FILE, data)
+            self._json(200, {"ok": True})
             return
         if self.path != "/api/publish":
             self._json(404, {"error": "not found"})

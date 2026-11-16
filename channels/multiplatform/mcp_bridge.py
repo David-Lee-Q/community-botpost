@@ -1042,11 +1042,57 @@ class DashHandler(BaseHTTPRequestHandler):
                 except Exception:
                     pass
             self._json(200, {"ok": True, "opened": opened, "requested": len(urls)})
+        elif p == "/api/probe":
+            try:
+                fut = asyncio.run_coroutine_threadsafe(
+                    probe_extension(self.bridge, self.cfg, tag="(手动)"), self.loop)
+                out = fut.result(timeout=400)
+                self._json(200, {"ok": True,
+                                 "hits": [m for m, v in out.items() if v.get("ok")]})
+            except Exception as e:
+                self._json(500, {"ok": False, "error": str(e)})
         else:
             self._json(404, {"error": "not found"})
 
     def _log(self, s):
         print("[%s] %s" % (time.strftime("%H:%M:%S"), s), flush=True)
+
+
+PROBE_METHODS = [
+    "tools/list", "listTools", "toolsList",
+    "listDrafts", "getDrafts", "getDraft", "getDraftList", "listDraftList",
+    "queryDrafts", "drafts", "draftList", "getPlatformDrafts",
+    "listArticles", "getArticles", "listMyArticles", "myArticles", "getUserArticles",
+    "syncStatus", "tasks", "getTask",
+    "openUrl", "openTab", "open", "openPage", "navigate", "goto",
+    "executeScript", "getContent", "screenshot", "getCookies", "getPlatformCookies",
+]
+
+
+async def probe_extension(bridge, cfg, tag=""):
+    """探测扩展支持的方法（草稿箱/浏览器操作能力），结果落本机 state 并推送台账。"""
+    out = {}
+    for m in PROBE_METHODS:
+        try:
+            r = await bridge.request(m, {}, timeout=15)
+            out[m] = {"ok": "error" not in r, "resp": json.dumps(r, ensure_ascii=False)[:1500]}
+        except Exception as e:
+            out[m] = {"ok": False, "error": str(e)[:200]}
+    hits = [m for m, v in out.items() if v.get("ok")]
+    save_state({"probe": {"time": time.strftime("%Y-%m-%d %H:%M:%S"), "hits": hits}})
+    print("[probe] 扩展能力探测完成%s: 命中 %s" % (tag, hits or "无"), flush=True)
+    base = ledger_base(cfg, (cfg.get("ledger_cookie") or "").strip())
+    if base:
+        try:
+            await asyncio.get_running_loop().run_in_executor(
+                None, lambda: http_json(base + "/api/bridge-probe",
+                                        {"time": time.strftime("%Y-%m-%d %H:%M:%S"),
+                                         "results": out},
+                                        30, cookie=cfg.get("ledger_cookie", "")))
+            print("[probe] 结果已推送台账", flush=True)
+        except Exception as e:
+            print("[probe] 结果推送台账失败: %s" % e, flush=True)
+    return out
 
 
 async def _check_and_save(bridge, cfg, tag="监测"):
@@ -1067,6 +1113,7 @@ async def monitor_loop(bridge, cfg):
     while not bridge.connected():
         await asyncio.sleep(5)
     await _check_and_save(bridge, cfg, tag="首查")
+    asyncio.get_running_loop().create_task(probe_extension(bridge, cfg, tag="(首连)"))
     was_connected = True
     while True:
         await asyncio.sleep(cfg["monitor_interval_sec"])
