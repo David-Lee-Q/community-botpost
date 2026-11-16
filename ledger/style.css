@@ -15,6 +15,8 @@
   }
   .csdn-entry:hover { background: #eaf1ff; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,.3); }
   .csdn-entry:active { transform: translateY(0); box-shadow: 0 1px 4px rgba(0,0,0,.25); }
+  button.csdn-entry { border: 0; }
+  button.csdn-entry:disabled { opacity: .65; cursor: default; transform: none; }
   .score-tag {
     display: inline-block; margin-left: auto; padding: 6px 18px; border-radius: 14px;
     text-align: center; line-height: 1.2; color: #1f3b8f; background: linear-gradient(135deg, #ffe066, #ffc53d);
