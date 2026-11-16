@@ -486,6 +486,8 @@ class Handler(http.server.SimpleHTTPRequestHandler):
         doc["platforms_ts"] = str(data.get("platforms_ts") or
                                   time.strftime("%Y-%m-%d %H:%M:%S"))
         doc["connected"] = bool(data.get("connected"))
+        if data.get("build"):
+            doc["bridge_build"] = str(data.get("build"))[:40]
         _write_json(PLATFORM_AUTH_FILE, doc)
         self._json(200, {"ok": True})
 
@@ -500,6 +502,7 @@ class Handler(http.server.SimpleHTTPRequestHandler):
         self._json(200, {"platforms": doc.get("platforms", {}),
                          "platforms_ts": doc.get("platforms_ts", ""),
                          "connected": doc.get("connected", False),
+                         "bridge_build": doc.get("bridge_build", ""),
                          "recheck": bool(doc.get("recheck_requested")),
                          "last_poll_at": doc.get("last_poll_at", ""),
                          "last_poll_ts": int(doc.get("last_poll_ts") or 0),

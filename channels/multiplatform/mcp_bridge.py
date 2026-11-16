@@ -41,6 +41,8 @@ BASE = os.path.dirname(os.path.abspath(__file__))
 CONFIG_FILE = os.path.join(BASE, "config.json")
 STATE_FILE = os.path.join(BASE, "state.json")
 PLATFORMS_FILE = os.path.join(BASE, "platforms.json")
+# 构建标记：每次发版更新（日期-短哈希），回传台账用于确认线上跑的版本
+BRIDGE_BUILD = "20261116-r3"
 
 DEFAULTS = {
     "ws_port": 3721,
@@ -520,7 +522,8 @@ async def push_auth_to_ledger(bridge, cfg, plats):
             None, lambda: http_json(url + "/api/platform-auth",
                                     {"platforms": plats,
                                      "platforms_ts": time.strftime("%Y-%m-%d %H:%M:%S"),
-                                     "connected": bool(bridge.connected())},
+                                     "connected": bool(bridge.connected()),
+                                     "build": BRIDGE_BUILD},
                                     cookie=cfg.get("ledger_cookie", "")))
     except Exception as e:
         print("[%s] 登录态推送台账失败: %s" % (time.strftime("%H:%M:%S"), e), flush=True)
