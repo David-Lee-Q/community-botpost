@@ -1382,13 +1382,14 @@ function openDistribute(aid, btn) {
     }, 600000);
     if (res.error) throw new Error(res.error);
     const platforms = res.platforms || (res.result && res.result.platforms) || {};
+    const raw = res.raw ? JSON.stringify(res.raw).slice(0, 8000) : '';
     const t = {
       task_id: task ? task.task_id : 'local-' + Date.now(), article_id: aid,
       status: res.status || (Object.values(platforms).some(x => x && x.ok) ? 'done' : 'failed'),
       title: art.title || '', created_at: task ? task.created_at : nowLocal(),
-      finished_at: nowLocal(), platforms
+      finished_at: nowLocal(), platforms, raw
     };
-    if (task) apiPost('api/distribute-result', { task_id: task.task_id, status: t.status, platforms }).catch(() => {});
+    if (task) apiPost('api/distribute-result', { task_id: task.task_id, status: t.status, platforms, raw }).catch(() => {});
     DIST_TASKS[String(aid)] = t;
     renderTable();
     showDistResult(t);
@@ -1438,26 +1439,42 @@ function distName(pid) {
 }
 
 let DIST_OK_URLS = [];
+let DIST_HAS_DRAFT_URL = false;
 
 function showDistResult(t) {
   const plats = t.platforms || {};
+  DIST_OK_URLS = [];
+  DIST_HAS_DRAFT_URL = false;
   let rows = Object.keys(plats).map(pid => {
     const e = plats[pid] || {};
+    const home = ((PLATFORM_META || []).find(m => m.id === pid) || {}).url || '';
+    if (e.ok) {
+      if (e.url) DIST_HAS_DRAFT_URL = true;
+      const u = e.url || home;
+      if (u) DIST_OK_URLS.push(u);
+    }
     const st = e.ok ? '<span class="tag g">草稿已创建</span>' : '<span class="tag s">失败</span>';
-    const detail = e.url
-      ? `<a href="${escapeHtml(e.url)}" target="_blank" rel="noopener" title="${escapeHtml(e.url)}">${distName(pid)} 草稿</a>`
-      : escapeHtml(e.error || '—');
+    let detail;
+    if (e.url) detail = `<a href="${escapeHtml(e.url)}" target="_blank" rel="noopener" title="${escapeHtml(e.url)}">打开草稿发布</a>`;
+    else if (e.ok && home) detail = `<a href="${escapeHtml(home)}" target="_blank" rel="noopener">打开平台去发布</a>`;
+    else detail = escapeHtml(e.error || '—');
     return `<tr><td>${escapeHtml(distName(pid))}</td><td>${st}</td><td>${detail}</td></tr>`;
   }).join('');
   if (!rows) rows = `<tr><td colspan="3">无平台返回结果${t.error ? '：' + escapeHtml(t.error) : ''}</td></tr>`;
+  const rawBlock = t.raw
+    ? `<details style="margin-top:10px"><summary style="cursor:pointer;font-size:12px;color:var(--muted)">查看扩展原始返回（排查用）</summary><pre style="font-size:11px;background:#f5f7fa;border:1px solid var(--border);border-radius:6px;padding:8px;max-height:220px;overflow:auto;white-space:pre-wrap;word-break:break-all">${escapeHtml(t.raw)}</pre></details>`
+    : '';
   document.getElementById('distMeta').textContent =
     `${t.title || ''} · 创建 ${t.created_at || '—'} · 完成 ${t.finished_at || '—'}`;
   document.getElementById('distBody').innerHTML = rows;
+  const rawBox = document.getElementById('distRaw');
+  if (rawBox) rawBox.innerHTML = rawBlock;
   const btn = document.getElementById('distOpenBtn');
-  DIST_OK_URLS = Object.values(plats).filter(e => e && e.ok && e.url).map(e => e.url);
   if (btn) {
     btn.style.display = DIST_OK_URLS.length ? '' : 'none';
-    btn.textContent = `一键打开 ${DIST_OK_URLS.length} 个发布页`;
+    btn.textContent = DIST_HAS_DRAFT_URL
+      ? `一键打开 ${DIST_OK_URLS.length} 个发布页`
+      : `一键打开 ${DIST_OK_URLS.length} 个平台（去发布）`;
     btn.disabled = false;
   }
   document.getElementById('distMask').classList.add('show');

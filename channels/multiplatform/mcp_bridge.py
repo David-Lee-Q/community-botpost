@@ -383,7 +383,9 @@ def _sync_entry_from_obj(e):
         err = err.get("message", "")
     if e.get("error") or e.get("error_message"):
         ok = False
-    url = e.get("url") or e.get("draftUrl") or e.get("link") or ""
+    url = (e.get("url") or e.get("draftUrl") or e.get("link")
+           or e.get("draft_url") or e.get("editUrl") or e.get("draftLink")
+           or e.get("articleUrl") or e.get("postUrl") or "")
     return {"ok": bool(ok), "url": str(url or "")[:500], "error": str(err or "")[:300]}
 
 
@@ -400,7 +402,7 @@ def normalize_sync_result(r, platform_ids):
     res = r.get("result")
     cands = []
     if isinstance(res, dict):
-        for k in ("platforms", "results", "items", "list"):
+        for k in ("platforms", "results", "items", "list", "synced"):
             v = res.get(k)
             if isinstance(v, list):
                 cands = v

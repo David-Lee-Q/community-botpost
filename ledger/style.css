@@ -5,12 +5,12 @@
   }
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body { font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif; background: var(--bg); color: var(--text); }
-  header { background: linear-gradient(135deg, #1f3b8f, #2f6fed); color: #fff; padding: 20px 28px; display: flex; align-items: center; flex-wrap: wrap; gap: 12px; }
-  header h1 { font-size: 22px; font-weight: 600; }
-  header .sub { font-size: 13px; opacity: .85; margin-top: 6px; flex-basis: 100%; }
+  header { position: sticky; top: 0; z-index: 50; background: linear-gradient(135deg, #1f3b8f, #2f6fed); color: #fff; padding: 8px 20px; display: flex; align-items: center; flex-wrap: wrap; gap: 8px; box-shadow: 0 2px 10px rgba(15,30,80,.28); }
+  header h1 { font-size: 16px; font-weight: 600; white-space: nowrap; }
+  header .sub { font-size: 12px; opacity: .85; margin-top: 0; flex-basis: auto; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 40%; }
   .csdn-entry {
-    display: inline-flex; align-items: center; gap: 6px; padding: 8px 18px; border-radius: 8px;
-    background: #fff; color: #1f3b8f; font-size: 13px; font-weight: 600; text-decoration: none;
+    display: inline-flex; align-items: center; gap: 6px; padding: 5px 12px; border-radius: 6px;
+    background: #fff; color: #1f3b8f; font-size: 12px; font-weight: 600; text-decoration: none;
     box-shadow: 0 2px 8px rgba(0,0,0,.22); transition: background .2s ease, transform .2s ease, box-shadow .2s ease;
   }
   .csdn-entry:hover { background: #eaf1ff; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,.3); }
@@ -18,13 +18,13 @@
   button.csdn-entry { border: 0; }
   button.csdn-entry:disabled { opacity: .65; cursor: default; transform: none; }
   .score-tag {
-    display: inline-block; margin-left: auto; padding: 6px 18px; border-radius: 14px;
-    text-align: center; line-height: 1.2; color: #1f3b8f; background: linear-gradient(135deg, #ffe066, #ffc53d);
+    display: inline-block; margin-left: auto; padding: 3px 14px; border-radius: 12px;
+    text-align: center; line-height: 1.15; color: #1f3b8f; background: linear-gradient(135deg, #ffe066, #ffc53d);
     box-shadow: 0 2px 10px rgba(0,0,0,.25); cursor: pointer; user-select: none;
     animation: breathe 2.2s ease-in-out infinite;
   }
-  .score-tag .st-label { display: block; font-size: 12px; font-weight: 600; opacity: .85; }
-  .score-tag .st-num { display: block; font-size: 24px; font-weight: 800; letter-spacing: 1px; }
+  .score-tag .st-label { display: block; font-size: 10px; font-weight: 600; opacity: .85; }
+  .score-tag .st-num { display: block; font-size: 16px; font-weight: 800; letter-spacing: 1px; }
   .score-tag:hover { animation-play-state: paused; transform: scale(1.06); }
   @keyframes breathe {
     0%, 100% { box-shadow: 0 0 0 0 rgba(255, 214, 64, .55), 0 2px 10px rgba(0,0,0,.25); }

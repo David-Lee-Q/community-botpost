@@ -437,6 +437,7 @@ class Handler(http.server.SimpleHTTPRequestHandler):
             t["status"] = str(data.get("status") or
                               ("done" if any(v["ok"] for v in norm.values()) else "failed"))
             t["finished_at"] = time.strftime("%Y-%m-%d %H:%M:%S")
+            t["raw"] = str(data.get("raw") or "")[:8000]
             _dist_save(tasks)
         self._json(200, {"ok": True, "status": t["status"]})
 
