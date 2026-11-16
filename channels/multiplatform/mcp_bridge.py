@@ -43,7 +43,7 @@ CONFIG_FILE = os.path.join(BASE, "config.json")
 STATE_FILE = os.path.join(BASE, "state.json")
 PLATFORMS_FILE = os.path.join(BASE, "platforms.json")
 # 构建标记：每次发版更新（日期-短哈希），回传台账用于确认线上跑的版本
-BRIDGE_BUILD = "20261116-r6"
+BRIDGE_BUILD = "20261116-r7"
 # serve 启动时填充，供 WS 帧捕获推送台账使用
 _CAPTURE_CFG = {}
 
@@ -90,7 +90,8 @@ def _load_platforms():
         for r in rows:
             if isinstance(r, dict) and r.get("id"):
                 out.append((r["id"], r.get("name", r["id"]),
-                            r.get("url", "https://"), r.get("format", "markdown")))
+                            r.get("url", "https://"), r.get("format", "markdown"),
+                            r.get("draftUrl", "")))
         if out:
             return out
     except (OSError, ValueError):
@@ -101,6 +102,7 @@ def _load_platforms():
 PLATFORMS = _load_platforms()
 PLATFORM_IDS = [p[0] for p in PLATFORMS]
 NAME_BY_ID = {p[0]: p[1] for p in PLATFORMS}
+DRAFT_URL_BY_ID = {p[0]: p[4] for p in PLATFORMS if len(p) > 4 and p[4]}
 
 
 def load_config():
@@ -563,6 +565,19 @@ DRAFT_URL_TEMPLATES = {
 DRAFT_ID_KEYS = ("draftId", "draft_id", "draftID", "postId", "articleId",
                  "article_id", "noteId", "note_id", "blogId")
 
+# 兜底参考链接（用户 2026-11-16 提供）：拿不到草稿 ID 时回填这些直达链接
+# （可能指向上次同步的草稿，但同一篇文章内容一致，用户可在此发布）
+DRAFT_URL_FALLBACKS = {
+    "juejin": "https://juejin.cn/editor/drafts/7708609864209170447",
+    "baijiahao": "https://baijiahao.baidu.com/builder/rc/edit?type=news&article_id=1882012930233800063&is_pay_training_camp=",
+    "xiaohongshu": "https://creator.xiaohongshu.com/publish/publish?from=menu&target=article",
+    "51cto": "https://blog.51cto.com/blogger/draft/2115749",
+    "jianshu": "https://www.jianshu.com/writer#/notebooks/57407088/notes/146351472",
+    "segmentfault": "https://segmentfault.com/user/draft",
+    "oschina": "https://my.oschina.net/u/7905287/blog/ai-write/draft/3353959",
+    "tencentcloud": "https://cloud.tencent.com/developer/article/write-new?draftId=347533",
+}
+
 
 def extract_draft_id(entry):
     if not isinstance(entry, dict):
@@ -578,27 +593,27 @@ def extract_draft_id(entry):
 
 
 def build_draft_url(pid, entry, url):
-    """草稿链接：扩展返回的编辑页 URL 优先；否则按模板+草稿 ID 拼直达链接；
-    拼不出时保留原值（空 url 由看板回退到 platforms.json 的入口地址）。"""
+    """草稿链接：扩展返回的编辑页 URL 优先；其次模板+草稿 ID 拼直达链接；
+    拼不出时用用户提供的参考链接兜底；都没有则保留原值。"""
     t = DRAFT_URL_TEMPLATES.get(pid)
     if not t:
-        return url
+        return DRAFT_URL_FALLBACKS.get(pid) or url
     if "{id}" not in t:
         return t
     if url and re.search(r"(draft|edit|write|editor)", url, re.I):
         return url
     did = extract_draft_id(entry)
     if not did:
-        return url
+        return DRAFT_URL_FALLBACKS.get(pid) or url
     if "{nb}" in t:
         nb = str((entry or {}).get("notebookId") or (entry or {}).get("notebook_id") or "")
         if not nb:
-            return "https://www.jianshu.com/writer"
+            return DRAFT_URL_FALLBACKS.get(pid) or "https://www.jianshu.com/writer"
         t = t.replace("{nb}/", nb + "/")
     try:
         return t.format(id=did)[:500]
     except Exception:
-        return url
+        return DRAFT_URL_FALLBACKS.get(pid) or url
 
 
 def normalize_sync_result(r, platform_ids):
@@ -816,8 +831,21 @@ async def track_sync_task(bridge, cfg, base_url, task_id, sync_id,
         except Exception as e:
             log("回填结果上报台账失败: %s" % e)
     else:
-        log("等待 %d 分钟仍未拿到逐平台结果（syncId=%s…），停止自动回填，可到各平台草稿箱查看"
+        log("等待 %d 分钟仍未拿到逐平台结果（syncId=%s…），用参考链接兜底回填"
             % (TRACK_TIMEOUT_SEC // 60, sync_id[:24]))
+        fb = {p: {"ok": True,
+                  "url": DRAFT_URL_FALLBACKS.get(p) or DRAFT_URL_BY_ID.get(p, ""),
+                  "error": "未取到草稿ID，已回填参考链接（可能指向上次草稿，内容相同）"}
+              for p in platform_ids}
+        try:
+            await _post_distribute_result(
+                cfg, base_url, task_id, "done", fb,
+                raw={"event": "track_timeout_fallback", "syncId": sync_id,
+                     "time": time.strftime("%Y-%m-%d %H:%M:%S")})
+            log("参考链接兜底回填完成（%d/%d 有链接）"
+                % (sum(1 for v in fb.values() if v["url"]), len(fb)))
+        except Exception as e:
+            log("兜底回填上报台账失败: %s" % e)
 
 
 async def _ledger_set_status(bridge, cfg, ok, error=""):

@@ -1473,7 +1473,7 @@ function showDistResult(t) {
       : '<span class="tag s">失败</span>');
     const isAsync = !e.ok && e.error && String(e.error).indexOf('异步') >= 0;
     let detail;
-    if (e.url) detail = `<a href="${escapeHtml(e.url)}" target="_blank" rel="noopener" title="${escapeHtml(e.url)}">打开草稿发布</a>`;
+    if (e.url) detail = `<a href="${escapeHtml(e.url)}" target="_blank" rel="noopener" title="${escapeHtml(e.url)}">打开草稿发布</a>` + (e.error ? `<div style="font-size:11px;color:var(--muted);margin-top:2px">${escapeHtml(e.error)}</div>` : '');
     else if (e.ok && home) detail = `<a href="${escapeHtml(home)}" target="_blank" rel="noopener">打开平台去发布</a>`;
     else if (isAsync) detail = `<span style="color:var(--muted)">${escapeHtml(e.error)}</span>`;
     else detail = escapeHtml(e.error || '—');

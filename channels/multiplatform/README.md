@@ -157,6 +157,7 @@ AI 图文变体（抖音图文/小红书图文）不支持 MCP，不在清单内
   逐平台草稿结果稍后产生。桥用 `track_sync_task` 双通道回填：
   1) 抓扩展主动推送的 WS 帧（按 syncId 匹配，`_capture_frame`，落 state.ws_frames 并上报台账 `/api/bridge-frame`）
   2) 60s 无推送后，用**原幂等键**重发 `syncArticle`（内容相同应命中扩展去重，返回原任务结果）
-  拿到逐平台结果后按 `DRAFT_URL_TEMPLATES`（8 平台草稿编辑页模板）拼直达链接，回传台账 `/api/distribute-result`
+   拿到逐平台结果后按 `DRAFT_URL_TEMPLATES`（8 平台草稿编辑页模板）拼直达链接，回传台账 `/api/distribute-result`；
+   **拿不到草稿 ID 时按 `DRAFT_URL_FALLBACKS`（用户提供的参考链接）兜底回填**（含 10 分钟跟踪超时）
 - 幂等键必须覆盖**全文**（`sha1(title|sha1(正文)|平台)`）：正文末尾加原文链接会改变键，
   旧版只取前 300 字导致"同键不同文章"被扩展拒收
