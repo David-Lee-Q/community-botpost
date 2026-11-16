@@ -526,11 +526,16 @@ async def push_auth_to_ledger(bridge, cfg, plats):
         print("[%s] 登录态推送台账失败: %s" % (time.strftime("%H:%M:%S"), e), flush=True)
 
 
-async def _post_distribute_result(cfg, base_url, task_id, status, plats):
+async def _post_distribute_result(cfg, base_url, task_id, status, plats, raw=None):
     url = ledger_base(cfg, (cfg.get("ledger_cookie") or "").strip()) or base_url
+    payload = {"task_id": task_id, "status": status, "platforms": plats}
+    if raw is not None:
+        try:
+            payload["raw"] = json.dumps(raw, ensure_ascii=False)
+        except Exception:
+            payload["raw"] = str(raw)
     await asyncio.get_running_loop().run_in_executor(
-        None, lambda: http_json(url + "/api/distribute-result",
-                                {"task_id": task_id, "status": status, "platforms": plats},
+        None, lambda: http_json(url + "/api/distribute-result", payload,
                                 30, cookie=cfg.get("ledger_cookie", "")))
 
 
@@ -567,8 +572,9 @@ async def run_distribute_task(bridge, cfg, base_url, task):
         log("完成: %s（成功 %d/%d）" % (status, sum(1 for v in res.values() if v["ok"]), len(targets)))
         save_state({"last_distribute": {"time": time.strftime("%Y-%m-%d %H:%M:%S"),
                                         "task_id": t_id, "status": status,
-                                        "platforms": res}})
-        await _post_distribute_result(cfg, base_url, t_id, status, res)
+                                        "platforms": res,
+                                        "raw": json.dumps(r, ensure_ascii=False)[:8000]}})
+        await _post_distribute_result(cfg, base_url, t_id, status, res, raw=r)
     except Exception as e:
         log("任务执行失败: %s" % e)
         try:
