@@ -1315,10 +1315,10 @@ function localBridgePost(path, body, ms = 0) {
     method: 'POST', signal: ac.signal,
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(body || {})
-  }).then(r => {
-    if (!r.ok) throw new Error('HTTP ' + r.status);
-    return r.json();
-  });
+  }).then(r => r.json().catch(() => ({})).then(d => {
+    if (!r.ok) throw new Error((d && d.error) || ('HTTP ' + r.status));
+    return d;
+  }));
 }
 
 function localAuthPlatforms(st) {
