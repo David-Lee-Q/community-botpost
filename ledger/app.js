@@ -586,6 +586,33 @@ function updateSelState() {
 }
 
 document.getElementById('refreshBtn').addEventListener('click', refreshData);
+
+document.getElementById('publishBatchBtn').addEventListener('click', async function () {
+  const btn = this;
+  if (btn.disabled) return;
+  btn.disabled = true;
+  const oldText = btn.textContent;
+  btn.textContent = '发布中…';
+  try {
+    const r = await apiPost('/api/publish-batch', { count: 2 });
+    const d = await r.json();
+    if (r.status !== 200) {
+      alert('请求失败：' + (d.error || r.status));
+    } else if (!d.ok) {
+      alert(d.reason || d.error || '无法发布');
+    } else {
+      const names = (d.tasks || []).map(t => '《' + t.title + '》').join('、');
+      alert('已开始发布：' + names + '\n每篇完成后自动发布下一篇，稍后刷新台账查看结果。');
+      if (!planPollTimer) planPollTimer = setInterval(loadTodayPlan, 5000);
+      loadTodayPlan();
+    }
+  } catch (err) {
+    alert('请求失败：' + err.message);
+  } finally {
+    btn.textContent = oldText;
+    btn.disabled = false;
+  }
+});
 document.getElementById('exportBtn').addEventListener('click', exportCsv);
 document.getElementById('exportSelBtn').addEventListener('click', exportSelected);
 document.getElementById('selAll').addEventListener('change', e => {

@@ -126,6 +126,9 @@ class Handler(http.server.SimpleHTTPRequestHandler):
         if self.path == "/api/publish-now":
             self._handle_publish_now()
             return
+        if self.path == "/api/publish-batch":
+            self._handle_publish_batch()
+            return
         if self.path != "/api/publish":
             self._json(404, {"error": "not found"})
             return
@@ -227,6 +230,38 @@ class Handler(http.server.SimpleHTTPRequestHandler):
         _lock.acquire()
         threading.Thread(target=_run_publish_now, args=(tid,), daemon=True).start()
         self._json(200, {"ok": True, "state": "publishing"})
+
+    def _handle_publish_batch(self):
+        data = self._body() or {}
+        try:
+            count = int(data.get("count") or 2)
+        except (TypeError, ValueError):
+            count = 2
+        count = max(1, min(count, 4))
+        if _lock.locked():
+            self._json(429, {"error": "已有任务执行中，请稍候"})
+            return
+        try:
+            with open(PLAN_FILE, encoding="utf-8") as f:
+                plan = json.load(f)
+        except (OSError, ValueError):
+            self._json(500, {"error": "计划文件读取失败"})
+            return
+        pend = [it for it in plan.get("schedule", []) if it.get("status") == "pending"]
+        pend.sort(key=lambda x: x.get("time") or "")
+        if not pend:
+            self._json(400, {"error": "没有待发布的文章"})
+            return
+        targets = [it for it in pend[:count] if it.get("taskId")]
+        if not targets:
+            self._json(400, {"error": "待发布计划缺少 taskId"})
+            return
+        _lock.acquire()
+        tids = [str(it["taskId"]) for it in targets]
+        threading.Thread(target=_run_publish_batch, args=(tids,), daemon=True).start()
+        self._json(200, {"ok": True, "state": "publishing",
+                         "tasks": [{"taskId": it["taskId"], "title": it.get("title", ""),
+                                    "time": it.get("time", "")} for it in targets]})
 
     def _handle_plan_update(self):
         data = self._body()
@@ -366,6 +401,17 @@ def _run_publish_now(task_id):
                        capture_output=True, timeout=900)
     finally:
         _lock.release()
+
+
+def _run_publish_batch(tids):
+    for tid in tids:
+        try:
+            subprocess.run([sys.executable, os.path.join(ROOT, "bot", "publish.py"),
+                            "--now", tid],
+                           capture_output=True, timeout=900)
+        except Exception:
+            pass
+    _lock.release()
 
 
 def _run_refresh():
