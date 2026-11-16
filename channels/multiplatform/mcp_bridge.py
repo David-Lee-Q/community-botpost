@@ -534,6 +534,8 @@ async def ledger_loop(bridge, cfg):
         else:
             print("[ledger] 自检通过前，台账「一键分发/平台登录态」不可用；"
                   "请检查 config.json 的 ledger_url 及本机到该地址的网络", flush=True)
+    last_err = ""
+    last_err_log = 0.0
     while True:
         try:
             if bridge.connected():
@@ -552,7 +554,17 @@ async def ledger_loop(bridge, cfg):
             else:
                 await _ledger_set_status(bridge, cfg, False, "扩展未连接，暂不轮询")
         except Exception as e:
-            print("[ledger] 轮询失败: %s" % e, flush=True)
+            msg = "轮询失败: %s" % e
+            now = time.time()
+            if msg != last_err or now - last_err_log > 600:
+                extra = ""
+                if msg == last_err:
+                    extra = "（重复错误，每 10 分钟提示一次）"
+                if "请求错误" in msg:
+                    extra += " 解决：本机直连（台账页→127.0.0.1）不受影响；" \
+                        "如需此链路：F12→Network 复制整行 Cookie 填入 config.json 的 ledger_cookie 后重启"
+                print("[ledger] %s%s" % (msg, extra), flush=True)
+                last_err, last_err_log = msg, now
             await _ledger_set_status(bridge, cfg, False, str(e))
         await asyncio.sleep(poll_sec)
 
