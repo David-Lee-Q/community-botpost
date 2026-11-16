@@ -16,6 +16,9 @@ let page = 1;
 let charts = {};
 let OPT_AID = null;
 let selectedCates = [];
+let DIST_TASKS = {};      // article_id -> 最近一次分发任务
+let PLATFORM_META = [];   // 17 平台元数据（名称/登录 URL）
+const DIST_POLLERS = {};  // task_id -> 轮询定时器
 
 function fmtNum(n) { return n == null ? 0 : Number(n).toLocaleString(); }
 
@@ -415,6 +418,7 @@ function renderTable() {
     opCell += `<button class="opt-btn" title="查看详情" onclick="openDetail(${a.id})">${ICON_EYE}</button>`;
     if (status === '已发布') opCell += `<button class="opt-btn" title="AI 优化" onclick="openOpt(${a.id})">${ICON_PEN}</button>`;
     if (HISTCOUNTS[String(a.id)]) opCell += `<button class="opt-btn hist" title="评分历史" onclick="openHist(${a.id})">${ICON_CLOCK}</button>`;
+    if (status === '已发布') opCell += `<button class="opt-btn dist${distBtnCls(a.id)}" title="一键分发到所有已登录平台（各平台生成草稿）" onclick="openDistribute(${a.id}, this)">${ICON_SEND}</button>`;
     opCell += '</td>';
     const srcMeta = POSTS[String(a.id)];
     const srcTxt = srcMeta ? (srcMeta.source || '手动') : '—';
@@ -851,6 +855,7 @@ function loadAll() {
 }
 
 loadAll();
+Promise.all([loadDistTasks(), refreshAuthView()]).then(() => renderTable());
 
 function todayStr() {
   const d = new Date();
@@ -1285,6 +1290,164 @@ function openDetail(aid) {
 
 document.getElementById('drawerClose').addEventListener('click', () => document.getElementById('drawerMask').classList.remove('show'));
 document.getElementById('drawerMask').addEventListener('click', e => { if (e.target === e.currentTarget) document.getElementById('drawerMask').classList.remove('show'); });
+
+/* ============ 一键分发（经本机桥同步到各平台草稿箱） ============ */
+
+function distBtnCls(aid) {
+  const t = DIST_TASKS[String(aid)];
+  if (!t) return '';
+  if (t.status === 'done') return ' dist-ok';
+  if (t.status === 'failed') return ' dist-err';
+  return ' dist-busy';
+}
+
+function loadDistTasks() {
+  return fetchJson('api/distribute-history', { tasks: [] }).then(d => {
+    DIST_TASKS = {};
+    (d.tasks || []).forEach(t => {
+      const k = String(t.article_id);
+      if (!DIST_TASKS[k] || (t.created_at || '') > (DIST_TASKS[k].created_at || '')) DIST_TASKS[k] = t;
+    });
+    return d;
+  });
+}
+
+function openDistribute(aid, btn) {
+  const a = ARTICLES.find(x => String(x.id) === String(aid));
+  const prev = DIST_TASKS[String(aid)];
+  const tip = prev && (prev.status === 'done' || prev.status === 'failed')
+    ? '已有一次分发记录，确定要重新分发吗？'
+    : '将同步到本机桥当前已登录的全部平台';
+  if (!confirm(`一键分发《${a ? a.title : ''}》？\n\n${tip}\n各平台生成草稿，需到平台后台点发布。`)) return;
+  if (btn) { btn.disabled = true; btn.classList.remove('dist-ok', 'dist-err'); btn.classList.add('dist-busy'); }
+  apiPost('api/distribute', { article_id: aid }).then(r => r.json().catch(() => ({}))).then(d => {
+    if (!d.ok) throw new Error(d.error || '创建分发任务失败');
+    DIST_TASKS[String(aid)] = { task_id: d.task_id, article_id: aid, status: d.status,
+                                created_at: '', platforms: {}, title: a ? a.title : '' };
+    pollDistTask(d.task_id, aid, btn);
+  }).catch(e => {
+    if (btn) { btn.disabled = false; btn.classList.remove('dist-busy'); }
+    alert('分发失败: ' + e.message);
+  });
+}
+
+function pollDistTask(taskId, aid, btn) {
+  if (DIST_POLLERS[taskId]) return;
+  const start = Date.now();
+  const timer = setInterval(() => {
+    fetchJson('api/distribute-task?id=' + encodeURIComponent(taskId), { ok: false, task: null })
+      .then(d => {
+        const t = d.task;
+        if (!t) return;
+        if (t.status === 'pending' || t.status === 'running') {
+          if (Date.now() - start > 600000) {
+            clearInterval(timer);
+            delete DIST_POLLERS[taskId];
+            if (btn) { btn.disabled = false; btn.classList.remove('dist-busy'); }
+            alert('仍在等待桥领取任务。请确认本机桥已运行、扩展已连接，且 Chrome 有激活的网页标签页。');
+          }
+          return;
+        }
+        clearInterval(timer);
+        delete DIST_POLLERS[taskId];
+        const cur = DIST_TASKS[String(aid)];
+        if (!cur || (cur.created_at || '') <= (t.created_at || '')) DIST_TASKS[String(aid)] = t;
+        renderTable();
+        showDistResult(t);
+      })
+      .catch(() => {});
+  }, 3000);
+  DIST_POLLERS[taskId] = timer;
+}
+
+function distName(pid) {
+  const m = (PLATFORM_META || []).find(x => x.id === pid);
+  return m ? m.name : pid;
+}
+
+function showDistResult(t) {
+  const plats = t.platforms || {};
+  let rows = Object.keys(plats).map(pid => {
+    const e = plats[pid] || {};
+    const st = e.ok ? '<span class="tag g">草稿已创建</span>' : '<span class="tag s">失败</span>';
+    const detail = e.url
+      ? `<a href="${escapeHtml(e.url)}" target="_blank" rel="noopener" title="${escapeHtml(e.url)}">${distName(pid)} 草稿</a>`
+      : escapeHtml(e.error || '—');
+    return `<tr><td>${escapeHtml(distName(pid))}</td><td>${st}</td><td>${detail}</td></tr>`;
+  }).join('');
+  if (!rows) rows = `<tr><td colspan="3">无平台返回结果${t.error ? '：' + escapeHtml(t.error) : ''}</td></tr>`;
+  document.getElementById('distMeta').textContent =
+    `${t.title || ''} · 创建 ${t.created_at || '—'} · 完成 ${t.finished_at || '—'}`;
+  document.getElementById('distBody').innerHTML = rows;
+  document.getElementById('distMask').classList.add('show');
+}
+
+/* ============ 平台登录态 ============ */
+
+function openAuthModal() {
+  document.getElementById('authMask').classList.add('show');
+  refreshAuthView();
+}
+
+function refreshAuthView() {
+  return fetchJson('api/platform-auth', { platforms: {}, meta: [] }).then(d => {
+    if (d && Array.isArray(d.meta) && d.meta.length) PLATFORM_META = d.meta;
+    renderAuthTable(d || { platforms: {}, meta: [] });
+    return d;
+  });
+}
+
+function renderAuthTable(d) {
+  const has = !!(d.platforms_ts);
+  document.getElementById('authMeta').textContent = has
+    ? `最近检查 ${d.platforms_ts} · 扩展${d.connected ? '已连接' : '未连接'} · 同步产出为草稿，需到各平台后台发布`
+    : '暂无数据（本机桥连上扩展后会自动推送登录态）';
+  const list = (PLATFORM_META.length ? PLATFORM_META
+    : Object.keys(d.platforms || {}).map(id => ({ id, name: id })));
+  document.getElementById('authBody').innerHTML = list.map(m => {
+    const p = (d.platforms || {})[m.id] || {};
+    const st = !has ? '<span class="tag">未监测</span>'
+      : (p.authenticated ? '<span class="tag g">已登录</span>' : '<span class="tag s">未登录</span>');
+    const op = (has && !p.authenticated && m.url)
+      ? `<button class="fab-btn ghost" style="padding:3px 10px;font-size:12px" onclick="window.open('${m.url}','_blank')">一键登录</button>`
+      : '<span style="color:var(--muted)">—</span>';
+    return `<tr><td>${escapeHtml(m.name || m.id)}</td><td>${st}</td><td>${escapeHtml(p.error || '')}</td><td class="num">${op}</td></tr>`;
+  }).join('');
+}
+
+function authRecheck() {
+  const btn = document.getElementById('authRefresh');
+  const hint = document.getElementById('authHint');
+  btn.disabled = true;
+  hint.textContent = '已通知桥重新检查，等待中…';
+  refreshAuthView().then(d0 => {
+    const oldTs = (d0 && d0.platforms_ts) || '';
+    let n = 0;
+    const t = setInterval(() => {
+      n += 1;
+      refreshAuthView().then(d => {
+        if (d && d.platforms_ts && d.platforms_ts !== oldTs) {
+          clearInterval(t);
+          btn.disabled = false;
+          hint.textContent = '登录态已更新';
+        } else if (n >= 20) {
+          clearInterval(t);
+          btn.disabled = false;
+          hint.textContent = (d0 && d0.connected)
+            ? '仍在等待桥返回…（可稍后再试）'
+            : '扩展未连接桥：请确认本机桥在运行且 Chrome 已打开';
+        }
+      });
+    }, 3000);
+  });
+}
+
+document.getElementById('authEntryBtn').addEventListener('click', openAuthModal);
+document.getElementById('authClose').addEventListener('click', () => document.getElementById('authMask').classList.remove('show'));
+document.getElementById('authMask').addEventListener('click', e => { if (e.target === e.currentTarget) document.getElementById('authMask').classList.remove('show'); });
+document.getElementById('distClose').addEventListener('click', () => document.getElementById('distMask').classList.remove('show'));
+document.getElementById('distMask').addEventListener('click', e => { if (e.target === e.currentTarget) document.getElementById('distMask').classList.remove('show'); });
+document.getElementById('authRefresh').addEventListener('click', authRecheck);
 
 function attachColResize() {
   document.querySelectorAll('.plan-table, .ledger-table').forEach(tbl => {

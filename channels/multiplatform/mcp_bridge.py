@@ -39,6 +39,7 @@ except ImportError:
 BASE = os.path.dirname(os.path.abspath(__file__))
 CONFIG_FILE = os.path.join(BASE, "config.json")
 STATE_FILE = os.path.join(BASE, "state.json")
+PLATFORMS_FILE = os.path.join(BASE, "platforms.json")
 
 DEFAULTS = {
     "ws_port": 3721,
@@ -47,10 +48,12 @@ DEFAULTS = {
     "monitor_interval_sec": 600,
     "request_timeout_sec": 300,
     "standalone_wait_sec": 90,
+    "ledger_url": "",
+    "ledger_poll_sec": 15,
 }
 
 # 平台元数据（逆向自扩展 v1.2.1；isAiGraphic 的两个图文变体不支持 MCP）
-PLATFORMS = [
+DEFAULT_PLATFORMS = [
     ("zhihu", "知乎", "https://www.zhihu.com", "html"),
     ("juejin", "掘金", "https://juejin.cn", "markdown"),
     ("weibo", "微博", "https://weibo.com", "html"),
@@ -69,6 +72,26 @@ PLATFORMS = [
     ("douyin", "抖音长文", "https://creator.douyin.com", "markdown"),
     ("xiaohongshu", "小红书长文", "https://www.xiaohongshu.com", "markdown"),
 ]
+
+
+def _load_platforms():
+    """优先读 platforms.json（与台账共享），缺文件时回退内置清单。"""
+    try:
+        with open(PLATFORMS_FILE, encoding="utf-8") as f:
+            rows = json.load(f)
+        out = []
+        for r in rows:
+            if isinstance(r, dict) and r.get("id"):
+                out.append((r["id"], r.get("name", r["id"]),
+                            r.get("url", "https://"), r.get("format", "markdown")))
+        if out:
+            return out
+    except (OSError, ValueError):
+        pass
+    return list(DEFAULT_PLATFORMS)
+
+
+PLATFORMS = _load_platforms()
 PLATFORM_IDS = [p[0] for p in PLATFORMS]
 NAME_BY_ID = {p[0]: p[1] for p in PLATFORMS}
 
@@ -99,6 +122,20 @@ def save_state(patch):
     with os.fdopen(fd, "w", encoding="utf-8") as f:
         json.dump(st, f, ensure_ascii=False, indent=2)
     os.replace(tmp, STATE_FILE)
+
+
+def http_json(url, payload=None, timeout=60):
+    """简单 HTTP JSON 调用（无第三方依赖，Windows 直接可用）。"""
+    import urllib.request
+    data = None
+    headers = {}
+    if payload is not None:
+        data = json.dumps(payload, ensure_ascii=False).encode()
+        headers["Content-Type"] = "application/json"
+    req = urllib.request.Request(url, data=data, headers=headers,
+                                 method="POST" if data is not None else "GET")
+    with urllib.request.urlopen(req, timeout=timeout) as r:
+        return json.loads(r.read().decode() or "{}")
 
 
 class ExtBridge:
@@ -312,6 +349,150 @@ async def auth_snapshot(bridge, cfg):
             item["preconditions"] = e["preconditions"]
         plats[pid] = item
     return plats
+
+
+def _sync_entry_from_obj(e):
+    """把扩展返回的单平台结果归一化为 {ok,url,error}。"""
+    if not isinstance(e, dict):
+        return {"ok": False, "url": "", "error": "未知结果格式"}
+    ok = bool(e.get("success") or e.get("ok") or e.get("status") in ("success", "ok", "done"))
+    err = e.get("error") or e.get("message") or ""
+    if isinstance(err, dict):
+        err = err.get("message", "")
+    if e.get("error") or e.get("error_message"):
+        ok = False
+    url = e.get("url") or e.get("draftUrl") or e.get("link") or ""
+    return {"ok": bool(ok), "url": str(url or "")[:500], "error": str(err or "")[:300]}
+
+
+def normalize_sync_result(r, platform_ids):
+    """syncArticle 响应 -> {platform_id: {ok,url,error}}（容错多种返回形态）。"""
+    out = {p: {"ok": False, "url": "", "error": ""} for p in platform_ids}
+    if not isinstance(r, dict):
+        return out
+    if "error" in r:
+        msg = str((r["error"] or {}).get("message", "同步失败"))[:300]
+        for p in out:
+            out[p]["error"] = msg
+        return out
+    res = r.get("result")
+    cands = []
+    if isinstance(res, dict):
+        for k in ("platforms", "results", "items", "list"):
+            v = res.get(k)
+            if isinstance(v, list):
+                cands = v
+                break
+        if not cands:
+            known = {p: res[p] for p in platform_ids if isinstance(res.get(p), dict)}
+            if known:
+                for p, v in known.items():
+                    out[p] = _sync_entry_from_obj(v)
+                return out
+    elif isinstance(res, list):
+        cands = res
+    for e in cands:
+        if not isinstance(e, dict):
+            continue
+        pid = e.get("platform") or e.get("platformId") or e.get("id")
+        if pid in out:
+            out[pid] = _sync_entry_from_obj(e)
+    if all(not v["ok"] and not v["error"] for v in out.values()) and isinstance(res, dict) and res:
+        u = res.get("url") or res.get("draftUrl") or ""
+        for p in out:
+            out[p] = {"ok": True, "url": str(u or "")[:500], "error": ""}
+    return out
+
+
+async def push_auth_to_ledger(bridge, cfg, plats):
+    """把登录态快照推给台账（失败只打日志，不影响主流程）。"""
+    url = (cfg.get("ledger_url") or "").rstrip("/")
+    if not url:
+        return
+    try:
+        await asyncio.get_running_loop().run_in_executor(
+            None, http_json, url + "/api/platform-auth",
+            {"platforms": plats,
+             "platforms_ts": time.strftime("%Y-%m-%d %H:%M:%S"),
+             "connected": bool(bridge.connected())})
+    except Exception as e:
+        print("[%s] 登录态推送台账失败: %s" % (time.strftime("%H:%M:%S"), e), flush=True)
+
+
+async def _post_distribute_result(cfg, base_url, task_id, status, plats):
+    url = (cfg.get("ledger_url") or "").rstrip("/")
+    await asyncio.get_running_loop().run_in_executor(
+        None, http_json, url + "/api/distribute-result",
+        {"task_id": task_id, "status": status, "platforms": plats}, 30)
+
+
+async def run_distribute_task(bridge, cfg, base_url, task):
+    """执行一个台账下发的一键分发任务（目标=当前已登录平台）。"""
+    t_id = task.get("task_id", "")
+    log = lambda s: print("[ledger][%s] %s" % (t_id, s), flush=True)
+    try:
+        md = (task.get("content") or "").strip()
+        title = (task.get("title") or "").strip() or extract_title(md)
+        if not md:
+            raise RuntimeError("任务正文为空")
+        if not title:
+            raise RuntimeError("任务缺少标题")
+        st = load_state()
+        auth = st.get("platforms") or {}
+        targets = [p for p in PLATFORM_IDS if (auth.get(p) or {}).get("authenticated")]
+        if not targets:
+            plats = {p: {"ok": False, "url": "", "error": "当前无已登录平台（快照为空或未登录）"}
+                     for p in PLATFORM_IDS}
+            log("无已登录平台，任务标记失败")
+            await _post_distribute_result(cfg, base_url, t_id, "failed", plats)
+            return
+        tags = [t for t in (task.get("tags") or []) if t]
+        art = {"title": title, "markdown": md, "platforms": targets,
+               "cover": task.get("cover") or "", "tags": tags, "retry": False}
+        md2, todo = replace_local_images(art["markdown"], "")
+        art["markdown"] = md2
+        art["todo_images"] = todo
+        r = await do_sync(bridge, art, cfg, log=log)
+        res = normalize_sync_result(r, targets)
+        status = "done" if any(v["ok"] for v in res.values()) else "failed"
+        log("完成: %s（成功 %d/%d）" % (status, sum(1 for v in res.values() if v["ok"]), len(targets)))
+        save_state({"last_distribute": {"time": time.strftime("%Y-%m-%d %H:%M:%S"),
+                                        "task_id": t_id, "status": status,
+                                        "platforms": res}})
+        await _post_distribute_result(cfg, base_url, t_id, status, res)
+    except Exception as e:
+        log("任务执行失败: %s" % e)
+        try:
+            await _post_distribute_result(
+                cfg, base_url, t_id, "failed",
+                {p: {"ok": False, "url": "", "error": str(e)[:300]} for p in PLATFORM_IDS})
+        except Exception as e2:
+            log("回传失败结果也失败: %s" % e2)
+
+
+async def ledger_loop(bridge, cfg):
+    """轮询台账：拉取一键分发任务、响应登录态重查请求。"""
+    base_url = (cfg.get("ledger_url") or "").rstrip("/")
+    if not base_url:
+        return
+    poll_sec = max(5, int(cfg.get("ledger_poll_sec", 15)))
+    print("[ledger] 台账联动开启: %s（轮询 %ds）" % (base_url, poll_sec), flush=True)
+    while True:
+        try:
+            if bridge.connected():
+                data = await asyncio.get_running_loop().run_in_executor(
+                    None, lambda: http_json(base_url + "/api/distribute-poll", timeout=30))
+                if data.get("recheck"):
+                    await _check_and_save(bridge, cfg, tag="台账重查")
+                task = data.get("task")
+                if isinstance(task, dict) and task.get("task_id"):
+                    print("[ledger] 收到分发任务 %s: %s"
+                          % (task["task_id"], task.get("title", "")), flush=True)
+                    asyncio.get_running_loop().create_task(
+                        run_distribute_task(bridge, cfg, base_url, task))
+        except Exception as e:
+            print("[ledger] 轮询失败: %s" % e, flush=True)
+        await asyncio.sleep(poll_sec)
 
 
 def ws_handler_factory(bridge):
@@ -653,6 +834,7 @@ async def _check_and_save(bridge, cfg, tag="监测"):
         n = sum(1 for p in plats.values() if p.get("authenticated"))
         print("[%s] 登录态%s: %d/%d 已登录"
               % (time.strftime("%H:%M:%S"), tag, n, len(plats)), flush=True)
+        await push_auth_to_ledger(bridge, cfg, plats)
     except Exception as e:
         print("[%s] %s失败: %s" % (time.strftime("%H:%M:%S"), tag, e), flush=True)
 
@@ -697,12 +879,17 @@ async def cmd_serve(args):
 
     httpd = await loop.run_in_executor(None, http_ready)
     mon = loop.create_task(monitor_loop(bridge, cfg))
+    ledger_task = None
+    if (cfg.get("ledger_url") or "").strip():
+        ledger_task = loop.create_task(ledger_loop(bridge, cfg))
     try:
         await asyncio.Future()
     except asyncio.CancelledError:
         pass
     finally:
         mon.cancel()
+        if ledger_task is not None:
+            ledger_task.cancel()
         httpd.shutdown()
         await close_server(srv)
 

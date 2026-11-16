@@ -221,3 +221,14 @@
   #histMask .modal { width: min(680px, 92vw); }
   .hist-table td { white-space: normal; }
   .hist-table td.num { text-align: center; white-space: nowrap; }
+  .opt-btn.dist { border-color: #18a058; color: #18a058; }
+  .opt-btn.dist:hover { background: #18a058; color: #fff; }
+  .opt-btn.dist-ok { border-color: #18a058; background: #18a058; color: #fff; }
+  .opt-btn.dist-err { border-color: #d4380d; background: #d4380d; color: #fff; }
+  .opt-btn.dist-busy { animation: distspin 1.2s linear infinite; }
+  @keyframes distspin { to { transform: rotate(360deg); } }
+  .auth-table { width: 100%; border-collapse: collapse; }
+  .auth-table th, .auth-table td { padding: 6px 8px; border-bottom: 1px solid #f0f2f5; text-align: left; font-size: 13px; word-break: break-all; }
+  .auth-table th { background: #f7f9fc; position: sticky; top: 0; }
+  .auth-table td.num, .auth-table th.num { text-align: right; white-space: nowrap; }
+  #authMask .modal, #distMask .modal { width: min(720px, 94vw); }

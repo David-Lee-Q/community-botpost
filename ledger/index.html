@@ -9,7 +9,7 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <title>社区内容自运营智能体</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
-<link rel="stylesheet" href="style.css?v=20261116a">
+<link rel="stylesheet" href="style.css?v=20261117a">
 </head>
 <body>
 <header>
@@ -17,6 +17,7 @@
   <span class="score-tag" id="scoreTag" title="点击查看下周优化建议"><span class="st-label">综合评分</span><span class="st-num">—</span></span>
   <button type="button" id="refreshBtn" class="csdn-entry" title="重新拉取平台文章数据">刷新数据</button>
   <button type="button" id="publishBatchBtn" class="csdn-entry" title="立即发布 2 篇待发布文章（按计划顺序）">立即发文</button>
+  <button type="button" id="authEntryBtn" class="csdn-entry" title="查看各平台登录态；未登录可一键打开登录页">平台登录态</button>
   <a class="csdn-entry" href="https://code.cosmoplat.cn/api/v1/p/e73d7d13-fce6-4c9c-86c4-3b57737ad1e6/8300" target="_blank" rel="noopener">CSDN 中转台</a>
   <div class="sub" id="sub">加载中...</div>
 </header>
@@ -337,6 +338,33 @@
   </div>
 </div>
 
+<div class="modal-mask" id="authMask">
+  <div class="modal">
+    <span class="close" id="authClose">&times;</span>
+    <h3>平台登录态</h3>
+    <div class="meta" id="authMeta">加载中...</div>
+    <table class="auth-table"><thead><tr>
+      <th>平台</th><th>状态</th><th>说明</th><th class="num">操作</th>
+    </tr></thead><tbody id="authBody"></tbody></table>
+    <div class="oneshot-actions" style="margin-top:14px">
+      <button id="authRefresh" class="fab-btn">刷新登录态</button>
+      <span class="hint" id="authHint"></span>
+    </div>
+  </div>
+</div>
+
+<div class="modal-mask" id="distMask">
+  <div class="modal">
+    <span class="close" id="distClose">&times;</span>
+    <h3>一键分发结果</h3>
+    <div class="meta" id="distMeta"></div>
+    <table class="auth-table"><thead><tr>
+      <th>平台</th><th>状态</th><th>草稿链接 / 说明</th>
+    </tr></thead><tbody id="distBody"></tbody></table>
+    <div class="meta" style="margin-top:10px">各平台产出为草稿，请前往对应平台后台点击发布</div>
+  </div>
+</div>
+
 <div class="drawer-mask" id="drawerMask">
   <div class="drawer" id="drawer">
     <div class="drawer-head">
@@ -355,6 +383,6 @@
   </div>
 </div>
 
-<script src="app.js?v=20261116a"></script>
+<script src="app.js?v=20261117a"></script>
 </body>
 </html>

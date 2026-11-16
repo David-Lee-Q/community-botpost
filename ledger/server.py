@@ -9,6 +9,7 @@ import sys
 import tempfile
 import threading
 import time
+import urllib.parse
 
 LEDGER = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(LEDGER)
@@ -20,6 +21,9 @@ REVIEWS_FILE = os.path.join(LEDGER, "data", "reviews.json")
 SCORES_FILE = os.path.join(LEDGER, "data", "article_scores.json")
 BOT_SCORE_FILE = os.path.join(LEDGER, "data", "bot_score.json")
 BOT_POSTS_FILE = os.path.join(LEDGER, "data", "bot_posts.json")
+DIST_TASKS_FILE = os.path.join(LEDGER, "data", "distribute_tasks.json")
+PLATFORM_AUTH_FILE = os.path.join(LEDGER, "data", "platform_auth.json")
+BODIES_FILE = os.path.join(LEDGER, "data", "article_bodies.json")
 
 sys.path.insert(0, LEDGER)
 sys.path.insert(0, os.path.join(ROOT, "bot"))
@@ -30,6 +34,9 @@ _lock = threading.Lock()
 _refreshing = False
 _summary_cache = {"t": 0.0, "body": None, "etag": ""}
 SUMMARY_TTL = 30
+DIST_LOCK = threading.Lock()
+DIST_STALE_SEC = 600  # 运行中任务超过 10 分钟视为桥掉线，放回队列
+DIST_KEEP = 100       # 任务文件最多保留条数
 
 
 def _load_auth_token():
@@ -52,6 +59,49 @@ def _read_json(path, fallback):
             return json.load(f)
     except (OSError, ValueError):
         return fallback
+
+
+def _write_json(path, obj):
+    fd, tmp = tempfile.mkstemp(dir=os.path.dirname(path), suffix=".tmp")
+    with os.fdopen(fd, "w", encoding="utf-8") as f:
+        json.dump(obj, f, ensure_ascii=False, indent=2)
+    os.replace(tmp, path)
+
+
+def _dist_load():
+    return _read_json(DIST_TASKS_FILE, {})
+
+
+def _dist_save(tasks):
+    if len(tasks) > DIST_KEEP:
+        keep = sorted(tasks, key=lambda k: tasks[k].get("created_at") or "",
+                      reverse=True)[:DIST_KEEP]
+        tasks = {k: tasks[k] for k in keep}
+    _write_json(DIST_TASKS_FILE, tasks)
+
+
+def _articles_list():
+    return _read_json(os.path.join(LEDGER, "data", "articles.json"), {}).get("articles", [])
+
+
+def _article_body(aid):
+    """正文优先取本地缓存，缓存缺失时回源社区 API。"""
+    bodies = _read_json(BODIES_FILE, {})
+    b = bodies.get(str(aid))
+    if isinstance(b, dict) and (b.get("content") or "").strip():
+        return b
+    art = opt._load_article(str(aid))
+    return {"title": art.get("title", ""), "summary": art.get("summary", ""),
+            "content": art.get("content", "")}
+
+
+def _first_image(md):
+    m = re.search(r"!\[[^\]]*\]\(([^)\s]+)", md or "")
+    return m.group(1) if m else ""
+
+
+def _platforms_meta():
+    return _read_json(os.path.join(ROOT, "channels", "multiplatform", "platforms.json"), [])
 
 
 def _build_summary():
@@ -128,6 +178,18 @@ class Handler(http.server.SimpleHTTPRequestHandler):
             return
         if self.path == "/api/publish-batch":
             self._handle_publish_batch()
+            return
+        if self.path == "/api/distribute":
+            self._handle_distribute()
+            return
+        if self.path == "/api/distribute-result":
+            self._handle_distribute_result()
+            return
+        if self.path == "/api/platform-auth":
+            self._handle_platform_auth_push()
+            return
+        if self.path == "/api/platform-auth-recheck":
+            self._handle_platform_auth_recheck()
             return
         if self.path != "/api/publish":
             self._json(404, {"error": "not found"})
@@ -260,8 +322,172 @@ class Handler(http.server.SimpleHTTPRequestHandler):
         tids = [str(it["taskId"]) for it in targets]
         threading.Thread(target=_run_publish_batch, args=(tids,), daemon=True).start()
         self._json(200, {"ok": True, "state": "publishing",
-                         "tasks": [{"taskId": it["taskId"], "title": it.get("title", ""),
-                                    "time": it.get("time", "")} for it in targets]})
+                          "tasks": [{"taskId": it["taskId"], "title": it.get("title", ""),
+                                     "time": it.get("time", "")} for it in targets]})
+
+    def _handle_distribute(self):
+        data = self._body() or {}
+        aid = str(data.get("article_id") or "").strip()
+        if not aid:
+            self._json(400, {"error": "缺少 article_id"})
+            return
+        meta = next((a for a in _articles_list() if str(a.get("id")) == aid), None)
+        if not meta:
+            self._json(404, {"error": "文章不存在"})
+            return
+        if meta.get("status") != 1:
+            self._json(400, {"error": "仅已发布文章可分发"})
+            return
+        with DIST_LOCK:
+            tasks = _dist_load()
+            for t in sorted(tasks.values(), key=lambda x: x.get("created_at") or ""):
+                if str(t.get("article_id")) == aid and t.get("status") in ("pending", "running"):
+                    self._json(200, {"ok": True, "task_id": t["task_id"],
+                                     "status": t["status"], "existing": True})
+                    return
+            task_id = "d" + time.strftime("%Y%m%d%H%M%S") + os.urandom(2).hex()
+            tasks[task_id] = {
+                "task_id": task_id, "article_id": aid,
+                "title": meta.get("title", ""), "status": "pending",
+                "created_at": time.strftime("%Y-%m-%d %H:%M:%S"),
+                "claimed_at": "", "finished_at": "", "error": "", "platforms": {},
+            }
+            _dist_save(tasks)
+            self._json(200, {"ok": True, "task_id": task_id, "status": "pending"})
+
+    def _handle_distribute_poll(self):
+        """桥端轮询：领取一个待分发任务，顺带返回登录态重查标志。"""
+        doc = _read_json(PLATFORM_AUTH_FILE, {})
+        recheck = bool(doc.get("recheck_requested"))
+        task_out = None
+        with DIST_LOCK:
+            tasks = _dist_load()
+            changed = False
+            now_ts = time.time()
+            for t in tasks.values():
+                if t.get("status") == "running" and t.get("claimed_at"):
+                    try:
+                        ct = time.mktime(time.strptime(t["claimed_at"], "%Y-%m-%d %H:%M:%S"))
+                    except ValueError:
+                        ct = 0
+                    if now_ts - ct > DIST_STALE_SEC:
+                        t["status"] = "pending"
+                        t["claimed_at"] = ""
+                        changed = True
+            for tid in sorted(tasks, key=lambda k: tasks[k].get("created_at") or ""):
+                t = tasks[tid]
+                if t.get("status") != "pending":
+                    continue
+                try:
+                    body = _article_body(str(t["article_id"]))
+                except Exception as e:
+                    t["status"] = "failed"
+                    t["finished_at"] = time.strftime("%Y-%m-%d %H:%M:%S")
+                    t["error"] = "拉取正文失败: " + str(e)[:200]
+                    changed = True
+                    break
+                t["status"] = "running"
+                t["claimed_at"] = time.strftime("%Y-%m-%d %H:%M:%S")
+                changed = True
+                meta = next((a for a in _articles_list()
+                             if str(a.get("id")) == str(t["article_id"])), {})
+                task_out = {
+                    "task_id": tid,
+                    "article_id": t["article_id"],
+                    "title": (body.get("title") or t.get("title") or "").strip(),
+                    "content": body.get("content", ""),
+                    "cover": _first_image(body.get("content", "")),
+                    "tags": [meta.get("cateName", "")] if meta.get("cateName") else [],
+                }
+                break
+            if changed:
+                _dist_save(tasks)
+        if recheck:
+            doc["recheck_requested"] = False
+            _write_json(PLATFORM_AUTH_FILE, doc)
+        self._json(200, {"task": task_out, "recheck": recheck})
+
+    def _handle_distribute_result(self):
+        data = self._body() or {}
+        tid = str(data.get("task_id") or "").strip()
+        if not tid:
+            self._json(400, {"error": "缺少 task_id"})
+            return
+        plats_in = data.get("platforms")
+        if not isinstance(plats_in, dict):
+            plats_in = {}
+        with DIST_LOCK:
+            tasks = _dist_load()
+            t = tasks.get(tid)
+            if not t:
+                self._json(404, {"error": "任务不存在"})
+                return
+            norm = {}
+            for pid, v in plats_in.items():
+                if not isinstance(v, dict):
+                    continue
+                norm[str(pid)] = {"ok": bool(v.get("ok")),
+                                  "url": str(v.get("url") or "")[:500],
+                                  "error": str(v.get("error") or "")[:300]}
+            t["platforms"] = norm
+            t["status"] = str(data.get("status") or
+                              ("done" if any(v["ok"] for v in norm.values()) else "failed"))
+            t["finished_at"] = time.strftime("%Y-%m-%d %H:%M:%S")
+            _dist_save(tasks)
+        self._json(200, {"ok": True, "status": t["status"]})
+
+    def _handle_distribute_task(self):
+        qs = self.path.split("?", 1)[1] if "?" in self.path else ""
+        params = {}
+        for p in qs.split("&"):
+            if "=" in p:
+                k, v = p.split("=", 1)
+                params[k] = urllib.parse.unquote(v)
+        with DIST_LOCK:
+            tasks = _dist_load()
+        t = None
+        if params.get("id"):
+            t = tasks.get(params["id"])
+        elif params.get("article_id"):
+            cands = [x for x in tasks.values()
+                     if str(x.get("article_id")) == params["article_id"]]
+            cands.sort(key=lambda x: x.get("created_at") or "")
+            t = cands[-1] if cands else None
+        self._json(200, {"ok": t is not None, "task": t})
+
+    def _handle_distribute_history(self):
+        with DIST_LOCK:
+            tasks = _dist_load()
+        out = sorted(tasks.values(), key=lambda x: x.get("created_at") or "", reverse=True)
+        self._json(200, {"tasks": out})
+
+    def _handle_platform_auth_push(self):
+        data = self._body() or {}
+        plats = data.get("platforms")
+        if not isinstance(plats, dict):
+            self._json(400, {"error": "platforms 需为对象"})
+            return
+        doc = _read_json(PLATFORM_AUTH_FILE, {})
+        doc["platforms"] = plats
+        doc["platforms_ts"] = str(data.get("platforms_ts") or
+                                  time.strftime("%Y-%m-%d %H:%M:%S"))
+        doc["connected"] = bool(data.get("connected"))
+        _write_json(PLATFORM_AUTH_FILE, doc)
+        self._json(200, {"ok": True})
+
+    def _handle_platform_auth_recheck(self):
+        doc = _read_json(PLATFORM_AUTH_FILE, {})
+        doc["recheck_requested"] = True
+        _write_json(PLATFORM_AUTH_FILE, doc)
+        self._json(200, {"ok": True})
+
+    def _handle_platform_auth_get(self):
+        doc = _read_json(PLATFORM_AUTH_FILE, {})
+        self._json(200, {"platforms": doc.get("platforms", {}),
+                         "platforms_ts": doc.get("platforms_ts", ""),
+                         "connected": doc.get("connected", False),
+                         "recheck": bool(doc.get("recheck_requested")),
+                         "meta": _platforms_meta()})
 
     def _handle_plan_update(self):
         data = self._body()
@@ -382,6 +608,18 @@ class Handler(http.server.SimpleHTTPRequestHandler):
                 self._json(200, {"ok": True, "schedule": plan.get("schedule", [])})
             except (OSError, ValueError) as e:
                 self._json(200, {"ok": False, "error": str(e)[:300]})
+            return
+        if self.path.startswith("/api/distribute-poll"):
+            self._handle_distribute_poll()
+            return
+        if self.path.startswith("/api/distribute-task"):
+            self._handle_distribute_task()
+            return
+        if self.path.startswith("/api/distribute-history"):
+            self._handle_distribute_history()
+            return
+        if self.path.startswith("/api/platform-auth"):
+            self._handle_platform_auth_get()
             return
         super().do_GET()
 
