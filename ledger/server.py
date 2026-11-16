@@ -185,6 +185,9 @@ class Handler(http.server.SimpleHTTPRequestHandler):
         if self.path == "/api/distribute-result":
             self._handle_distribute_result()
             return
+        if self.path == "/api/distribute-poll":
+            self._handle_distribute_poll()
+            return
         if self.path == "/api/platform-auth":
             self._handle_platform_auth_push()
             return

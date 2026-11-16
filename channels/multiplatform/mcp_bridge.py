@@ -167,6 +167,65 @@ def http_json(url, payload=None, timeout=60, cookie=""):
         raise RuntimeError("HTTP %s %s" % (e.code, body or e.reason)) from e
 
 
+_RELAY_CACHE = {"base": "", "ts": 0.0}
+RELAY_TTL = 1800
+
+
+def resolve_relay_base(stable_url, cookie=""):
+    """稳定地址（/api/v1/p/...）只放行 GET，POST 会被网关 nginx 405。
+    用 GET 触发其 302，取 Location 得到真正承载服务的 host（放 POST，匿名可达）。
+    兼容 200 + JS/meta 跳转的形态。失败返回 None。"""
+    import urllib.request
+    import urllib.error
+    import re
+    from urllib.parse import urljoin
+
+    class _NoRedirect(urllib.request.HTTPRedirectHandler):
+        def redirect_request(self, req, fp, code, msg, headers, newurl):
+            return None
+
+    opener = urllib.request.build_opener(_NoRedirect)
+    req = urllib.request.Request(stable_url, headers={
+        "User-Agent": _UA, "Accept": "text/html,application/json"})
+    if cookie:
+        req.add_header("Cookie", cookie)
+    try:
+        with opener.open(req, timeout=20) as r:
+            body = r.read(8192).decode("utf-8", "replace")
+    except urllib.error.HTTPError as e:
+        if e.code not in (301, 302, 303, 307, 308):
+            raise
+        loc = (e.headers or {}).get("Location") or ""
+        return urljoin(stable_url, loc) if loc else None
+    m = re.search(r'(?:location\.href\s*=\s*|content="0;\s*url=)["\']?([^"\'\s>]+)', body)
+    return urljoin(stable_url, m.group(1)) if m else None
+
+
+def ledger_base(cfg, cookie=""):
+    """台账请求的 base 地址。稳定地址自动解析为真实 host（缓存 30 分钟），
+    非稳定地址（如本机直连或已填真实 host）原样返回。"""
+    stable = (cfg.get("ledger_url") or "").rstrip("/")
+    if not stable or "/api/v1/p/" not in stable:
+        return stable
+    now = time.time()
+    if _RELAY_CACHE["base"] and now - _RELAY_CACHE["ts"] < RELAY_TTL:
+        return _RELAY_CACHE["base"]
+    try:
+        got = resolve_relay_base(stable, cookie)
+    except Exception:
+        got = None
+    if got:
+        _RELAY_CACHE["base"] = got.rstrip("/")
+        _RELAY_CACHE["ts"] = now
+        return _RELAY_CACHE["base"]
+    return _RELAY_CACHE["base"] or stable
+
+
+def invalidate_relay_cache():
+    _RELAY_CACHE["base"] = ""
+    _RELAY_CACHE["ts"] = 0.0
+
+
 class ExtBridge:
     """与扩展的 WS 连接管理。"""
 
@@ -437,7 +496,7 @@ def normalize_sync_result(r, platform_ids):
 
 async def push_auth_to_ledger(bridge, cfg, plats):
     """把登录态快照推给台账（失败只打日志，不影响主流程）。"""
-    url = (cfg.get("ledger_url") or "").rstrip("/")
+    url = ledger_base(cfg, (cfg.get("ledger_cookie") or "").strip())
     if not url:
         return
     try:
@@ -452,7 +511,7 @@ async def push_auth_to_ledger(bridge, cfg, plats):
 
 
 async def _post_distribute_result(cfg, base_url, task_id, status, plats):
-    url = (cfg.get("ledger_url") or "").rstrip("/")
+    url = ledger_base(cfg, (cfg.get("ledger_cookie") or "").strip()) or base_url
     await asyncio.get_running_loop().run_in_executor(
         None, lambda: http_json(url + "/api/distribute-result",
                                 {"task_id": task_id, "status": status, "platforms": plats},
@@ -515,32 +574,32 @@ async def _ledger_set_status(bridge, cfg, ok, error=""):
 
 
 async def ledger_loop(bridge, cfg):
-    """轮询台账：拉取一键分发任务、响应登录态重查请求。"""
-    base_url = (cfg.get("ledger_url") or "").rstrip("/")
-    if not base_url:
+    """轮询台账：拉取一键分发任务、响应登录态重查请求。
+
+    稳定地址（/api/v1/p/...）只放行 GET、POST 被 nginx 405，
+    这里先解析 302 拿到真实服务 host，轮询/回传都打真实 host。"""
+    configured = (cfg.get("ledger_url") or "").rstrip("/")
+    if not configured:
         print("[ledger] 未配置 ledger_url，台账联动关闭"
               "（在 config.json 设置 ledger_url 后重启即启用）", flush=True)
         return
     poll_sec = max(5, int(cfg.get("ledger_poll_sec", 15)))
     cookie = (cfg.get("ledger_cookie") or "").strip()
+    base_url = ledger_base(cfg, cookie)
+    if base_url != configured:
+        print("[ledger] 已解析台账真实地址: %s" % base_url, flush=True)
     print("[ledger] 台账联动开启: %s（轮询 %ds，cookie %s）"
           % (base_url, poll_sec, "已配置" if cookie else "未配置"), flush=True)
     try:
         await asyncio.get_running_loop().run_in_executor(
-            None, lambda: http_json(base_url + "/api/distribute-poll",
-                                    payload={}, timeout=15, cookie=cookie))
+            None, lambda: http_json(base_url + "/api/status",
+                                    timeout=15, cookie=cookie))
         await _ledger_set_status(bridge, cfg, True)
         print("[ledger] 台账自检通过：链路正常", flush=True)
     except Exception as e:
         await _ledger_set_status(bridge, cfg, False, "自检失败: %s" % e)
         print("[ledger] 台账自检失败: %s" % e, flush=True)
-        if "请求错误" in str(e):
-            print("[ledger] 网关返回「请求错误」= 缺少平台登录态。请在浏览器打开台账页→F12→Network→"
-                  "任一请求→Request Headers→复制完整 Cookie 值，填入 config.json 的 ledger_cookie 后重启",
-                  flush=True)
-        else:
-            print("[ledger] 自检通过前，台账「一键分发/平台登录态」不可用；"
-                  "请检查 config.json 的 ledger_url 及本机到该地址的网络", flush=True)
+        print("[ledger] 请检查 config.json 的 ledger_url 及本机到该地址的网络", flush=True)
     last_err = ""
     last_err_log = 0.0
     while True:
@@ -567,9 +626,16 @@ async def ledger_loop(bridge, cfg):
                 extra = ""
                 if msg == last_err:
                     extra = "（重复错误，每 10 分钟提示一次）"
-                if "请求错误" in msg:
-                    extra += " 解决：本机直连（台账页→127.0.0.1）不受影响；" \
-                        "如需此链路：F12→Network 复制整行 Cookie 填入 config.json 的 ledger_cookie 后重启"
+                if any(s in msg for s in ("404", "405", "410", "Name or service not known",
+                                          "Connection refused", "ConnectionReset")):
+                    invalidate_relay_cache()
+                    try:
+                        nb = ledger_base(cfg, cookie)
+                        if nb != base_url:
+                            base_url = nb
+                            extra += " 台账地址已重新解析为 %s" % nb
+                    except Exception:
+                        pass
                 print("[ledger] %s%s" % (msg, extra), flush=True)
                 last_err, last_err_log = msg, now
             await _ledger_set_status(bridge, cfg, False, str(e))
