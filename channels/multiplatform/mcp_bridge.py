@@ -470,18 +470,42 @@ async def run_distribute_task(bridge, cfg, base_url, task):
             log("回传失败结果也失败: %s" % e2)
 
 
+async def _ledger_set_status(bridge, cfg, ok, error=""):
+    """把台账链路状态写进 state.json，供看板展示。"""
+    base_url = (cfg.get("ledger_url") or "").rstrip("/")
+    try:
+        save_state({"ledger": {"url": base_url, "ok": bool(ok),
+                               "last_poll_at": time.strftime("%Y-%m-%d %H:%M:%S"),
+                               "last_error": (error or "")[:300]}})
+    except Exception:
+        pass
+
+
 async def ledger_loop(bridge, cfg):
     """轮询台账：拉取一键分发任务、响应登录态重查请求。"""
     base_url = (cfg.get("ledger_url") or "").rstrip("/")
     if not base_url:
+        print("[ledger] 未配置 ledger_url，台账联动关闭"
+              "（在 config.json 设置 ledger_url 后重启即启用）", flush=True)
         return
     poll_sec = max(5, int(cfg.get("ledger_poll_sec", 15)))
     print("[ledger] 台账联动开启: %s（轮询 %ds）" % (base_url, poll_sec), flush=True)
+    try:
+        await asyncio.get_running_loop().run_in_executor(
+            None, lambda: http_json(base_url + "/api/platform-auth", timeout=15))
+        await _ledger_set_status(bridge, cfg, True)
+        print("[ledger] 台账自检通过：链路正常", flush=True)
+    except Exception as e:
+        await _ledger_set_status(bridge, cfg, False, "自检失败: %s" % e)
+        print("[ledger] 台账自检失败: %s" % e, flush=True)
+        print("[ledger] 自检通过前，台账「一键分发/平台登录态」不可用；"
+              "请检查 config.json 的 ledger_url 及本机到该地址的网络", flush=True)
     while True:
         try:
             if bridge.connected():
                 data = await asyncio.get_running_loop().run_in_executor(
                     None, lambda: http_json(base_url + "/api/distribute-poll", timeout=30))
+                await _ledger_set_status(bridge, cfg, True)
                 if data.get("recheck"):
                     await _check_and_save(bridge, cfg, tag="台账重查")
                 task = data.get("task")
@@ -490,8 +514,11 @@ async def ledger_loop(bridge, cfg):
                           % (task["task_id"], task.get("title", "")), flush=True)
                     asyncio.get_running_loop().create_task(
                         run_distribute_task(bridge, cfg, base_url, task))
+            else:
+                await _ledger_set_status(bridge, cfg, False, "扩展未连接，暂不轮询")
         except Exception as e:
             print("[ledger] 轮询失败: %s" % e, flush=True)
+            await _ledger_set_status(bridge, cfg, False, str(e))
         await asyncio.sleep(poll_sec)
 
 
@@ -644,6 +671,7 @@ pre{background:#111827;color:#d1d5db;border-radius:8px;padding:10px;font-size:11
 <header>
   <h1>多平台分发桥</h1>
   <span id="b-conn" class="badge off">扩展未连接</span>
+  <span id="b-ledger" class="badge off">台账未连接</span>
   <span id="b-auth" class="badge">已登录 0</span>
 </header>
 <main>
@@ -700,6 +728,11 @@ async function refresh(){
     const ids=Object.keys(plats).sort();
     authCount=ids.filter(id=>plats[id].authenticated).length;
     document.getElementById('b-auth').textContent='已登录 '+authCount;
+    const lg=s.ledger||{}, lb=document.getElementById('b-ledger');
+    if(!lg.url){lb.textContent='台账未配置';lb.className='badge';lb.title='config.json 未设置 ledger_url';}
+    else if(lg.ok){lb.textContent='台账在线 '+(lg.last_poll_at||'').slice(11);lb.className='badge on';lb.title='台账链路正常，最近轮询 '+lg.last_poll_at;}
+    else {lb.textContent='台账离线';lb.className='badge off';
+      lb.title=(lg.last_error||'未知原因')+'｜若桥是旧版代码：重新解压新 multiplatform.zip 覆盖后重启 serve';}
     rows.innerHTML=ids.map(id=>{
       const p=plats[id];
       const sup=(p.supports||[]).filter(x=>['draft','publish','image_upload','tags','cover','categories'].includes(x)).join(',');

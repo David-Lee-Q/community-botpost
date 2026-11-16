@@ -125,7 +125,7 @@ Agent 在任务执行过程中发现的条目应遵循以下格式：
   - gen_plan.py 已改为每篇排期成功立即落盘 plan.json；单篇 LLM 生成失败（如 JSONDecodeError）捕获跳过该时段继续，不再整体崩溃丢进度
   - 恢复发布流程：POST /api/article/list 验证 token(code=0)→清理 plan.json 过期 pending→python3 gen_plan.py 3 补计划（12篇约40-60分钟）→重启 runner
   - 当日补发：bot/backfill_today.py 把当天剩余时段（now+45min 起均匀分布到 19:30）补足 4 篇 pending，runner 到点自动发布；gen_plan.py 只补未来天数不含当天；某选题连续生成失败会跳过该时段致当天不足 4 篇，需次日 gen_plan 或 backfill_today 补齐
-  - 2026-09-02 停发案例：LLM 模型 cosmo-mind-coder 被平台下线返回 403（r.json() 解析 "Forbidden" 文本报 JSONDecodeError），gen_plan 全失败→计划池耗尽→停发；修复：sensitive.chat() 统一 LLM 调用，主模型 403/404/410 自动按 MCAI_LLM_FALLBACK_MODELS 回退，超时 600s，可用模型 cosmo-mind-vl-think（think 模型慢，单篇约 256s）；排查法：直接 POST {MCAI_LLM_BASE_URL}/chat/completions 逐模型试 status_code（403=下线/无权限，404=不存在），/v1/models 无权限不可用；修模型后需带新 env 重启 runner
+  - 2026-09-02 停发案例（2026-11-16 复发）：LLM 模型 cosmo-mind-coder 被平台下线返回 403，gen_plan/AI优化全失败→停发；排查法：直接 POST {MCAI_LLM_BASE_URL}/chat/completions 逐模型试 status_code（403=下线/无权限，404=不存在），/v1/models 无权限不可用；2026-11-16 起 sensitive.py 内置 BUILTIN_FALLBACK_MODELS=["cosmo-mind-vl-think"] 末位兜底（think 模型慢，单篇约 256s），env 主模型 403 时自动回退，不再依赖 MCAI_LLM_FALLBACK_MODELS；已运行进程需重启才吃到新回退逻辑
   - save 校验顺序：标题→正文长度→token 严格校验；过期 token 下短探测报 500、真实长文报 10002（10002 也可能是平台 WAF 拦截正文 unsplash/pexels 图链，见「社区发文 bot 运行方式」），两者并存时优先查 WAF 图链再查 token
   - runner.py due 块的 publish/fetch_detail_urls/fetch_articles 子进程超时（TimeoutExpired）现统一块内捕获记日志，不再打崩主循环（9-02 曾 37 次崩溃重启）
   - fetch_detail_urls.py 重构：列表页只加载一次；详情 URL 以 DETAIL_PATTERN(article_id) 兜底直出，列表点击仅增强（敏感词优化改过标题的文章标题校验必然 mismatch，旧逻辑会误清 detail_url）；依赖 /tmp/login_state.json，token 变更后必须刷新，否则挂起超时

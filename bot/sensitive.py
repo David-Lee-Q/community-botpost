@@ -111,6 +111,11 @@ def check_brand(text):
     return sorted(hits)
 
 
+# 末位兜底模型：环境变量指定的模型下线(403/404/410)时自动回退，
+# 避免旧环境变量导致生成/优化管线整体失败
+BUILTIN_FALLBACK_MODELS = ["cosmo-mind-vl-think"]
+
+
 def _model_list():
     models = []
     primary = os.environ.get("MCAI_LLM_MODEL", "")
@@ -119,6 +124,9 @@ def _model_list():
     for m in os.environ.get("MCAI_LLM_FALLBACK_MODELS", "").split(","):
         m = m.strip()
         if m and m not in models:
+            models.append(m)
+    for m in BUILTIN_FALLBACK_MODELS:
+        if m not in models:
             models.append(m)
     return models
 
