@@ -142,10 +142,11 @@ Agent 在任务执行过程中发现的条目应遵循以下格式：
 
 [多平台桥↔台账联动排障要点]
 - Date: 2026-11-16
-- Context: Agent 排查「平台登录态不显示/桥轮询 400」时发现
+- Context: Agent 排查「平台登录态不显示/桥轮询 400/405」时发现
 - Category: 排错调试
 - Instructions:
-  - 预览网关(code.cosmoplat.cn/api/v1/p/{taskId}/{port})按登录态放行：匿名/脚本请求（即使伪装 Chrome UA）一律 400「请求错误 [trace_id]」，带平台会话 Cookie 的浏览器请求 200；桥走网关需在 config.json 配 ledger_cookie（浏览器 F12→Network 复制完整 Cookie 头，数天过期需重拷）
+  - 预览网关是**两层结构**：①稳定地址 `code.cosmoplat.cn/api/v1/p/{taskId}/{port}` 只放行 GET/OPTIONS（POST 被 nginx 直接 405，`Allow: OPTIONS, GET`），且 GET 时 302 跳转到真实服务 host；②真实 host `8090-{实例ID}.code.cosmoplat.cn` 匿名可达、放行 GET+POST（无需 Cookie）。所以桥/脚本**不要直接 POST 稳定地址**（必然 405），应先 GET 稳定地址取 302 Location 解析出真实 host 再发 POST
+  - mcp_bridge.py 的 `ledger_base()`/`resolve_relay_base()` 已自动完成"稳定地址→302→真实 host"解析并缓存 30 分钟（`ledger_loop`/`push_auth`/`_post_distribute_result` 都走它）；台账 server.py 的 `do_POST` 需同时注册 `/api/distribute-poll`（轮询）和 `/api/distribute-result`/`/api/platform-auth`（回传），否则 POST 落到 404；`ledger_cookie` 对轮询链路已非必需（真实 host 匿名放行），仅在直接打稳定地址的旧路径下才有意义
   - 首选路线=本地桥直连（台账页与桥同机）：页面 JS 直连 http://127.0.0.1:8390（/api/status、/api/sync、/api/check-auth）绕开网关；桥响应必须带 CORS + Access-Control-Allow-Private-Network: true（公网 HTTPS 页→回环触发 Chrome PNA 预检，缺该头被 block；127.0.0.1 不受混合内容拦截）
   - 排查入口：桥看板 8390 页头「台账在线/离线/未配置」徽标（tooltip 含原因）+ serve 控制台「台账自检通过/失败」；state.json.ledger 记录 last_poll_at/last_error
 

@@ -57,31 +57,25 @@ pip3 install websockets
 - **登录态回传**：每次登录态检查后推快照到台账；台账页「平台登录态」弹窗的
   「刷新登录态」按钮会通知桥立即重查
 
-在 `config.json` 里加上台账地址（台账 8090 的公开预览地址）：
+在 `config.json` 里加上台账地址（台账 8090 的稳定预览地址）：
 
 ```json
 {
   "token": "弹窗里显示的 Token",
   "ledger_url": "https://code.cosmoplat.cn/api/v1/p/<taskId>/8090",
-  "ledger_poll_sec": 15,
-  "ledger_cookie": "从浏览器复制的平台会话 Cookie"
+  "ledger_poll_sec": 15
 }
 ```
 
-**为什么需要 `ledger_cookie`**：预览网关对台账地址按登录态放行——浏览器带着平台
-会话 Cookie 能访问，匿名请求（脚本/无 Cookie）一律被网关拒为 `400 请求错误`。
-所以桥要能连上台账，必须携带你在 code.cosmoplat.cn 的会话 Cookie。
-
-获取方式（约 30 秒）：
-1. 浏览器打开台账页（`https://code.cosmoplat.cn/api/v1/p/<taskId>/8090`）
-2. 按 `F12` 打开开发者工具 → `Network`（网络）标签
-3. 刷新页面，点任意一个请求（如 `summary`）
-4. 在 `Request Headers` 里找到 `Cookie:`，**复制整行冒号后的完整值**
-5. 粘贴进 `config.json` 的 `ledger_cookie`，保存后重启桥
+**工作原理**：预览网关的稳定地址只放行 GET，POST 会被 nginx 拒为 `405`；
+它通过 302 把浏览器带到真正承载服务的 host（`8090-xxx.code.cosmoplat.cn`，
+该 host 放行 GET+POST）。桥启动时会自动 GET 稳定地址、跟随 302 解析出真实
+host 并缓存 30 分钟，轮询/结果回传/登录态推送全部打真实 host——**无需
+`ledger_cookie`**（旧版本曾要求配置，现仅兼容保留，可不填）。
 
 注意：
-- Cookie 有有效期（通常数天），过期后桥会再次报 `400 请求错误`，重新复制一次即可
-- `ledger_cookie` 等同于你的平台登录凭证，只放在本机 `config.json`，勿外传
+- 若台账服务所在环境重建导致 302 目标变化，桥在轮询出错时会重新解析（日志见
+  「台账地址已重新解析为 …」）
 - 未配置 `ledger_url` 时行为与旧版完全一致（台账联动静默关闭）
 - 各平台同步产出仍是**草稿**（扩展硬编码，`draft:false` 会被拒绝，无法一键自动发布）。
   台账「一键分发」结果弹窗里有「一键打开 N 个发布页」按钮：调桥的 `POST /api/open-drafts`
