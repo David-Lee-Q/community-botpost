@@ -18,24 +18,32 @@ pip3 install websockets
 
 ## 使用步骤
 
-1. 启动常驻桥（WS 服务 + 本地看板 + 登录态自动监测）：
+1. 配置 Token（必须一致）：扩展启用 MCP 时会自动生成 Token（弹窗「MCP 配置」里可见），
+   桥端必须用同一个值，否则扩展对每个请求都回 403。把弹窗里的 Token 填入
+   `config.json`（与 `mcp_bridge.py` 同目录，参考 `config.example.json`）：
+
+   ```json
+   { "token": "弹窗里显示的 Token" }
+   ```
+
+2. 启动常驻桥（WS 服务 + 本地看板 + 登录态自动监测）：
 
    ```bash
-   python3 mcp_bridge.py serve
+   python mcp_bridge.py serve
    ```
 
    输出 `WS 服务: ws://127.0.0.1:3721  看板: http://127.0.0.1:8390`
 
-2. 打开扩展弹窗（Chrome 工具栏「CSDN同步助手」）：
+3. 打开扩展弹窗（Chrome 工具栏「CSDN同步助手」）：
    - 打开「启用 MCP / WebSocket」开关
-   - Server 地址保持默认 `ws://127.0.0.1:3721`
-   - 若弹窗里 Token 留空则无需配置；若填了 Token，在 `config.json` 的 `token` 填相同值
-   - 启用后扩展会立刻连接本服务，看板左上角变为「扩展已连接」
+   - Server 地址保持默认 `ws://127.0.0.1:3721`（非本机地址必须 wss://）
+   - 若刚改过 Token：把 MCP 开关关一次再打开（或最多等 60 秒自动重连）
+   - 连接成功后看板左上角变为「扩展已连接」
 
-3. 在各平台完成登录（扩展用浏览器 Cookie 判断登录态，看板每 10 分钟自动刷新，
+4. 在各平台完成登录（扩展用浏览器 Cookie 判断登录态，看板每 10 分钟自动刷新，
    也可点「刷新登录态」）
 
-4. 同步文章，三种方式任选：
+5. 同步文章，三种方式任选：
    - 看板 http://127.0.0.1:8390 ：粘贴/载入 markdown → 勾选平台 → 同步
    - 每平台一个脚本：`python3 sync_juejin.py 文章.md`（共 17 个，见下方清单）
    - 全量同步到所有已登录平台：`python3 mcp_bridge.py sync-all 文章.md`
