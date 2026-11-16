@@ -365,7 +365,23 @@ def build_sync_args(platform, argv):
     return a
 
 
+ORIGINAL_URL = "https://openlab.cosmoplat.com/article-detils?id={aid}&articleType=0"
+
+
+def with_original_link(md, article_id):
+    """正文末尾追加卡奥斯开源社区原文链接（幂等：已含该链接则不重复加）。"""
+    aid = str(article_id or "").strip()
+    if not aid.isdigit():
+        return md
+    url = ORIGINAL_URL.format(aid=aid)
+    if url in md:
+        return md
+    return md.rstrip() + "\n\n> 原文链接（卡奥斯开源社区）: %s" % url
+
+
 async def do_sync(bridge, art, cfg, log=print):
+    if art.get("article_id"):
+        art["markdown"] = with_original_link(art["markdown"], art["article_id"])
     platforms = art["platforms"]
     md = art["markdown"]
     for i, (orig, p) in enumerate(art.get("todo_images") or []):
@@ -540,7 +556,8 @@ async def run_distribute_task(bridge, cfg, base_url, task):
             return
         tags = [t for t in (task.get("tags") or []) if t]
         art = {"title": title, "markdown": md, "platforms": targets,
-               "cover": task.get("cover") or "", "tags": tags, "retry": False}
+               "cover": task.get("cover") or "", "tags": tags, "retry": False,
+               "article_id": str(task.get("article_id") or "")}
         md2, todo = replace_local_images(art["markdown"], "")
         art["markdown"] = md2
         art["todo_images"] = todo
@@ -807,6 +824,7 @@ pre{background:#111827;color:#d1d5db;border-radius:8px;padding:10px;font-size:11
       <input type="text" id="title" placeholder="标题（留空取 markdown 首行 # 标题）" style="flex:1;min-width:240px">
       <input type="text" id="cover" placeholder="封面 URL（可选）" style="flex:1;min-width:200px">
       <input type="text" id="tags" placeholder="标签，逗号分隔（可选）">
+      <input type="text" id="aid" placeholder="源文章ID（可选，正文末尾追加社区原文链接）" style="flex:1;min-width:220px">
     </div>
     <textarea id="md" placeholder="粘贴 Markdown 正文，或"></textarea>
     <div class="row" style="margin:8px 0">
@@ -888,6 +906,7 @@ async function doSync(all){
   const body={title:document.getElementById('title').value.trim(),markdown:md,
     cover:document.getElementById('cover').value.trim(),
     tags:document.getElementById('tags').value.split(',').map(s=>s.trim()).filter(Boolean),
+    article_id:document.getElementById('aid').value.trim(),
     platforms:plats};
   msg('同步中（多平台可能需数分钟）...');
   try{
@@ -960,6 +979,7 @@ class DashHandler(BaseHTTPRequestHandler):
                        "platforms": body.get("platforms") or [],
                        "cover": body.get("cover") or "",
                        "tags": body.get("tags") or [],
+                       "article_id": str(body.get("article_id") or ""),
                        "retry": False}
                 if not art["markdown"].strip():
                     return {"error": "正文为空"}
