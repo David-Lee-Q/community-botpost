@@ -884,13 +884,16 @@ class DashHandler(BaseHTTPRequestHandler):
                 art["markdown"] = md2
                 art["todo_images"] = todo
                 r = await do_sync(self.bridge, art, self.cfg, log=self._log)
+                norm = normalize_sync_result(r, art["platforms"])
+                status = "done" if any(v["ok"] for v in norm.values()) else "failed"
                 try:
                     save_state({"last_http_sync": {
                         "time": time.strftime("%Y-%m-%d %H:%M:%S"),
-                        "title": art["title"], "result": r}})
+                        "title": art["title"], "status": status,
+                        "platforms": norm}})
                 except Exception:
                     pass
-                return r
+                return {"status": status, "platforms": norm, "raw": r}
             try:
                 fut = asyncio.run_coroutine_threadsafe(run(), self.loop)
                 self._json(200, fut.result())

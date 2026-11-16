@@ -343,17 +343,20 @@ class Handler(http.server.SimpleHTTPRequestHandler):
             for t in sorted(tasks.values(), key=lambda x: x.get("created_at") or ""):
                 if str(t.get("article_id")) == aid and t.get("status") in ("pending", "running"):
                     self._json(200, {"ok": True, "task_id": t["task_id"],
-                                     "status": t["status"], "existing": True})
+                                     "status": t["status"], "existing": True,
+                                     "created_at": t.get("created_at", "")})
                     return
             task_id = "d" + time.strftime("%Y%m%d%H%M%S") + os.urandom(2).hex()
+            created = time.strftime("%Y-%m-%d %H:%M:%S")
             tasks[task_id] = {
                 "task_id": task_id, "article_id": aid,
                 "title": meta.get("title", ""), "status": "pending",
-                "created_at": time.strftime("%Y-%m-%d %H:%M:%S"),
+                "created_at": created,
                 "claimed_at": "", "finished_at": "", "error": "", "platforms": {},
             }
             _dist_save(tasks)
-            self._json(200, {"ok": True, "task_id": task_id, "status": "pending"})
+            self._json(200, {"ok": True, "task_id": task_id, "status": "pending",
+                             "created_at": created})
 
     def _handle_distribute_poll(self):
         """桥端轮询：领取一个待分发任务，顺带返回登录态重查标志。"""

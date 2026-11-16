@@ -1381,10 +1381,10 @@ function openDistribute(aid, btn) {
       platforms: targets
     }, 600000);
     if (res.error) throw new Error(res.error);
-    const platforms = (res.result && res.result.platforms) || res.platforms || {};
+    const platforms = res.platforms || (res.result && res.result.platforms) || {};
     const t = {
       task_id: task ? task.task_id : 'local-' + Date.now(), article_id: aid,
-      status: Object.values(platforms).some(x => x && x.ok) ? 'done' : 'failed',
+      status: res.status || (Object.values(platforms).some(x => x && x.ok) ? 'done' : 'failed'),
       title: art.title || '', created_at: task ? task.created_at : nowLocal(),
       finished_at: nowLocal(), platforms
     };
