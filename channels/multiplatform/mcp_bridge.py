@@ -124,18 +124,34 @@ def save_state(patch):
     os.replace(tmp, STATE_FILE)
 
 
+_UA = ("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
+       "(KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36")
+
+
 def http_json(url, payload=None, timeout=60):
-    """简单 HTTP JSON 调用（无第三方依赖，Windows 直接可用）。"""
+    """简单 HTTP JSON 调用（无第三方依赖，Windows 直接可用）。
+
+    带浏览器特征头：预览网关 WAF 会拦截 Python-urllib 默认 UA（400/405）。
+    失败时把响应体并入异常，便于定位网关错误。"""
     import urllib.request
+    import urllib.error
     data = None
-    headers = {}
+    headers = {"User-Agent": _UA, "Accept": "application/json",
+               "Accept-Language": "zh-CN,zh;q=0.9"}
     if payload is not None:
         data = json.dumps(payload, ensure_ascii=False).encode()
         headers["Content-Type"] = "application/json"
     req = urllib.request.Request(url, data=data, headers=headers,
                                  method="POST" if data is not None else "GET")
-    with urllib.request.urlopen(req, timeout=timeout) as r:
-        return json.loads(r.read().decode() or "{}")
+    try:
+        with urllib.request.urlopen(req, timeout=timeout) as r:
+            return json.loads(r.read().decode() or "{}")
+    except urllib.error.HTTPError as e:
+        try:
+            body = e.read().decode("utf-8", "replace")[:300]
+        except Exception:
+            body = ""
+        raise RuntimeError("HTTP %s %s" % (e.code, body or e.reason)) from e
 
 
 class ExtBridge:
