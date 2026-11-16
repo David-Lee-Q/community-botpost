@@ -1,19 +1,19 @@
 [
-  {"id": "zhihu", "name": "知乎", "url": "https://www.zhihu.com", "format": "html"},
-  {"id": "juejin", "name": "掘金", "url": "https://juejin.cn", "format": "markdown"},
+  {"id": "zhihu", "name": "知乎", "url": "https://www.zhihu.com", "format": "html", "draftUrl": "https://zhuanlan.zhihu.com/write"},
+  {"id": "juejin", "name": "掘金", "url": "https://juejin.cn", "format": "markdown", "draftUrl": "https://juejin.cn/creator/home"},
   {"id": "weibo", "name": "微博", "url": "https://weibo.com", "format": "html"},
   {"id": "toutiao", "name": "头条", "url": "https://mp.toutiao.com", "format": "html"},
   {"id": "baijiahao", "name": "百家号", "url": "https://baijiahao.baidu.com", "format": "html"},
   {"id": "wechat", "name": "微信公众号", "url": "https://mp.weixin.qq.com", "format": "html"},
   {"id": "cnblogs", "name": "博客园", "url": "https://www.cnblogs.com", "format": "markdown"},
   {"id": "51cto", "name": "51CTO", "url": "https://www.51cto.com", "format": "markdown"},
-  {"id": "jianshu", "name": "简书", "url": "https://www.jianshu.com", "format": "html"},
+  {"id": "jianshu", "name": "简书", "url": "https://www.jianshu.com", "format": "html", "draftUrl": "https://www.jianshu.com/writer"},
   {"id": "segmentfault", "name": "思否", "url": "https://segmentfault.com", "format": "markdown"},
-  {"id": "oschina", "name": "开源中国", "url": "https://www.oschina.net", "format": "markdown"},
+  {"id": "oschina", "name": "开源中国", "url": "https://www.oschina.net", "format": "markdown", "draftUrl": "https://my.oschina.net"},
   {"id": "tencentcloud", "name": "腾讯云开发者", "url": "https://cloud.tencent.com/developer", "format": "markdown"},
   {"id": "aliyun", "name": "阿里云开发者", "url": "https://developer.aliyun.com", "format": "markdown"},
-  {"id": "netease", "name": "网易号", "url": "https://www.163.com", "format": "html"},
-  {"id": "bilibili", "name": "哔哩哔哩", "url": "https://www.bilibili.com", "format": "html"},
+  {"id": "netease", "name": "网易号", "url": "https://www.163.com", "format": "html", "draftUrl": "https://dy.163.com"},
+  {"id": "bilibili", "name": "哔哩哔哩", "url": "https://www.bilibili.com", "format": "html", "draftUrl": "https://member.bilibili.com"},
   {"id": "douyin", "name": "抖音长文", "url": "https://creator.douyin.com", "format": "markdown"},
-  {"id": "xiaohongshu", "name": "小红书长文", "url": "https://www.xiaohongshu.com", "format": "markdown"}
+  {"id": "xiaohongshu", "name": "小红书长文", "url": "https://www.xiaohongshu.com", "format": "markdown", "draftUrl": "https://creator.xiaohongshu.com"}
 ]

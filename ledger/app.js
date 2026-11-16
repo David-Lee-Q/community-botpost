@@ -1447,7 +1447,8 @@ function showDistResult(t) {
   DIST_HAS_DRAFT_URL = false;
   let rows = Object.keys(plats).map(pid => {
     const e = plats[pid] || {};
-    const home = ((PLATFORM_META || []).find(m => m.id === pid) || {}).url || '';
+    const metaP = ((PLATFORM_META || []).find(m => m.id === pid) || {});
+    const home = metaP.draftUrl || metaP.url || '';
     if (e.ok) {
       if (e.url) DIST_HAS_DRAFT_URL = true;
       const u = e.url || home;
