@@ -42,7 +42,7 @@ CONFIG_FILE = os.path.join(BASE, "config.json")
 STATE_FILE = os.path.join(BASE, "state.json")
 PLATFORMS_FILE = os.path.join(BASE, "platforms.json")
 # 构建标记：每次发版更新（日期-短哈希），回传台账用于确认线上跑的版本
-BRIDGE_BUILD = "20261116-r3"
+BRIDGE_BUILD = "20261116-r4"
 
 DEFAULTS = {
     "ws_port": 3721,
@@ -1129,6 +1129,21 @@ async def monitor_loop(bridge, cfg):
 
 
 async def cmd_serve(args):
+    """serve 入口：任何致命错误同时落盘 startup_error.log，避免控制台一闪而过丢失。"""
+    try:
+        await _cmd_serve_inner(args)
+    except BaseException:
+        import traceback
+        try:
+            with open(os.path.join(BASE, "startup_error.log"), "a", encoding="utf-8") as f:
+                f.write("\n=== %s ===\n%s" % (
+                    time.strftime("%Y-%m-%d %H:%M:%S"), traceback.format_exc()))
+        except Exception:
+            pass
+        raise
+
+
+async def _cmd_serve_inner(args):
     cfg = load_config()
     if ws_serve is None:
         raise SystemExit("缺少依赖：pip3 install websockets")
@@ -1146,7 +1161,9 @@ async def cmd_serve(args):
         try:
             httpd = ThreadingHTTPServer(("127.0.0.1", cfg["http_port"]), DashHandler)
         except OSError as e:
-            raise SystemExit("看板端口 %d 不可用：%s" % (cfg["http_port"], e))
+            raise SystemExit("看板端口 %d 不可用：%s（若刚重启过桥，等 30 秒再试；"
+                              "或先执行 netstat -ano | findstr %d 查占用）"
+                             % (cfg["http_port"], e, cfg["http_port"]))
         threading.Thread(target=httpd.serve_forever, daemon=True).start()
         return httpd
 
