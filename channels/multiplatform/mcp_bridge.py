@@ -386,12 +386,10 @@ def http_bridge_alive(cfg):
         return False
 
 
-async def cmd_sync(args):
-    cfg = load_config()
+async def run_sync(art, cfg):
+    """执行一次同步：优先走常驻桥 HTTP，否则临时起 WS 等扩展连接。"""
     if ws_serve is None:
         raise SystemExit("缺少依赖：pip3 install websockets")
-    platform_ids = [args.platform]
-    art = parse_article_file(args, platform_ids)
     if http_bridge_alive(cfg):
         print("（走常驻桥）")
         r = sync_via_http(cfg, art)
@@ -407,6 +405,28 @@ async def cmd_sync(args):
         print_sync_result(r)
     finally:
         await close_server(srv)
+
+
+def resolve_platform_ids(args, cfg):
+    """目标平台：优先 --platforms；否则取 state 中全部已登录（本地文件或常驻桥）。"""
+    if getattr(args, "platforms", None):
+        return [x.strip() for x in args.platforms.split(",") if x.strip()]
+    st = load_state().get("platforms") or {}
+    ids = [pid for pid in PLATFORM_IDS if st.get(pid, {}).get("authenticated")]
+    if not ids and http_bridge_alive(cfg):
+        import urllib.request
+        with urllib.request.urlopen(
+                "http://127.0.0.1:%d/api/status" % cfg["http_port"],
+                timeout=3) as r:
+            st = json.loads(r.read().decode()).get("platforms") or {}
+        ids = [pid for pid in PLATFORM_IDS if st.get(pid, {}).get("authenticated")]
+    return ids
+
+
+async def cmd_sync(args):
+    cfg = load_config()
+    art = parse_article_file(args, [args.platform])
+    await run_sync(art, cfg)
 
 
 DASH = r"""<!doctype html>
@@ -729,6 +749,14 @@ def main():
         sp.add_argument("--cover")
         sp.add_argument("--tags")
         sp.add_argument("--retry", action="store_true")
+    sp = sub.add_parser("sync-bot", help="批量同步目录下全部/最近 N 篇 .md")
+    sp.add_argument("dir", help="markdown 文章目录")
+    sp.add_argument("--platforms", help="逗号分隔平台 id；缺省=全部已登录")
+    sp.add_argument("--latest", type=int, help="只同步文件名排序后最近 N 篇")
+    sp.add_argument("--cover", help="全局封面 URL（可选）")
+    sp.add_argument("--tags", help="全局标签，逗号分隔（可选）")
+    sp.add_argument("--retry", action="store_true")
+    sp.add_argument("--delay", type=float, default=10, help="篇间隔秒数，默认 10")
     a = ap.parse_args()
     if a.cmd == "serve":
         asyncio.run(cmd_serve(a))
@@ -740,44 +768,53 @@ def main():
         asyncio.run(cmd_sync(a))
     elif a.cmd == "sync-all":
         asyncio.run(cmd_sync_all(a))
+    elif a.cmd == "sync-bot":
+        asyncio.run(cmd_sync_bot(a))
     else:
         ap.print_help()
 
 
 async def cmd_sync_all(args):
     cfg = load_config()
-    if args.platforms:
-        ids = [x.strip() for x in args.platforms.split(",") if x.strip()]
-    else:
-        st = load_state().get("platforms") or {}
-        ids = [pid for pid in PLATFORM_IDS if st.get(pid, {}).get("authenticated")]
-        if not ids:
-            import urllib.request
-            if http_bridge_alive(cfg):
-                with urllib.request.urlopen(
-                        "http://127.0.0.1:%d/api/status" % cfg["http_port"],
-                        timeout=3) as r:
-                    st = json.loads(r.read().decode()).get("platforms") or {}
-                ids = [pid for pid in PLATFORM_IDS if st.get(pid, {}).get("authenticated")]
+    ids = resolve_platform_ids(args, cfg)
     if not ids:
         raise SystemExit("没有已登录平台（先运行 serve 监测登录态，或用 --platforms 指定）")
-    args.platform = None
     art = parse_article_file(args, ids)
-    if http_bridge_alive(cfg):
-        print("（走常驻桥）同步到 %s" % ",".join(ids))
-        r = sync_via_http(cfg, art)
-        print_sync_result(r)
-        return
-    print("常驻桥未运行，启动临时 WS 等待扩展连接...")
-    bridge = ExtBridge(cfg["token"])
-    srv = await run_ws_server(bridge, cfg["ws_port"], wait_sec=cfg["standalone_wait_sec"])
-    try:
-        if not bridge.connected():
-            raise SystemExit("等待超时：扩展未连接")
-        r = await do_sync(bridge, attach_local_images(art), cfg)
-        print_sync_result(r)
-    finally:
-        await close_server(srv)
+    await run_sync(art, cfg)
+
+
+async def cmd_sync_bot(args):
+    """批量同步：把目录里全部（或最近 N 篇）.md 逐篇同步到目标平台。
+
+    标题取各文件首行 # 标题；--cover/--tags 全局生效；篇间隔 --delay 秒。
+    """
+    import glob as _glob
+    from types import SimpleNamespace
+    cfg = load_config()
+    ids = resolve_platform_ids(args, cfg)
+    if not ids:
+        raise SystemExit("没有已登录平台（先运行 serve 监测登录态，或用 --platforms 指定）")
+    files = sorted(_glob.glob(os.path.join(args.dir, "*.md")))
+    if args.latest:
+        files = files[-args.latest:]
+    if not files:
+        raise SystemExit("目录里没有 .md 文件: %s" % args.dir)
+    print("共 %d 篇待同步 -> %s" % (len(files), ",".join(
+        NAME_BY_ID.get(p, p) for p in ids)))
+    ok = 0
+    for i, f in enumerate(files, 1):
+        print("\n==== [%d/%d] %s ====" % (i, len(files), os.path.basename(f)), flush=True)
+        a = SimpleNamespace(file=f, title=None, cover=args.cover,
+                            tags=args.tags, retry=args.retry)
+        try:
+            art = parse_article_file(a, ids)
+            await run_sync(art, cfg)
+            ok += 1
+        except (SystemExit, Exception) as e:
+            print("本篇失败，继续: %s" % e, flush=True)
+        if i < len(files):
+            await asyncio.sleep(args.delay)
+    print("\n完成: 成功 %d / 共 %d 篇" % (ok, len(files)))
 
 
 if __name__ == "__main__":

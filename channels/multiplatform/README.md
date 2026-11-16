@@ -55,11 +55,29 @@ python3 mcp_bridge.py serve                # 常驻桥（看板+监测+WS）
 python3 mcp_bridge.py platforms            # 打印各平台登录态
 python3 mcp_bridge.py sync  --platform juejin 文章.md [--title T] [--cover U] [--tags a,b] [--retry]
 python3 mcp_bridge.py sync-all 文章.md [--platforms juejin,weibo] [--title T] [--cover U] [--tags a,b]
+python3 mcp_bridge.py sync-bot 文章目录 [--platforms a,b] [--latest N] [--tags a,b] [--delay 10]
 python3 sync_<平台id>.py 文章.md            # 单平台薄封装，等价 sync --platform <平台id>
 ```
 
-`sync`/`sync-all` 优先走运行中的常驻桥（HTTP 8390），未运行则自动起临时 WS 等扩展连接
+`sync`/`sync-all`/`sync-bot` 优先走运行中的常驻桥（HTTP 8390），未运行则自动起临时 WS 等扩展连接
 （最多 `standalone_wait_sec` 秒）。
+
+### 内容不用自己写
+
+community-bot 每天生成的 4 篇 markdown（工作空间 `bot-articles/` 目录，标题在首行 `# 标题`）就是
+现成内容，流程：
+
+1. 从工作空间「项目文件」面板下载当日的 `.md` 文件（`bot-articles/` 下当天那几篇）
+2. 批量同步到全部已登录平台：
+
+   ```bash
+   python mcp_bridge.py sync-bot .\今日文章 --latest 4 --tags 人工智能,工业软件
+   ```
+
+   - `--latest 4` 只同步文件名排序后最近 4 篇（每天正好 4 篇）
+   - 标题自动取各文件首行；markdown 里引用的本地图片自动上传替换
+   - 篇间隔默认 10 秒（`--delay` 可调），某篇失败会跳过并继续
+   - 结果均为各平台**草稿**，去各平台后台点发布
 
 ## 平台清单（17 个，扩展支持 MCP 的全部平台）
 
