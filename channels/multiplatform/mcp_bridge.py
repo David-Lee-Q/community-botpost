@@ -625,20 +625,32 @@ class DashHandler(BaseHTTPRequestHandler):
         print("[%s] %s" % (time.strftime("%H:%M:%S"), s), flush=True)
 
 
+async def _check_and_save(bridge, cfg, tag="监测"):
+    try:
+        plats = await auth_snapshot(bridge, cfg)
+        save_state({"platforms": plats,
+                    "platforms_ts": time.strftime("%Y-%m-%d %H:%M:%S")})
+        n = sum(1 for p in plats.values() if p.get("authenticated"))
+        print("[%s] 登录态%s: %d/%d 已登录"
+              % (time.strftime("%H:%M:%S"), tag, n, len(plats)), flush=True)
+    except Exception as e:
+        print("[%s] %s失败: %s" % (time.strftime("%H:%M:%S"), tag, e), flush=True)
+
+
 async def monitor_loop(bridge, cfg):
+    print("[等待扩展连接中...]（连上后立即做首次登录态检查）", flush=True)
+    while not bridge.connected():
+        await asyncio.sleep(5)
+    await _check_and_save(bridge, cfg, tag="首查")
+    was_connected = True
     while True:
         await asyncio.sleep(cfg["monitor_interval_sec"])
         if not bridge.connected():
+            was_connected = False
             continue
-        try:
-            plats = await auth_snapshot(bridge, cfg)
-            save_state({"platforms": plats,
-                        "platforms_ts": time.strftime("%Y-%m-%d %H:%M:%S")})
-            n = sum(1 for p in plats.values() if p.get("authenticated"))
-            print("[%s] 登录态监测: %d/%d 已登录"
-                  % (time.strftime("%H:%M:%S"), n, len(plats)), flush=True)
-        except Exception as e:
-            print("[%s] 监测失败: %s" % (time.strftime("%H:%M:%S"), e), flush=True)
+        await _check_and_save(bridge, cfg,
+                              tag="重连首查" if not was_connected else "监测")
+        was_connected = True
 
 
 async def cmd_serve(args):
