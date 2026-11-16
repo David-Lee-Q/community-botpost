@@ -1617,6 +1617,7 @@ document.getElementById('authEntryBtn').addEventListener('click', openAuthModal)
 document.getElementById('authClose').addEventListener('click', () => document.getElementById('authMask').classList.remove('show'));
 document.getElementById('authMask').addEventListener('click', e => { if (e.target === e.currentTarget) document.getElementById('authMask').classList.remove('show'); });
 document.getElementById('distClose').addEventListener('click', () => document.getElementById('distMask').classList.remove('show'));
+document.getElementById('distOpenBtn').addEventListener('click', openAllDrafts);
 document.getElementById('distMask').addEventListener('click', e => { if (e.target === e.currentTarget) document.getElementById('distMask').classList.remove('show'); });
 document.getElementById('authRefresh').addEventListener('click', authRecheck);
 
