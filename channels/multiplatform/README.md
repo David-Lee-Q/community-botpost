@@ -63,12 +63,27 @@ pip3 install websockets
 {
   "token": "弹窗里显示的 Token",
   "ledger_url": "https://code.cosmoplat.cn/api/v1/p/<taskId>/8090",
-  "ledger_poll_sec": 15
+  "ledger_poll_sec": 15,
+  "ledger_cookie": "从浏览器复制的平台会话 Cookie"
 }
 ```
 
-未配置 `ledger_url` 时行为与旧版完全一致（台账联动静默关闭）。
-注意：各平台同步产出仍是**草稿**，需在台账页结果里点「去各平台后台发布」。
+**为什么需要 `ledger_cookie`**：预览网关对台账地址按登录态放行——浏览器带着平台
+会话 Cookie 能访问，匿名请求（脚本/无 Cookie）一律被网关拒为 `400 请求错误`。
+所以桥要能连上台账，必须携带你在 code.cosmoplat.cn 的会话 Cookie。
+
+获取方式（约 30 秒）：
+1. 浏览器打开台账页（`https://code.cosmoplat.cn/api/v1/p/<taskId>/8090`）
+2. 按 `F12` 打开开发者工具 → `Network`（网络）标签
+3. 刷新页面，点任意一个请求（如 `summary`）
+4. 在 `Request Headers` 里找到 `Cookie:`，**复制整行冒号后的完整值**
+5. 粘贴进 `config.json` 的 `ledger_cookie`，保存后重启桥
+
+注意：
+- Cookie 有有效期（通常数天），过期后桥会再次报 `400 请求错误`，重新复制一次即可
+- `ledger_cookie` 等同于你的平台登录凭证，只放在本机 `config.json`，勿外传
+- 未配置 `ledger_url` 时行为与旧版完全一致（台账联动静默关闭）
+- 各平台同步产出仍是**草稿**，需在台账页结果里点「去各平台后台发布」
 
 ## 命令行
 

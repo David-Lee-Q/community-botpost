@@ -50,6 +50,7 @@ DEFAULTS = {
     "standalone_wait_sec": 90,
     "ledger_url": "",
     "ledger_poll_sec": 15,
+    "ledger_cookie": "",
 }
 
 # 平台元数据（逆向自扩展 v1.2.1；isAiGraphic 的两个图文变体不支持 MCP）
@@ -128,16 +129,20 @@ _UA = ("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
        "(KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36")
 
 
-def http_json(url, payload=None, timeout=60):
+def http_json(url, payload=None, timeout=60, cookie=""):
     """简单 HTTP JSON 调用（无第三方依赖，Windows 直接可用）。
 
-    带浏览器特征头：预览网关 WAF 会拦截 Python-urllib 默认 UA（400/405）。
+    预览网关按登录态放行（匿名请求一律 400 请求错误）：
+    带浏览器特征头 + 平台 Referer；cookie 非空时携带平台会话 Cookie。
     失败时把响应体并入异常，便于定位网关错误。"""
     import urllib.request
     import urllib.error
     data = None
     headers = {"User-Agent": _UA, "Accept": "application/json",
-               "Accept-Language": "zh-CN,zh;q=0.9"}
+               "Accept-Language": "zh-CN,zh;q=0.9",
+               "Referer": "https://code.cosmoplat.cn/"}
+    if cookie:
+        headers["Cookie"] = cookie
     if payload is not None:
         data = json.dumps(payload, ensure_ascii=False).encode()
         headers["Content-Type"] = "application/json"
@@ -427,10 +432,11 @@ async def push_auth_to_ledger(bridge, cfg, plats):
         return
     try:
         await asyncio.get_running_loop().run_in_executor(
-            None, http_json, url + "/api/platform-auth",
-            {"platforms": plats,
-             "platforms_ts": time.strftime("%Y-%m-%d %H:%M:%S"),
-             "connected": bool(bridge.connected())})
+            None, lambda: http_json(url + "/api/platform-auth",
+                                    {"platforms": plats,
+                                     "platforms_ts": time.strftime("%Y-%m-%d %H:%M:%S"),
+                                     "connected": bool(bridge.connected())},
+                                    cookie=cfg.get("ledger_cookie", "")))
     except Exception as e:
         print("[%s] 登录态推送台账失败: %s" % (time.strftime("%H:%M:%S"), e), flush=True)
 
@@ -438,8 +444,9 @@ async def push_auth_to_ledger(bridge, cfg, plats):
 async def _post_distribute_result(cfg, base_url, task_id, status, plats):
     url = (cfg.get("ledger_url") or "").rstrip("/")
     await asyncio.get_running_loop().run_in_executor(
-        None, http_json, url + "/api/distribute-result",
-        {"task_id": task_id, "status": status, "platforms": plats}, 30)
+        None, lambda: http_json(url + "/api/distribute-result",
+                                {"task_id": task_id, "status": status, "platforms": plats},
+                                30, cookie=cfg.get("ledger_cookie", "")))
 
 
 async def run_distribute_task(bridge, cfg, base_url, task):
@@ -505,22 +512,31 @@ async def ledger_loop(bridge, cfg):
               "（在 config.json 设置 ledger_url 后重启即启用）", flush=True)
         return
     poll_sec = max(5, int(cfg.get("ledger_poll_sec", 15)))
-    print("[ledger] 台账联动开启: %s（轮询 %ds）" % (base_url, poll_sec), flush=True)
+    cookie = (cfg.get("ledger_cookie") or "").strip()
+    print("[ledger] 台账联动开启: %s（轮询 %ds，cookie %s）"
+          % (base_url, poll_sec, "已配置" if cookie else "未配置"), flush=True)
     try:
         await asyncio.get_running_loop().run_in_executor(
-            None, lambda: http_json(base_url + "/api/platform-auth", timeout=15))
+            None, lambda: http_json(base_url + "/api/platform-auth",
+                                    timeout=15, cookie=cookie))
         await _ledger_set_status(bridge, cfg, True)
         print("[ledger] 台账自检通过：链路正常", flush=True)
     except Exception as e:
         await _ledger_set_status(bridge, cfg, False, "自检失败: %s" % e)
         print("[ledger] 台账自检失败: %s" % e, flush=True)
-        print("[ledger] 自检通过前，台账「一键分发/平台登录态」不可用；"
-              "请检查 config.json 的 ledger_url 及本机到该地址的网络", flush=True)
+        if "请求错误" in str(e):
+            print("[ledger] 网关返回「请求错误」= 缺少平台登录态。请在浏览器打开台账页→F12→Network→"
+                  "任一请求→Request Headers→复制完整 Cookie 值，填入 config.json 的 ledger_cookie 后重启",
+                  flush=True)
+        else:
+            print("[ledger] 自检通过前，台账「一键分发/平台登录态」不可用；"
+                  "请检查 config.json 的 ledger_url 及本机到该地址的网络", flush=True)
     while True:
         try:
             if bridge.connected():
                 data = await asyncio.get_running_loop().run_in_executor(
-                    None, lambda: http_json(base_url + "/api/distribute-poll", timeout=30))
+                    None, lambda: http_json(base_url + "/api/distribute-poll",
+                                            timeout=30, cookie=cookie))
                 await _ledger_set_status(bridge, cfg, True)
                 if data.get("recheck"):
                     await _check_and_save(bridge, cfg, tag="台账重查")
@@ -748,7 +764,10 @@ async function refresh(){
     if(!lg.url){lb.textContent='台账未配置';lb.className='badge';lb.title='config.json 未设置 ledger_url';}
     else if(lg.ok){lb.textContent='台账在线 '+(lg.last_poll_at||'').slice(11);lb.className='badge on';lb.title='台账链路正常，最近轮询 '+lg.last_poll_at;}
     else {lb.textContent='台账离线';lb.className='badge off';
-      lb.title=(lg.last_error||'未知原因')+'｜若桥是旧版代码：重新解压新 multiplatform.zip 覆盖后重启 serve';}
+      lb.title=(lg.last_error||'未知原因')
+        +((lg.last_error||'').indexOf('请求错误')>=0
+          ?'｜网关要求平台登录态：在 config.json 填 ledger_cookie（浏览器打开台账页→F12→Network→复制 Cookie 头）后重启'
+          :'｜若桥是旧版代码：重新解压新 multiplatform.zip 覆盖后重启 serve');}
     rows.innerHTML=ids.map(id=>{
       const p=plats[id];
       const sup=(p.supports||[]).filter(x=>['draft','publish','image_upload','tags','cover','categories'].includes(x)).join(',');

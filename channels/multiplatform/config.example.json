@@ -6,5 +6,6 @@
   "request_timeout_sec": 300,
   "standalone_wait_sec": 90,
   "ledger_url": "",
-  "ledger_poll_sec": 15
+  "ledger_poll_sec": 15,
+  "ledger_cookie": ""
 }
