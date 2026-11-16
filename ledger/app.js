@@ -804,7 +804,7 @@ function renderAll() {
   calcStats();
   renderCharts();
   applyFilters();
-  document.getElementById('sub').textContent = `账号 ${ARTICLES.length} 篇 · 数据更新 ${DATA_UPDATED || ''}`;
+  document.getElementById('sub').textContent = DATA_UPDATED ? `数据更新 ${DATA_UPDATED}` : '加载中...';
 }
 
 function fetchJson(url, fallback, retries = 1) {
@@ -850,7 +850,7 @@ function loadAll() {
       parseData(json);
       renderScore();
       DATA_UPDATED = json.updatedAt || '';
-      document.getElementById('sub').textContent = `账号 ${json.memberId || '—'} · 共 ${json.total || 0} 篇文章 · 数据更新 ${DATA_UPDATED}`;
+      document.getElementById('sub').textContent = `数据更新 ${DATA_UPDATED}`;
       loadTodayPlan();
       return true;
     })
