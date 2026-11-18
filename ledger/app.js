@@ -15,6 +15,8 @@ let selectedIds = new Set();
 let page = 1;
 let charts = {};
 let OPT_AID = null;
+let OPT_TIMER = null;
+let OPT_OPTIMIZED = false;
 let selectedCates = [];
 let DIST_TASKS = {};      // article_id -> 最近一次分发任务
 const LOCAL_BRIDGE = 'http://127.0.0.1:8390';  // 本机桥直连（台账页与桥同机时可用）
@@ -1122,8 +1124,34 @@ document.getElementById('planBody').addEventListener('click', async e => {
   mask.addEventListener('click', e => { if (e.target === mask) mask.classList.remove('show'); });
 })();
 
+function stopOptCountdown() {
+  if (OPT_TIMER) { clearInterval(OPT_TIMER); OPT_TIMER = null; }
+  const hint = document.getElementById('optHint');
+  hint.classList.remove('gen');
+}
+
+function startOptCountdown() {
+  stopOptCountdown();
+  const hint = document.getElementById('optHint');
+  let remain = 120;
+  const paint = () => {
+    hint.textContent = remain > 0
+      ? 'AI 优化生成中（剩余 ' + String(Math.floor(remain / 60)).padStart(2, '0') + ':' + String(remain % 60).padStart(2, '0') + '）...'
+      : 'AI 优化生成中（已超预计时间，请稍候）...';
+  };
+  hint.classList.add('gen');
+  paint();
+  OPT_TIMER = setInterval(() => {
+    remain -= 1;
+    paint();
+    if (remain <= 0) stopOptCountdown();
+  }, 1000);
+}
+
 function openOpt(aid) {
   OPT_AID = aid;
+  OPT_OPTIMIZED = false;
+  stopOptCountdown();
   const meta = document.getElementById('optMeta');
   meta.textContent = '加载中...';
   document.getElementById('optHint').textContent = '';
@@ -1131,6 +1159,7 @@ function openOpt(aid) {
   document.getElementById('optTitle').value = '';
   document.getElementById('optSummary').value = '';
   document.getElementById('optContent').value = '';
+  document.getElementById('optSave').disabled = true;
   document.getElementById('optMask').classList.add('show');
   fetch(`/api/article?id=${aid}`).then(r => r.json()).then(d => {
     if (!d.ok) {
@@ -1148,6 +1177,7 @@ function openOpt(aid) {
 }
 
 function closeOpt() {
+  stopOptCountdown();
   document.getElementById('optMask').classList.remove('show');
 }
 
@@ -1157,11 +1187,15 @@ function aiOptimize() {
   const c = document.getElementById('optContent').value.trim();
   if (!c) { document.getElementById('optStatus').innerHTML = '<span class="err">正文不能为空</span>'; return; }
   const ai = document.getElementById('optAi');
+  const sv = document.getElementById('optSave');
   ai.disabled = true;
-  document.getElementById('optHint').textContent = 'AI 优化生成中（约1-2分钟）...';
+  sv.disabled = true;
+  OPT_OPTIMIZED = false;
+  startOptCountdown();
   document.getElementById('optStatus').innerHTML = '';
   apiPost('/api/optimize', { id: OPT_AID, title: t, summary: s, content: c }).then(r => r.json()).then(d => {
     ai.disabled = false;
+    stopOptCountdown();
     document.getElementById('optHint').textContent = '';
     if (!d.ok) {
       document.getElementById('optStatus').innerHTML = '<span class="err">' + escapeHtml(d.error) + '</span>';
@@ -1170,14 +1204,19 @@ function aiOptimize() {
     document.getElementById('optTitle').value = d.result.title;
     document.getElementById('optSummary').value = d.result.summary;
     document.getElementById('optContent').value = d.result.body;
+    OPT_OPTIMIZED = true;
+    sv.disabled = false;
     document.getElementById('optStatus').innerHTML = '<span class="ok">已生成优化稿，请核对后提交更新</span>';
   }).catch(() => {
     ai.disabled = false;
+    stopOptCountdown();
+    document.getElementById('optHint').textContent = '';
     document.getElementById('optStatus').innerHTML = '<span class="err">AI优化请求失败，请重试</span>';
   });
 }
 
 function submitUpdate() {
+  if (!OPT_OPTIMIZED) { document.getElementById('optStatus').innerHTML = '<span class="err">请先完成 AI 优化，再提交更新</span>'; return; }
   const t = document.getElementById('optTitle').value.trim();
   const s = document.getElementById('optSummary').value.trim();
   const c = document.getElementById('optContent').value.trim();
