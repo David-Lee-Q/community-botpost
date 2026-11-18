@@ -17,6 +17,7 @@ let charts = {};
 let OPT_AID = null;
 let OPT_TIMER = null;
 let OPT_OPTIMIZED = false;
+let OPT_ORIG = null;
 let selectedCates = [];
 let DIST_TASKS = {};      // article_id -> 最近一次分发任务
 const LOCAL_BRIDGE = 'http://127.0.0.1:8390';  // 本机桥直连（台账页与桥同机时可用）
@@ -1124,8 +1125,96 @@ document.getElementById('planBody').addEventListener('click', async e => {
   mask.addEventListener('click', e => { if (e.target === mask) mask.classList.remove('show'); });
 })();
 
-function stopOptCountdown() {
-  if (OPT_TIMER) { clearInterval(OPT_TIMER); OPT_TIMER = null; }
+function _seqDiff(a, b) {
+  const n = a.length, m = b.length;
+  const dp = [];
+  for (let i = 0; i <= n; i++) dp.push(new Uint32Array(m + 1));
+  for (let i = n - 1; i >= 0; i--)
+    for (let j = m - 1; j >= 0; j--)
+      dp[i][j] = a[i] === b[j] ? dp[i + 1][j + 1] + 1 : Math.max(dp[i + 1][j], dp[i][j + 1]);
+  const out = [];
+  let i = 0, j = 0;
+  const push = (t, s) => {
+    if (s == null || s === '') return;
+    if (out.length && out[out.length - 1].t === t) out[out.length - 1].s += s;
+    else out.push({ t, s });
+  };
+  while (i < n && j < m) {
+    if (a[i] === b[j]) { push('eq', a[i]); i++; j++; }
+    else if (dp[i + 1][j] >= dp[i][j + 1]) { push('del', a[i]); i++; }
+    else { push('add', b[j]); j++; }
+  }
+  while (i < n) { push('del', a[i]); i++; }
+  while (j < m) { push('add', b[j]); j++; }
+  return out;
+}
+
+function _charDiffHtml(aText, bText) {
+  const ops = _seqDiff(aText, bText);
+  let delHtml = '', addHtml = '';
+  for (const o of ops) {
+    const e = escapeHtml(o.s);
+    if (o.t === 'eq') { delHtml += '<span class="dctx">' + e + '</span>'; addHtml += e; }
+    else if (o.t === 'del') delHtml += '<span class="ddel">' + e + '</span>';
+    else addHtml += '<span class="dadd">' + e + '</span>';
+  }
+  return { delHtml, addHtml };
+}
+
+function _fieldDiffHtml(label, aText, bText) {
+  if (aText === bText) return '';
+  const { addHtml } = _charDiffHtml(aText, bText);
+  return '<span class="dd-label">' + label + '</span>' +
+    '<div class="dl"><span class="ddel">' + escapeHtml(aText) + '</span></div>' +
+    '<div class="dl">' + addHtml + '</div>';
+}
+
+function _bodyDiffHtml(origText, curText) {
+  if (origText === curText) return '';
+  const la = origText.split('\n'), lb = curText.split('\n');
+  const ops = _seqDiff(la, lb);
+  let html = '';
+  let i = 0;
+  while (i < ops.length) {
+    const o = ops[i];
+    if (o.t === 'eq') {
+      html += '<div class="dl">' + escapeHtml(o.s) + '</div>';
+      i++;
+      continue;
+    }
+    const dels = [], adds = [];
+    while (i < ops.length && ops[i].t === 'del') { dels.push(ops[i].s); i++; }
+    while (i < ops.length && ops[i].t === 'add') { adds.push(ops[i].s); i++; }
+    const pairN = Math.min(dels.length, adds.length);
+    for (let k = 0; k < pairN; k++) {
+      const { delHtml, addHtml } = _charDiffHtml(dels[k], adds[k]);
+      html += '<div class="dl">' + delHtml + '</div><div class="dl">' + addHtml + '</div>';
+    }
+    for (let k = pairN; k < dels.length; k++) html += '<div class="dl"><span class="ddel">' + escapeHtml(dels[k]) + '</span></div>';
+    for (let k = pairN; k < adds.length; k++) html += '<div class="dl"><span class="dadd">' + escapeHtml(adds[k]) + '</span></div>';
+  }
+  return html;
+}
+
+function renderOptDiff(orig, cur) {
+  const box = document.getElementById('optDiff');
+  const body = document.getElementById('optDiffBody');
+  let html = _fieldDiffHtml('标题', orig.title, cur.title) +
+    _fieldDiffHtml('摘要', orig.summary, cur.summary) +
+    _bodyDiffHtml(orig.content, cur.content);
+  if (!html) {
+    body.innerHTML = '<div class="dl" style="color:var(--muted)">未检测到内容变化</div>';
+  } else {
+    body.innerHTML = html;
+  }
+  box.style.display = 'block';
+}
+
+function hideOptDiff() {
+  document.getElementById('optDiff').style.display = 'none';
+}
+
+function stopOptCountdown() {  if (OPT_TIMER) { clearInterval(OPT_TIMER); OPT_TIMER = null; }
   const hint = document.getElementById('optHint');
   hint.classList.remove('gen');
 }
@@ -1151,7 +1240,9 @@ function startOptCountdown() {
 function openOpt(aid) {
   OPT_AID = aid;
   OPT_OPTIMIZED = false;
+  OPT_ORIG = null;
   stopOptCountdown();
+  hideOptDiff();
   const meta = document.getElementById('optMeta');
   meta.textContent = '加载中...';
   document.getElementById('optHint').textContent = '';
@@ -1191,6 +1282,7 @@ function aiOptimize() {
   ai.disabled = true;
   sv.disabled = true;
   OPT_OPTIMIZED = false;
+  OPT_ORIG = { title: t, summary: s, content: c };
   startOptCountdown();
   document.getElementById('optStatus').innerHTML = '';
   apiPost('/api/optimize', { id: OPT_AID, title: t, summary: s, content: c }).then(r => r.json()).then(d => {
@@ -1201,12 +1293,16 @@ function aiOptimize() {
       document.getElementById('optStatus').innerHTML = '<span class="err">' + escapeHtml(d.error) + '</span>';
       return;
     }
-    document.getElementById('optTitle').value = d.result.title;
-    document.getElementById('optSummary').value = d.result.summary;
-    document.getElementById('optContent').value = d.result.body;
+    const nt = (d.result.title || '').trim();
+    const ns = (d.result.summary || '').trim();
+    const nc = (d.result.body || '').trim();
+    document.getElementById('optTitle').value = nt;
+    document.getElementById('optSummary').value = ns;
+    document.getElementById('optContent').value = nc;
     OPT_OPTIMIZED = true;
     sv.disabled = false;
-    document.getElementById('optStatus').innerHTML = '<span class="ok">已生成优化稿，请核对后提交更新</span>';
+    renderOptDiff(OPT_ORIG, { title: nt, summary: ns, content: nc });
+    document.getElementById('optStatus').innerHTML = '<span class="ok">已生成优化稿，请核对下方红色标记的差异后提交更新</span>';
   }).catch(() => {
     ai.disabled = false;
     stopOptCountdown();
@@ -1271,6 +1367,11 @@ document.getElementById('optCancel').addEventListener('click', closeOpt);
 document.getElementById('optMask').addEventListener('click', e => { if (e.target === e.currentTarget) closeOpt(); });
 document.getElementById('optAi').addEventListener('click', aiOptimize);
 document.getElementById('optSave').addEventListener('click', submitUpdate);
+['optTitle', 'optSummary', 'optContent'].forEach(id => {
+  document.getElementById(id).addEventListener('input', () => {
+    if (OPT_OPTIMIZED) hideOptDiff();
+  });
+});
 document.getElementById('histClose').addEventListener('click', () => document.getElementById('histMask').classList.remove('show'));
 document.getElementById('histMask').addEventListener('click', e => { if (e.target === e.currentTarget) document.getElementById('histMask').classList.remove('show'); });
 

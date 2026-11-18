@@ -219,6 +219,14 @@
   .opt-actions { display: flex; gap: 10px; justify-content: flex-end; flex-wrap: wrap; align-items: center; margin-top: 10px; }
   .opt-actions .hint { font-size: 12px; color: var(--muted); margin-right: auto; }
   .opt-actions .hint.gen { font-size: 15px; font-weight: 600; color: var(--primary); }
+  .opt-diff { margin-top: 10px; border: 1px solid var(--border); border-radius: 8px; background: #fafbfc; max-height: 300px; overflow: auto; }
+  .opt-diff-hd { font-size: 12px; color: var(--muted); padding: 6px 10px; border-bottom: 1px solid var(--border); background: #f5f7fa; position: sticky; top: 0; }
+  .opt-diff-body { padding: 8px 10px; font-size: 13px; line-height: 1.8; }
+  .opt-diff-body .dl { white-space: pre-wrap; word-break: break-all; }
+  .opt-diff-body .ddel { color: #a8abb2; text-decoration: line-through; }
+  .opt-diff-body .dctx { color: #8a8d93; }
+  .opt-diff-body .dadd { color: #d93026; font-weight: 600; }
+  .opt-diff-body .dd-label { display: block; font-size: 12px; color: var(--muted); margin: 6px 0 2px; }
   #histMask .modal { width: min(680px, 92vw); }
   .hist-table td { white-space: normal; }
   .hist-table td.num { text-align: center; white-space: nowrap; }
