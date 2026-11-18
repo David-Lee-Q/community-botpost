@@ -86,7 +86,8 @@ def gen_one(direction, time_str, existing_titles):
                 gen["title"], gen["summary"], gen["body"],
                 prefix="ill-" + time_str.replace(":", "").replace(" ", "-"))
             body = (gen["body"].replace("IMAGE1", "[[IMG1]]")
-                    .replace("IMAGE2", "[[IMG2]]"))
+                    .replace("IMAGE2", "[[IMG2]]")
+                    .replace("IMAGE3", "[[IMG3]]"))
             cover_path = illu["cover"]
             body_image_files = illu["body_files"]
         except Exception as e:
@@ -97,11 +98,12 @@ def gen_one(direction, time_str, existing_titles):
         for _ in range(5):
             imgs = osx.pick_images(gen["category"], hint=gen.get("image_query", ""))
             body = (gen["body"].replace("IMAGE1", imgs["body"][0])
-                    .replace("IMAGE2", imgs["body"][1]))
+                    .replace("IMAGE2", imgs["body"][1])
+                    .replace("IMAGE3", imgs["body"][2]))
             cover_path = osx.build_cover_path(gen["category"])
             try:
                 osx._download_cover(imgs["cover"], cover_path)
-                images = [imgs["body"][0], imgs["body"][1]]
+                images = [imgs["body"][0], imgs["body"][1], imgs["body"][2]]
                 break
             except Exception as e:
                 print("封面下载失败(%s)，换图重试: %s" % (imgs["cover"], str(e)[:80]), flush=True)

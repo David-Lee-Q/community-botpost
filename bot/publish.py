@@ -147,14 +147,14 @@ def _upload_local(token, path):
 
 
 def _resolve_body_images(token, body, item):
-    """把正文占位符 [[IMG1]]/[[IMG2]] 替换为平台 OSS 路径。
+    """把正文占位符 [[IMG1]]/[[IMG2]]/[[IMG3]] 替换为平台 OSS 路径。
 
     必须在品牌/敏感检查之后调用：OSS 域名含 cosmoplat，会误触品牌词。
     优先用 item['body_image_files'] 的本地文件上传，其次用已就绪路径 item['body_images']/['images']。
     """
     files = item.get("body_image_files") or []
     paths = item.get("body_images") or item.get("images") or []
-    for i in (1, 2):
+    for i in (1, 2, 3):
         ph = "[[IMG%d]]" % i
         if ph not in body:
             continue

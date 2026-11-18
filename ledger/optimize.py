@@ -39,9 +39,9 @@ OPTIMIZE_PROMPT = (
     "   c. 二级标题精炼有力、概括段落核心观点，可带数字或反差；"
     "   d. 保留原文事实、案例、结论与逻辑顺序，不虚构数据；"
     "   e. 结尾段给出落地建议或趋势判断；"
-    "4. 正文中所有图片标记行（形如 ![xxx](http...)，通常为 ![配图1](...)、![配图2](...)）"
+    "4. 正文中所有图片标记行（形如 ![xxx](http...)，通常为 ![配图1](...)、![配图2](...)、![配图3](...)）"
     "必须原样保留位置与链接，不得删除、移动或替换；"
-    "5. 正文不少于1000字。"
+    "5. 正文不少于1200字（平台硬性下限1000字，严禁低于）。"
 )
 
 
@@ -111,7 +111,7 @@ def ai_optimize(article):
         cliche_open = re.search(
             r"^(在[^，。]{0,18}浪潮|随着[^，。]{0,24}发展|近年来[^，。]{0,10}成为|众所周知|当前[^，。]{0,10}正)", first_para)
         ok = (len(title) >= 6 and not weak_title and not cliche_open
-              and len(body) >= 1000 and 100 <= len(summary) <= 160
+              and len(body) >= 1200 and 100 <= len(summary) <= 160
               and all(180 <= len(s) <= 450 for s in paras)
               and imgs and "IMAGE1" not in body)
         if ok:

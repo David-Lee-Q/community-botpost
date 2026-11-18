@@ -83,7 +83,7 @@ def _valid(url, max_bytes):
 
 
 def pick(category, hint="", used_ids=None):
-    """返回 3 个可用图 item（含校验），无 key 或全部失败时返回 []。"""
+    """返回 4 个可用图 item（含校验），无 key 或全部失败时返回 []。"""
     if not get_key():
         return []
     used_ids = used_ids or set()
@@ -108,6 +108,6 @@ def pick(category, hint="", used_ids=None):
     for key, pid in cands:
         if _valid(_img_url(pid, "body"), 900 * 1024) and _valid(_img_url(pid, "cover"), 1024 * 1024):
             picked.append((key, pid))
-        if len(picked) == 3:
+        if len(picked) == 4:
             break
     return [{"site": "pexels", "ref": pid, "key": key} for key, pid in picked]

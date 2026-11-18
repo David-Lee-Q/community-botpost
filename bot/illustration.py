@@ -1,8 +1,8 @@
 """小黑线稿插图（文生图 MCP）——每日发文优先配图源。
 
 - MCP 配置：环境变量 T2I_MCP_URL / T2I_MCP_TOKEN，或 bot/t2i_mcp.json（不入 git）
-- illustrate(title, summary, body) -> {"body_files": [jpg1, jpg2], "cover": jpg, "files": [...]}
-  内部：LLM 选 2 个认知锚点 -> 逐张调用 generate_image（1792x1024 / sketch / b64_json）-> 压缩
+- illustrate(title, summary, body) -> {"body_files": [jpg1, jpg2, jpg3], "cover": jpg, "files": [...]}
+  内部：LLM 选 3 个认知锚点 -> 逐张调用 generate_image（1792x1024 / sketch / b64_json）-> 压缩
 - 任一步失败抛异常，由调用方回退到图库
 """
 import io
@@ -153,9 +153,9 @@ def _parse_shots(text):
     data = json.loads(s[i:j + 1])
     shots = [x for x in (data.get("shots") or [])
              if isinstance(x, dict) and str(x.get("composition") or "").strip()]
-    if len(shots) < 2:
-        raise ValueError("有效 shot 不足 2 个")
-    return shots[:2]
+    if len(shots) < 3:
+        raise ValueError("有效 shot 不足 3 个")
+    return shots[:3]
 
 
 def _generic_shots(title, summary):
@@ -165,6 +165,10 @@ def _generic_shots(title, summary):
          "core": core,
          "composition": "画面：小黑站在左侧杂乱的数据和右侧清晰结论之间，用一条粗箭头把问题推过一道判断关口。",
          "labels": ["现状", "判断", "结论"]},
+        {"topic": "关键机制", "structure": "输入输出闭环",
+         "core": core,
+         "composition": "画面：小黑把一块原料投入一台手绘机器，机器齿轮转动，出口端吐出标注好的成品，旁注一个回环箭头。",
+         "labels": ["输入", "处理", "输出"]},
         {"topic": "落地路径", "structure": "承接路径",
          "core": core,
          "composition": "画面：小黑把三张步骤卡片依次放上一条时间线，末尾箭头指向一个可执行的结果。",
@@ -175,7 +179,7 @@ def _generic_shots(title, summary):
 def _shots(title, summary, body):
     import sensitive
     sys_prompt = (
-        "你是中文技术文章的配图策划。阅读文章，选出 2 个最适合画成‘小黑怪诞手绘解释图’的认知锚点"
+        "你是中文技术文章的配图策划。阅读文章，选出 3 个最适合画成‘小黑怪诞手绘解释图’的认知锚点"
         "（核心判断、两个断点、输入输出闭环、分流、前后对比、承接路径等）。"
         "只输出 JSON，不要 markdown 代码块、不要解释：{\"shots\":[{\"topic\":\"≤12字\","
         "\"structure\":\"结构类型\",\"core\":\"一句核心意思\",\"composition\":\"画面，≤50字\","

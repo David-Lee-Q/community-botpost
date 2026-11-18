@@ -39,7 +39,7 @@ Agent 在任务执行过程中发现的条目应遵循以下格式：
   - bot 组件位于 /workspace/bot：publish.py（发布+查重）、runner.py（定时守护，30秒轮询，调度发布/评分/数据刷新/飞书报告）、report.py（每日/每周总结飞书推送）、fetch_detail_urls.py（抓取详情URL）、plan.json（发布计划）、HEARTBEAT.md（发布记录）、SCHEDULE.md（定时任务说明）
   - 发布直接调用 POST /api/article/save，认证用自定义 header `s-user-token`（JWT，有效期约7天），token 存于 /workspace/bot/token.txt；save 严格校验 token（list/upload 宽松，uploadFileStream 不校验）；重登脚本为仓库内 bot/login.py（Playwright，风控有时免 MFA 直接密码登录，有时需短信验证码写入 /tmp/mfa_code.txt，成功后自动刷新 token.txt 和 /tmp/login_state.json）；runner 内置 token 看门狗：剩余不足 1 天自动调 login.py 重登（失败 6 小时后再试），一般无需人工干预
   - 封面上传：POST /api/file/uploadFileStream?type=1（multipart）返回 data.path 作 thumbnail；封面 800×400、jpg/png、≤1MB
-  - 发布必填字段：cateId（分类ID，见 publish.py CATEGORY_IDS）、thumbnail、title、description（摘要）、content（markdown正文，不含首行#标题）、viewRank=0；正文配图至少2张，图源见「配图来源规范」
+  - 发布必填字段：cateId（分类ID，见 publish.py CATEGORY_IDS）、thumbnail、title、description（摘要）、content（markdown正文，不含首行#标题）、viewRank=0；正文配图 3 张，图源见「配图来源规范」；字数政策（用户 2026-11-16 告知平台更新）：硬性下限 1000 字、建议 1200+，生成与校验统一按 1200+ 执行（one_shot.py SYSTEM_PROMPT/校验、optimize.py 校验）
   - 正文配图（unsplash/pexels 外链）save 前必须转存平台 OSS（publish._rehost_body_images）：平台 WAF 拦截正文中这两个域名并返回误导性的 10002「无效的token」；转存须放在品牌检查之后（平台 OSS 域名含 cosmoplat，会误触品牌词 COSMOPlat）
   - 每批发布完成后 fetch_detail_urls.py 自动抓取详情 URL：优先从「我的文章」页（usercenter/1447/article/全部文章）点击取真实 URL，以发布接口返回的 article_id 构造 `https://openlab.cosmoplat.com/article-detils?id={id}&articleType=0` 兜底（列表页存在同名/重复文章，避免误记）；记录位置：plan.json 的 detail_url 字段与 HEARTBEAT.md 当日清单
 
@@ -79,11 +79,11 @@ Agent 在任务执行过程中发现的条目应遵循以下格式：
 - Instructions:
   - 正文配图从以下网站检索并确认所用为免费图（非付费/非授权受限），正文中直接引用图片链接：https://www.magnific.com/、https://www.pexels.com/zh-cn/、https://unsplash.com/、https://pixabay.com/
   - 封面图必须下载到工作区再上传，保存目录按文章主题区分：/workspace/bot/covers/<主题关键词>/（如 ai、smart-manufacturing、cloud-native、industrial-internet），按主题归类避免同一张图在多篇文章混用
-  - 配图主题化池：IMAGE_POOL 73 张全部为记忆确认主题的 Unsplash 图，按 theme 分组（ai 11/code 9/dc 12/ind 15/data 9/abs 17）；2026-09-22 起 pick_images 优先走 Pexels API 动态搜图（bot/image_source.py，key 存 bot/pexels_key.txt 不入 git；按 LLM 输出的 image_query 英文词搜图，photo id 全局去重，下载前校验大小/可达），静态池仅作无 key 或失败回退，recent 保留 60 张；每次发文取3张（正文2+封面1），全局去重记录于 bot/used_images.json
+  - 配图主题化池：IMAGE_POOL 73 张全部为记忆确认主题的 Unsplash 图，按 theme 分组（ai 11/code 9/dc 12/ind 15/data 9/abs 17）；2026-09-22 起 pick_images 优先走 Pexels API 动态搜图（bot/image_source.py，key 存 bot/pexels_key.txt 不入 git；按 LLM 输出的 image_query 英文词搜图，photo id 全局去重，下载前校验大小/可达），静态池仅作无 key 或失败回退，recent 保留 60 张；每次发文取4张（正文3+封面1），全局去重记录于 bot/used_images.json
   - 主题分组：ai=机器人/AI/对话，code=代码编程，dc=数据中心/服务器/芯片，ind=工业制造/自动化，data=数据图表/分析，abs=抽象科技/网络；LLM 无视觉能力、Pexels/Unsplash 检索与详情页均反爬，故主题标签靠记忆标注并逐一验证可达性
   - 图源可达性结论：images.unsplash.com 与 images.pexels.com 直链可达（生成/下载用）；但发布 save 前必须转存平台 OSS（见「社区发文 bot 运行方式」），不能依赖平台抓取外链；magnific.com 是 AI 放大工具无免费图库；pixabay 搜索需 API key 且部分 CDN 图 hotlink 403，故暂未纳入池
   - 发一篇配图流程：generate() 正文保留 IMAGE1/IMAGE2 占位→插图路径：gen_plan 调 illustration.illustrate() 出 2 图+封面，占位改 [[IMG1]]/[[IMG2]] 并记 body_image_files，发布时品牌/敏感检查通过后再上传替换（OSS 域名含 cosmoplat 会误触品牌词）；图库路径：run() 调 pick_images() 直接替换→成功后记 used_images.json
-  - 每日发文与前端「发一篇」临时文章配图都优先线稿插图（用户 2026-10-29 指令）：走文生图 MCP（bot/illustration.py，工具 generate_image，size=1792x1024、style=sketch、response_format=b64_json，约 2 分钟/张），LLM 选 2 个认知锚点出 2 张正文图+1 张封面，Pillow 压成 JPEG（正文<880KB、封面 800x400）；shots 的 LLM 输出解析失败会重试一次、再失败用通用锚点兜底（错误写 bot/illustration_errors.log）；MCP 不可用/超时/超预算自动回退 Pexels/静态图库，保证任何情况都能发；技能源码 /root/.claude/skills/ian-xiaohei-illustrations（源自 github.com/David-Lee-Q/line-drawing）
+  - 每日发文与前端「发一篇」临时文章配图都优先线稿插图（用户 2026-10-29 指令）：走文生图 MCP（bot/illustration.py，工具 generate_image，size=1792x1024、style=sketch、response_format=b64_json，约 2 分钟/张），LLM 选 3 个认知锚点出 3 张正文图+1 张封面，Pillow 压成 JPEG（正文<880KB、封面 800x400）；shots 的 LLM 输出解析失败会重试一次、再失败用通用锚点兜底（错误写 bot/illustration_errors.log）；MCP 不可用/超时/超预算自动回退 Pexels/静态图库，保证任何情况都能发；技能源码 /root/.claude/skills/ian-xiaohei-illustrations（源自 github.com/David-Lee-Q/line-drawing）
 
 [飞书报告定时推送]
 - Date: 2026-08-08

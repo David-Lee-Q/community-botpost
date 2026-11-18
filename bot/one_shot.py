@@ -156,19 +156,19 @@ _DEFAULT_THEMES = ["abs", "dc", "ai"]
 
 
 def pick_images(category="人工智能", hint=""):
-    """取 3 张配图（正文2+封面1），排除已用图并全局记录。
+    """取 4 张配图（正文3+封面1），排除已用图并全局记录。
 
     优先用 Pexels 按 hint/category 关键词动态搜图（池近乎无限，几乎不重复）；
     无 key 或动态源失败时回退静态主题图池。
-    静态池不足 3 张时扩展相邻组；全池耗尽时重置（保留最近 60 张避免立即重复）。
-    返回 {"body": [url1, url2], "cover": url, "items": [item1, item2, item3]}。"""
+    静态池不足 4 张时扩展相邻组；全池耗尽时重置（保留最近 60 张避免立即重复）。
+    返回 {"body": [url1, url2, url3], "cover": url, "items": [...4 items]}。"""
     used = _load_used()
     used_ids = set(used.get("used_ids", []))
 
     picks = None
     try:
         dyn = image_source.pick(category, hint=hint, used_ids=used_ids)
-        if len(dyn) == 3:
+        if len(dyn) == 4:
             picks = dyn
     except Exception:
         picks = None
@@ -178,23 +178,24 @@ def pick_images(category="人工智能", hint=""):
         cand = []
         for t in themes:
             cand += [i for i in IMAGE_POOL if i["theme"] == t and _img_key(i) not in used_ids]
-        if len(cand) < 3:
+        if len(cand) < 4:
             cand += [i for i in IMAGE_POOL if _img_key(i) not in used_ids and i not in cand]
-        if len(cand) < 3:
+        if len(cand) < 4:
             recent = used.get("recent", [])
             used_ids = set(recent)
             used["used_ids"] = list(recent)
             cand = [i for i in IMAGE_POOL if _img_key(i) not in used_ids]
         random.shuffle(cand)
-        picks = cand[:3]
+        picks = cand[:4]
 
     keys = [_img_key(i) for i in picks]
     new_ids = sorted(used_ids | set(keys))
     used["used_ids"] = new_ids
     used["recent"] = new_ids[-60:]
     _save_used(used)
-    return {"body": [_img_url(picks[0], "body"), _img_url(picks[1], "body")],
-            "cover": _img_url(picks[2], "cover"),
+    return {"body": [_img_url(picks[0], "body"), _img_url(picks[1], "body"),
+                     _img_url(picks[2], "body")],
+            "cover": _img_url(picks[3], "cover"),
             "items": picks}
 
 
@@ -211,7 +212,7 @@ SYSTEM_PROMPT = (
     "1. 标题信息量大且有钩子：用具体数字、强观点、反差对比或读者痛点，"
     "避免「赋能」「新引擎」「新范式」「加速落地」「驶入快车道」等空泛套话；"
     "2. 摘要直击读者痛点并点明文章价值：先抛出问题或结论，再给出阅读价值；"
-    "3. 正文不少于1200字，4-6段，每段200-400字，段间用二级标题分隔，"
+    "3. 正文不少于1200字（平台硬性下限1000字，严禁低于），5-7段，每段200-400字，段间用二级标题分隔，"
     "整体遵循「引言-分论点-结论」框架："
     "   a. 引言（首段）：前三句必须抓住读者——用具体数据、真实痛点、反差场景或争议观点切入，"
     "   段末抛出全文要论证的核心论点或悬念；严禁「在...浪潮下」「随着...的发展」"
@@ -221,6 +222,7 @@ SYSTEM_PROMPT = (
     "   （避免「第一...第二...第三...」式堆砌）；"
     "   c. 二级标题精炼有力、能概括段落核心观点，可带数字或反差；"
     "   d. 正文第1段后插入图片标记 ![配图1](IMAGE1)，第3段后插入 ![配图2](IMAGE2)，"
+    "   第5段后插入 ![配图3](IMAGE3)，共3张，"
     "   图片说明文字与所在段落主题相关（图文呼应）；"
     "   e. 结论（结尾段）：呼应引言论点并给出落地建议或趋势判断，避免戛然而止；"
     "4. 术语准确、数据克制、逻辑层层递进，围绕用户主题展开；"
@@ -279,7 +281,7 @@ def generate(prompt):
             category = "人工智能"
         if ":" in title:
             title = title.replace(":", "：")
-        plain = body.replace("![配图1](IMAGE1)", "").replace("![配图2](IMAGE2)", "")
+        plain = body.replace("![配图1](IMAGE1)", "").replace("![配图2](IMAGE2)", "").replace("![配图3](IMAGE3)", "")
         segments = [s for s in body.split("\n\n") if s.strip() and not s.startswith("!")]
         paras = [s for s in segments if not s.startswith("#")]
         first_para = paras[0] if paras else ""
@@ -289,7 +291,7 @@ def generate(prompt):
         ok = (len(title) >= 6 and not weak_title and not cliche_open
               and len(plain) >= 1200
               and all(180 <= len(s) <= 420 for s in paras)
-              and 100 <= len(summary) <= 160 and "IMAGE" not in body.replace("IMAGE1", "").replace("IMAGE2", "")
+              and 100 <= len(summary) <= 160 and "IMAGE" not in body.replace("IMAGE1", "").replace("IMAGE2", "").replace("IMAGE3", "")
               and not (sensitive.check_brand(title) or sensitive.check_brand(summary) or sensitive.check_brand(body)))
         if ok:
             return {"title": title, "category": category, "summary": summary,
@@ -319,19 +321,21 @@ def run(prompt):
     try:
         import illustration
         illu = illustration.illustrate(gen["title"], gen["summary"], gen["body"],
-                                       prefix="oneshot-" + ts, img_timeout=180, budget=300)
+                                       prefix="oneshot-" + ts, img_timeout=180, budget=540)
         gen["body"] = (gen["body"].replace("IMAGE1", "[[IMG1]]")
-                       .replace("IMAGE2", "[[IMG2]]"))
+                       .replace("IMAGE2", "[[IMG2]]")
+                       .replace("IMAGE3", "[[IMG3]]"))
         cover_path = illu["cover"]
         body_image_files = illu["body_files"]
     except Exception as e:
         print("插图失败，回退图库: %s" % str(e)[:120], flush=True)
         imgs = pick_images(gen["category"], hint=gen.get("image_query", ""))
         gen["body"] = (gen["body"].replace("IMAGE1", imgs["body"][0])
-                       .replace("IMAGE2", imgs["body"][1]))
+                       .replace("IMAGE2", imgs["body"][1])
+                       .replace("IMAGE3", imgs["body"][2]))
         cover_path = build_cover_path(gen["category"])
         _download_cover(imgs["cover"], cover_path)
-        images = [imgs["body"][0], imgs["body"][1]]
+        images = [imgs["body"][0], imgs["body"][1], imgs["body"][2]]
         used_items = imgs["items"]
 
     os.makedirs(ARTICLES_DIR, exist_ok=True)
